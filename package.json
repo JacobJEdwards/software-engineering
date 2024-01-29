@@ -1,15 +1,31 @@
 {
+<<<<<<< HEAD
+  "name": "study_planner",
+=======
   "name": "software-engineering",
+>>>>>>> upstream/main
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+<<<<<<< HEAD
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "fullcalendar": "^6.1.10",
+    "mongoose": "^8.1.1"
+  }
+=======
   "repository": {
     "type": "git",
     "url": "."
   },
   "author": "",
   "license": "ISC"
+>>>>>>> upstream/main
 }

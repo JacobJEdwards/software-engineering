@@ -1,3 +1,13 @@
+<<<<<<< HEAD
+node_modules
+.idea
+.gitignore
+..
+.*
+package-lock.json
+
+git push upstream main
+=======
 # Logs
 che_cjs/
 .rts2_cache_es/
@@ -128,3 +138,4 @@ web_modules/
 # Microbundle cache
 .rpt2_cache/
 .rts2_ca
+>>>>>>> upstream/main
