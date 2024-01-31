@@ -14,6 +14,7 @@
     "@fullcalendar/interaction": "^6.1.10",
     "@fullcalendar/timegrid": "^6.1.10",
     "@fullcalendar/vue3": "^6.1.10",
+    "primevue": "^3.47.2",
     "vue": "^3.3.11",
     "vue-router": "^4.2.5"
   },
