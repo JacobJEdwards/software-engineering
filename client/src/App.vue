@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import Calendar from './components/Calender.vue'
+import HelloWorld from "./components/HelloWorld.vue";
+import Calendar from "./components/Calendar.vue";
 </script>
 
 <template>
-  <div>
-  </div>
-  <HelloWorld msg="" />
+  <div></div>
   <Calendar />
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
