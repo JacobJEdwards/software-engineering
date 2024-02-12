@@ -2,7 +2,11 @@ import express from 'express';
 import AuthMiddleware from "./middleware/AuthMiddleware.js"
 import  AuthRoutes from "./routes/AuthRoutes.js";
 import mongoose from 'mongoose';
+import dotenv from "dotenv";
 
+dotenv.config({path: "../.env"});
+
+const mongoDBUri = 'mongodb://localhost:27017/wonderfultasksdb';
 
 mongoose.connect(mongoDBUri, )
     .then(() => console.log('MongoDB connected'))
@@ -12,12 +16,13 @@ const app = express();
 app.use(express.json());
 const authRoutes = new AuthRoutes(); // Instantiate AuthRoutes
 const PORT = 3000;
-app.use('/api/protected', AuthMiddleware.authenticate, (req, res) => {
-    res.json({ message: 'This is a protected route' });
-});
 
-app.use('/api/auth', authRoutes.router);
+app.use('/api/protected', AuthMiddleware.authenticate, authRoutes.router);
 
+app.use('/api/protected/test', (req, res) => {
+    res.json("testing");
+})
+app.use('/api/auth', authRoutes.router)
 app.get("/", (req, res) => {
     res.json("hello world");
 })
