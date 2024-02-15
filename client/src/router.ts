@@ -3,18 +3,23 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
     {
         path: '/',
-        name: "Home",
+        name: "home",
         component: () => import("./views/Home.vue")
     },
     {
         path: '/login',
-        name: 'Login',
+        name: 'login',
         component: () => import("./views/Login.vue")
     },
     {
         path: "/schedule",
-        name: 'Schedule',
+        name: 'schedule',
         component: () => import("./views/Schedule.vue")
+    },
+    {
+        path: "/signup",
+        name: 'signup',
+        component: () => import("./views/Signup.vue")
     }
 ]
 
@@ -23,11 +28,13 @@ export const router = createRouter({
     routes
 })
 
-const isAuth = true
+const isAuth = () => {
+    return $cookies.get("auth");
+}
 
-router.beforeEach(async (to, from) => {
-    if (!isAuth && to.name !== "Login") {
-        return { name: "Login" }
+router.beforeEach((to, from) => {
+    if (!isAuth() && to.name !== "login") {
+        return { name: "login" }
     }
 })
 

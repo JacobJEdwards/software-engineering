@@ -4,31 +4,51 @@ import FloatLabel from 'primevue/floatlabel'
 import InputGroup from 'primevue/inputgroup'
 import InputText from 'primevue/inputtext'
 
-let loading = false;
+import { useRouter } from "vue-router"
 
-function load() {
-console.log("here")
-    loading = !loading
+import { ref } from 'vue'
+
+const loading = ref(false);
+const username = ref('')
+const password = ref('')
+const error = ref("")
+
+const router = useRouter()
+
+const login = async () => {
+    loading.value = true;
+    try {
+        const res = await fetch
+    } catch {
+        error.value = "Error on signup" 
+    } finally {
+        loading.value = false;
+    }
+    $cookies.set("auth", "test")
+    router.push("/")
+    
 }
+
 </script>
 
 <template>
-<form @click.prevent="onSubmit">
-    <InputGroup>
+<form @submit.prevent="login">
+        <InputGroup>
         <FloatLabel>
-            <InputText inputId='username'/>
+            <InputText v-model="username" id='username'/>
             <label for="username">Username</label>
         </FloatLabel>
-    </InputGroup>
-    <InputGroup>
+        </InputGroup>
 
+        <InputGroup>
         <FloatLabel>
-            <Password v-model="value" inputId="password" toggleMask />
+            <Password v-model="password" id="password" toggleMask />
             <label for="password">Password</label>
         </FloatLabel>
-    </InputGroup>
-    <InputGroup>
-        <Button label="Login" :loading="loading" @click="loading=!loading"/>
-    </InputGroup>
+        </InputGroup>
+
+        <InputGroup>
+        <Button label="Login" :loading="loading" type="submit"/>
+        </InputGroup>
 </form>
 </template>

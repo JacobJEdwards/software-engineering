@@ -5,12 +5,17 @@ export default {
   components: {
     Header,
   },
+  computed: {
+  isLoginPage() {
+    return this.$route.name === 'login' || this.$route.name == "signup"
+  }
+  }
 };
 </script>
 
 <template>
   <div id="app">
-    <Header />
+    <Header v-if="!isLoginPage" />
     <router-view />
   </div>
 </template>
