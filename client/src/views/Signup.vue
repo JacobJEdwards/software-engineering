@@ -1,87 +1,98 @@
 <script setup lang="ts">
-import Password from "primevue/password"
-import FloatLabel from 'primevue/floatlabel'
-import InputGroup from 'primevue/inputgroup'
-import InputText from 'primevue/inputtext'
-import { API_ROUTE } from "/src/config.ts"
+import {API_ROUTE} from "/src/config.ts"
+import {VueCookies} from "vue-cookies";
+import {useRouter} from "vue-router"
+import {inject, ref} from 'vue'
 
-import { useRouter } from "vue-router"
-
-import { ref } from 'vue'
+const $cookies = inject<VueCookies>("$cookies")
 
 const loading = ref(false);
 const username = ref('')
-const email = res("")
+const email = ref("")
 const password = ref('')
 const error = ref("")
+const successMessage = ref("")
 
 const router = useRouter()
 
-const login = async () => {
-    loading.value = true;
-    try {
-        const options = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                username, password, email
-            })
-        }
+const signup = async () => {
+  loading.value = true;
+  error.value = ""
+  successMessage.value = ""
 
-        const res = await fetch(`${API_ROUTE}/auth/signup`, options);
+   if (!username.value || !email.value || !password.value) {
+        error.value = 'Please fill in all fields';
+        return;
+   }
 
-        if (!res.ok) {
-            throw new Error("Error on login")
-        }
-
-        const { token } = await res.json();
-
-        if (!token) {
-            throw new Error("Error on login")
-        }
-
-        $cookies.set("auth", token)
-        router.push("/")
-
-    } catch {
-        error.value = "Error on login" 
-    } finally {
-        loading.value = false;
+  try {
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        username: username.value, password: password.value, email: email.value
+      })
     }
 
-    
+    const res = await fetch(`${API_ROUTE}/auth/signup`, options);
+
+    if (!res.ok) {
+      throw new Error("Error on login")
+    }
+
+    const {token} = await res.json();
+
+    if (!token) {
+      throw new Error("Error on login")
+    }
+
+    $cookies?.set("auth", token)
+    successMessage.value = "Signup successful"
+    await router.push("/")
+
+  } catch {
+    error.value = "Error on signup"
+    password.value = ""
+  } finally {
+    loading.value = false;
+  }
+}
+
+const redirectToLogin = async () => {
+  await router.push("/login")
 }
 
 </script>
 
 <template>
-<form @submit.prevent="login">
-        <InputGroup>
-        <FloatLabel>
-            <InputText v-model="username" id='username'/>
-            <label for="username">Username</label>
-        </FloatLabel>
-        </InputGroup>
-
-        <InputGroup>
-        <FloatLabel>
-            <InputText v-model="email" id='email' type="email" />
-            <label for="username">Email</label>
-        </FloatLabel>
-        </InputGroup>
-
-        <InputGroup>
-        <FloatLabel>
-            <Password v-model="password" id="password" toggleMask />
-            <label for="password">Password</label>
-        </FloatLabel>
-        </InputGroup>
-
-        <InputGroup>
-        <Button label="Login" :loading="loading" type="submit"/>
-            <p>{{loading}}</p>
-        </InputGroup>
-</form>
+  <v-container>
+    <v-row justify="center">
+      <v-col cols="12" sm="8" md="4">
+        <v-card class="elevation-12">
+          <v-toolbar color="primary" dark flat>
+            <v-toolbar-title>Sign Up</v-toolbar-title>
+          </v-toolbar>
+          <v-card-text>
+            <v-form @submit.prevent="signup">
+              <v-text-field v-model="username" label="Username" required></v-text-field>
+              <v-text-field v-model="email" label="Email" required></v-text-field>
+              <v-text-field v-model="password" label="Password" type="password" required></v-text-field>
+              <v-btn type="submit" color="primary" class="mr-4">Sign Up</v-btn>
+              <v-btn @click="redirectToLogin">Login</v-btn>
+              <v-alert v-if="error" type="error" dismissible>{{ error }}</v-alert>
+              <v-alert v-if="successMessage" type="success" dismissible>{{ successMessage }}</v-alert>
+            </v-form>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
+
+<style scoped>
+.elevation-12 {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+</style>

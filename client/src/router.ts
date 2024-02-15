@@ -1,6 +1,6 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, RouteRecordRaw, Router } from 'vue-router'
 
-const routes = [
+const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
         name: "home",
@@ -20,25 +20,20 @@ const routes = [
         path: "/signup",
         name: 'signup',
         component: () => import("./views/Signup.vue")
+    },
+    {
+        path: "/tasks",
+        name: 'tasks',
+        component: () => import("./views/Tasks.vue")
     }
 ]
 
-export const router = createRouter({
+export const router: Router = createRouter({
     history: createWebHistory(),
     routes
 })
 
-const isAuth = () => {
-    return $cookies.get("auth");
-}
-
-router.beforeEach((to, from) => {
-    if (!isAuth() && to.name !== "login") {
-        return { name: "login" }
-    }
-})
-
-router.onError(err => {
+router.onError(async (err) => {
     console.error(err)
-    router.push("/")
+    await router.push("/")
 })

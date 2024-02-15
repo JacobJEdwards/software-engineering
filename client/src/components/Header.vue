@@ -1,63 +1,28 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router"
-const items = [
-        {
-          label: "Home",
-          icon: "pi pi-home",
-          route: "/",
-        },
-        {
-          label: "Schedule",
-          icon: "pi pi-info-circle",
-          route: "/schedule",
-        },
-]
+import { VueCookies } from "vue-cookies";
+import { inject } from 'vue'
+
+const $cookies = inject<VueCookies>("$cookies")
 
 const router = useRouter();
 
-const logout = () => {
-    $cookies.remove("auth")
-    router.push("/login");
+const logout = async () => {
+    $cookies?.remove("auth")
+    await router.push("/login");
 }
 </script>
 
 <template>
-  <div class="header">
-    <Menubar :model="items">
-      <template #item="{ item, props, hasSubmenu }">
-        <router-link
-          v-if="item.route"
-          v-slot="{ href, navigate }"
-          :to="item.route"
-          custom
-        >
-          <a v-ripple :href="href" v-bind="props.action" @click="navigate">
-            <span :class="item.icon" />
-            <span class="ml-2">{{ item.label }}</span>
-          </a>
-        </router-link>
-        <a
-          v-else
-          v-ripple
-          :href="item.url"
-          :target="item.target"
-          v-bind="props.action"
-        >
-          <span :class="item.icon" />
-          <span class="ml-2">{{ item.label }}</span>
-          <span v-if="hasSubmenu" class="pi pi-fw pi-angle-down ml-2" />
-        </a>
-      </template>
-    </Menubar>
-      <Button @click="logout">Logout</Button>
-  </div>
+  <header>
+  <v-app-bar app color="primary">
+    <v-toolbar-title>Wonderful Tasks</v-toolbar-title>
+    <v-spacer></v-spacer>
+    <v-btn :to="{ name: 'home'}" >Home</v-btn>
+    <v-btn :to="{ name: 'tasks'}" >Tasks</v-btn>
+    <v-btn :to="{ name: 'schedule'}" >Schedule</v-btn>
+    <v-spacer></v-spacer>
+    <v-btn @click="logout">Logout</v-btn>
+  </v-app-bar>
+  </header>
 </template>
-
-
-<style scoped>
-.header {
-  background-color: #42b983;
-  padding: 10px;
-  text-align: center;
-}
-</style>
