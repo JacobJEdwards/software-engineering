@@ -1,3 +1,26 @@
+<script setup lang="ts">
+import { useRouter } from "vue-router"
+const items = [
+        {
+          label: "Home",
+          icon: "pi pi-home",
+          route: "/",
+        },
+        {
+          label: "Schedule",
+          icon: "pi pi-info-circle",
+          route: "/schedule",
+        },
+]
+
+const router = useRouter();
+
+const logout = () => {
+    $cookies.remove("auth")
+    router.push("/login");
+}
+</script>
+
 <template>
   <div class="header">
     <Menubar :model="items">
@@ -26,29 +49,10 @@
         </a>
       </template>
     </Menubar>
+      <Button @click="logout">Logout</Button>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      items: [
-        {
-          label: "Home",
-          icon: "pi pi-home",
-          route: "/",
-        },
-        {
-          label: "Schedule",
-          icon: "pi pi-info-circle",
-          route: "/schedule",
-        },
-      ],
-    };
-  },
-};
-</script>
 
 <style scoped>
 .header {
