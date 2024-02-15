@@ -25,6 +25,5 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px; /* Adjust the margin to accommodate the header height */
 }
 </style>
