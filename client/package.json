@@ -16,7 +16,8 @@
     "primevue": "^3.47.2",
     "vue": "^3.3.11",
     "vue-cookies": "^1.8.3",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.2.5",
+    "vuetify": "^3.5.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.5.2",

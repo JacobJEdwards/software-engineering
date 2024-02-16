@@ -1,29 +1,37 @@
-<script lang="ts">
+<script setup lang="ts">
 import Header from "./components/Header.vue";
 
-export default {
-  components: {
-    Header,
-  },
-  computed: {
-  isLoginPage() {
-    return this.$route.name === 'login' || this.$route.name == "signup"
+import { useRouter } from "vue-router";
+import { VueCookies } from "vue-cookies";
+import {computed, inject} from "vue";
+
+const $cookies = inject<VueCookies>("$cookies");
+const router = useRouter();
+
+const isLoginPage = computed(() => {
+  return router.currentRoute.value.path === "/login" || router.currentRoute.value.path === "/signup"
+});
+
+const isAuth = computed(() => {
+  return !!$cookies?.get("auth");
+});
+
+router.beforeEach((to, _, next) => {
+  if (!isAuth.value && to.path !== "/login" && to.path !== "/signup") {
+    next("/login");
+  } else {
+    next();
   }
-  }
-};
+});
+
 </script>
 
 <template>
-  <div id="app">
+  <v-app>
     <Header v-if="!isLoginPage" />
     <router-view />
-  </div>
+  </v-app>
 </template>
 
 <style scoped>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  text-align: center;
-  color: #2c3e50;
-}
 </style>
