@@ -2,14 +2,14 @@
 import mongoose from 'mongoose';
 import milestones from "./Milestones.js";
 
-const { Schema, model } = mongoose;
+const {Schema, model} = mongoose;
 
 const moduleSchema = new Schema({
-    moduleName: { type: String, required: true },
+    moduleName: {type: String, required: true},
     milestones: [milestones],
-    startDate: { type: Date, required: true },
-    endDate: { type: Date, required: true }
-}, { timestamps: true });
+    startDate: {type: Date},
+    endDate: {type: Date},
+}, {timestamps: true});
 
 
 export default moduleSchema

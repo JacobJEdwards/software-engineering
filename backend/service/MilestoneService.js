@@ -10,8 +10,5 @@ class MilestoneService {
      await module.save();
  }
 }
-userSchema.loadClass(MilestoneService);
 
-const Milestone = model('User', userSchema);
-
-export default Milestone;
+export default MilestoneService;
