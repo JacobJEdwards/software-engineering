@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
+import User from '../service/UserService.js';
 
 export class AuthController {
     static async signup(req, res) {
