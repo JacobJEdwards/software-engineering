@@ -1,5 +1,9 @@
 <script setup lang="ts">
+<<<<<<< HEAD
     import { API_ROUTE } from "/src/config.ts"
+=======
+import { API_ROUTE } from "../config.ts"
+>>>>>>> main
 import { VueCookies } from "vue-cookies";
 
 import { useRouter } from "vue-router"

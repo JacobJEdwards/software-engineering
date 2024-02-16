@@ -1,7 +1,8 @@
 import express from "express";
 import {AuthController} from "../controllers/authController.js";
+import User from "../models/User.js";
 
-class AuthRoutes {
+class UserRoutes {
     constructor() {
         this.router = express.Router();
         this.registerRoutes();
@@ -9,8 +10,12 @@ class AuthRoutes {
 
     registerRoutes() {
         this.router.get('/home', (req, res) => {
-            res.json({test: "homepage"})
-        });
-        this.router.get('/tasks', (req, res))
+            User.getAllUsers()
+                .then(users => {
+                    res.status(200).send(users);
+                })
+                .catch(error => {
+                    res.status(500).send
+        })});
     }
 }

@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
+import User from '../service/UserService.js';
 
 export class AuthController {
     static async signup(req, res) {
@@ -21,12 +21,9 @@ export class AuthController {
                 console.log("users cannot be verified");
                 return res.status(401).json({ message: 'Authentication failed' });
             }
-
             const token = jwt.sign({ userId: user._id}, process.env.JWT_SECRET, { expiresIn: '1h' });
             return res.status(200).json({token: token})
-
         } catch (error) {
-
             console.log("Token cannot be verified");
             res.status(500).json({ message: error.message });
         }
