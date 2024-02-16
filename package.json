@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+      "dev": "node ./backend/app.js && cd client && npm run dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
