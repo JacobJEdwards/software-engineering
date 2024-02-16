@@ -29,7 +29,9 @@ router.beforeEach((to, _, next) => {
 <template>
   <v-app>
     <Header v-if="!isLoginPage" />
+    <v-main>
     <router-view />
+    </v-main>
   </v-app>
 </template>
 

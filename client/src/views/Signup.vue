@@ -3,19 +3,42 @@ import {API_ROUTE} from "../config.ts"
 import {VueCookies} from "vue-cookies";
 import {useRouter} from "vue-router"
 import {inject, ref} from 'vue'
+import { useField, useForm } from "vee-validate";
+
+const { handleSubmit, handleReset } = useForm({
+  validationSchema: {
+    username(value: string) {
+      if(value?.length >= 6) return true;
+
+      return "Username must be at least 6 characters long";
+    },
+    password(value: string) {
+      if(value?.length >= 6) return true;
+
+      return "Password must be at least 6 characters long";
+    },
+    email(value: string) {
+      if(value?.includes("@")) return true;
+
+      return "Invalid email";
+    }
+
+  }
+});
 
 const $cookies = inject<VueCookies>("$cookies")
 
 const loading = ref(false);
-const username = ref('')
-const email = ref("")
-const password = ref('')
+const username = useField("username");
+const email = useField("email");
+const password = useField("password");
+
 const error = ref("")
 const successMessage = ref("")
 
 const router = useRouter()
 
-const signup = async () => {
+const signup = handleSubmit(async () => {
   loading.value = true;
   error.value = ""
   successMessage.value = ""
@@ -32,7 +55,7 @@ const signup = async () => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        username: username.value, password: password.value, email: email.value
+        username: username.value.value, password: password.value.value, email: email.value.value
       })
     }
 
@@ -54,11 +77,11 @@ const signup = async () => {
 
   } catch {
     error.value = "Error on signup"
-    password.value = ""
+    password.value.value = ""
   } finally {
     loading.value = false;
   }
-}
+})
 
 const redirectToLogin = async () => {
   await router.push("/login")
@@ -76,9 +99,9 @@ const redirectToLogin = async () => {
           </v-toolbar>
           <v-card-text>
             <v-form @submit.prevent="signup">
-              <v-text-field v-model="username" label="Username" required></v-text-field>
-              <v-text-field v-model="email" label="Email" required></v-text-field>
-              <v-text-field v-model="password" label="Password" type="password" required></v-text-field>
+              <v-text-field v-model="username.value.value" :counter="6" label="Username" :error-messages="username.errorMessage.value" required></v-text-field>
+              <v-text-field v-model="email.value.value" label="Email" type="email" :error-messages="email.errorMessage.value" required></v-text-field>
+              <v-text-field v-model="password.value.value" :error-messages="password.errorMessage.value" label="Password" type="password" required></v-text-field>
               <v-btn type="submit" color="primary" class="mr-4">Sign Up</v-btn>
               <v-btn @click="redirectToLogin">Login</v-btn>
               <v-alert v-if="error" type="error" dismissible>{{ error }}</v-alert>
