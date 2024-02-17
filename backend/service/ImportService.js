@@ -13,15 +13,16 @@ class ImportService {
                 modules: [],
             }
 
-            Semester.addSemester(element.Semester, user_id);
+            await Semester.addSemester(element.Semester, user_id);
 
-
-            const module = {
+            let module = {
                 moduleCode: element.ModuleCode,
                 moduleName: element.ModuleName,
+                milestones: [],
                 startDate: Date.now(),
-            };
-            Module.addModule(element.Semester, module, user_id);
+            }
+
+            await Module.addModule(element.Semester, module, user_id);
 
         }
     }

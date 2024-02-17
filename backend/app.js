@@ -17,8 +17,8 @@ mongoose.connect(mongoDBUri, )
     .catch(err => console.error('MongoDB connection error:', err));
 
 
-User.getUserById("65d0782a0b7db3e67f2e2c07").then((user) => {
-    console.log(user);
+User.getUserById("65d0806b86702881cfe60fed").then((user) => {
+    console.log(user.semester[0].modules);
 });
 const app = express();
 app.use(express.json());

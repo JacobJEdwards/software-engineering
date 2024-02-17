@@ -10,7 +10,7 @@ const moduleSchema = new Schema({
     milestones: [milestones],
     startDate: {type: Date},
     endDate: {type: Date},
-}, {timestamps: true, unique: true});
+}, {timestamps: true});
 
 
 export default moduleSchema

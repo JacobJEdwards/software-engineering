@@ -5,9 +5,17 @@ import UserService from "./UserService.js";
 class SemesterService {
     static async addSemester(semesterName, user_id) {
         const user = await UserService.getUserById(user_id);
-        const newSemester = { semesterName: semesterName, modules: [] }; // Example structure, adjust as needed
-        user.semester.push(newSemester);
-        await user.save();
+        // Check if the semester with the given name already exists in the user's semesters
+        const semesterExists = user.semester.some(semester => semester.semesterName === semesterName);
+
+        if (!semesterExists) {
+            const newSemester = { semesterName: semesterName, modules: [] };
+            user.semester.push(newSemester);
+            await user.save();
+            console.log("Semester added successfully");
+        } else {
+            console.log("Semester already exists");
+        }
     }
 }
 
