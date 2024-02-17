@@ -1,20 +1,18 @@
-import bcrypt from "bcryptjs";
 import userSchema from "../models/User.js";
 import {model} from "mongoose";
-import user from "../models/User.js";
-
+import UserService from "./UserService.js";
 class ModuleService {
-    static async addModule(file, user_id) {
-        const module = {
-        };
-
-        const user = await user.findById(user_id);
-        user.modules.push(module);
+    static async addModule(semesterName, module, user_id) {
+        const user = await UserService.getUserById(user_id);
+        user.semester.forEach(semester => {
+            console.log(semester.semesterName);
+        });
+        await user.save();
     }
 }
 
 
-userSchema.loadClass(ImportService);
-const Import = model('import', userSchema);
+userSchema.loadClass(ModuleService);
+const Module = model('Module', userSchema);
 
-export default Import;
+export default Module;
