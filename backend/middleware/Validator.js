@@ -1,6 +1,8 @@
 import Joi from "joi"
 
 const schema = Joi.object({
+    Semester: Joi.string()
+        .required(),
     ModuleCode: Joi.string()
         .alphanum()
         .min(3)
