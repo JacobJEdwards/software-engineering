@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { API_ROUTE } from "/src/config.ts"
+import { API_ROUTE } from "../config.ts"
 import { VueCookies } from "vue-cookies";
 import { useRouter } from "vue-router"
 import { ref, inject } from 'vue'
@@ -15,7 +15,7 @@ const password = ref("");
 
 const router = useRouter()
 
-const useApi = import.meta.env.VITE_IGNORE_API_LOGIN
+// const useApi = import.meta.env.VITE_IGNORE_API_LOGIN
 
 const emailRules = [
   (value: string) => {

@@ -23,7 +23,7 @@ const links = [
 <template>
   <v-app-bar app color="primary">
     <v-container class="mx-auto d-flex align-center justify-center">
-      <v-toolbar-title>Study Planner</v-toolbar-title>
+      <v-toolbar-title>Wonderful Tasks</v-toolbar-title>
       <v-spacer></v-spacer>
 
       <v-btn v-for="link in links" :key="link.display" :to="link.to" varient="text">{{ link.display }}</v-btn>
