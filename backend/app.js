@@ -36,7 +36,21 @@ app.use('/api/protected/test', (req, res) => {
     })
 })
 app.use('/api/auth', authRoutes.router)
-app.get("/", (req, res) => {
+
+// error api route
+app.all('/api', (err, req, res, next) => {
+    console.error(err)
+    req.status(400).json({})
+})
+
+// not found api route
+app.all("/api", (req, res, next) => {
+    req.status(404).json({})
+})
+
+// everything else is frontend
+app.all("*", (req, res) => {
+    req.sendFile("../client/dist/index.html")
 })
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
