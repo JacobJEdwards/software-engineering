@@ -6,6 +6,7 @@ const {Schema, model} = mongoose;
 
 const moduleSchema = new Schema({
     moduleName: {type: String, required: true},
+    moduleCode: {type: String, required: true, unique: true},
     milestones: [milestones],
     startDate: {type: Date},
     endDate: {type: Date},
