@@ -3,41 +3,42 @@ import { API_ROUTE } from "/src/config.ts"
 import { VueCookies } from "vue-cookies";
 import { useRouter } from "vue-router"
 import { ref, inject } from 'vue'
-import { useForm, useField } from "vee-validate";
 
 const $cookies = inject<VueCookies>("$cookies")
-
-const { handleSubmit } = useForm({
-  validationSchema: {
-    email(value: string) {
-      if(value?.includes("@")) return true;
-
-      return "Invalid email";
-    },
-    password(value: string) {
-      if(value?.length >= 6) return true;
-
-      return "Invalid password";
-    }
-  }
-});
 
 const loading = ref(false);
 const error = ref("")
 const successMessage = ref("")
 
-const email = useField("email");
-const password = useField("password");
+const email = ref("");
+const password = ref("");
 
 const router = useRouter()
 
 const useApi = import.meta.env.VITE_IGNORE_API_LOGIN
 
+const emailRules = [
+  (value: string) => {
+    if (value.includes("@")) return true
 
-const login = handleSubmit(async () => {
+    return "Invalid email"
+  },
+]
+
+const passwordRules = [
+  (value: string) => {
+      if (value?.length > 6) return true
+
+    return "Password too short"
+  }
+]
+
+
+const login = async () => {
     loading.value = true;
     error.value = ""
     successMessage.value = ""
+  console.log("here")
 
 if (true) {
   $cookies?.set("auth", "token")
@@ -84,7 +85,7 @@ if (true) {
     } finally {
         loading.value = false;
     }
-})
+}
 
 const redirectToSignup = () => {
     router.push("/signup")
@@ -102,8 +103,8 @@ const redirectToSignup = () => {
                     </v-toolbar>
                     <v-card-text>
                         <v-form @submit.prevent="login">
-                            <v-text-field v-model="email.value.value" type="email" :error-messages="email.errorMessage.value" label="Email" required></v-text-field>
-                            <v-text-field v-model="password.value.value" :error-messages="password.errorMessage.value" label="Password" type="password" required></v-text-field>
+                            <v-text-field v-model="email" validate-on="input" :rules="emailRules" type="email" label="Email" required></v-text-field>
+                            <v-text-field v-model="password" validate-on="input" :rules="passwordRules" label="Password" type="password" required></v-text-field>
                             <v-btn type="submit" color="primary" class="mr-4">Login</v-btn>
                             <v-btn @click="redirectToSignup">Sign up</v-btn>
                             <v-alert v-if="error" type="error" dismissible>{{ error }}</v-alert>
