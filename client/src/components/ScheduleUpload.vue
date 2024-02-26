@@ -7,35 +7,40 @@
 
     const fileName = computed(() => file.value?.name);
 
-    const uploadFile = (e: Event) => {
-        console.log("here")
-        console.log(file.value)
-        errorMessage.value = ""
-        file.value = event.target.files[0]
-        console.log(event)
+    const uploadFile = (event: Event) => {
+        const target = event.target as HTMLInputElement;
+        if (!target.files) return;
+        file.value = target.files[0]
     }
 
     const submitFile = async () => {
-    console.log(file.value)
-        loading.value = true
-        const reader = new FileReader()
+        loading.value = true;
+        errorMessage.value = ""
+
         if (!file.value) {
-            errorMessage.value = "No file uploaded"
-            loading.value = false
-            return
+            errorMessage.value = "Please upload a file"
+            loading.value = false;
+            return;
         }
 
-        read.readAsDataURL(file.value)
+        try {
+            const formData = new FormData();
+            formData.append("file", file.value);
 
-        reader.onload = async () => {
-            const encodedFile = reader.result.split(",")[1]
-            try {
+            const response = await fetch("", {
+                 method: "POST",
+                 body: formData,
+                 headers: {
+                   "Content-Type": "multipart/form-data"
+                }
+            })
 
-            } catch(e: Exception) {
-                errorMessage.value = e.message || "Error uploading file"
-            } finally {
-                loading.value = false
-            }
+            const data = await response.json();
+            console.log(data);
+        } catch (e) {
+            console.error(e)
+        } finally {
+          loading.value = false;
         }
     }
 
@@ -44,10 +49,9 @@
 <template>
     <v-form @submit.prevent="submitFile">
     <v-file-input 
-            label="Schedule Upload">
-            v-model="file"
-            @update:modalValue="uploadFile"
-            required
+            label="Schedule Upload"
+            @change="uploadFile"
+            required>
     </v-file-input>
     <v-btn type="submit" :loading="loading">Upload</v-btn>
     </v-form>
