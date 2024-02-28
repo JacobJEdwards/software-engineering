@@ -58,6 +58,7 @@ const login = async () => {
         const res = await fetch(`${API_ROUTE}/auth/login`, options);
 
         if (!res.ok) {
+            console.log(res);
             throw new Error("Error on login")
         }
 
@@ -69,6 +70,7 @@ const login = async () => {
 
         $cookies?.set("auth", token)
         successMessage.value = "Login successful"
+
         await router.push("/")
 
     } catch (e) {

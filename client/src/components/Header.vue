@@ -15,7 +15,8 @@ const logout = async () => {
 const links = [
   { display: "Home", to: { name: "home"} },
   { display: "Tasks", to: { name: "tasks"} },
-  { display: "Schedule", to: { name: "schedule"} }
+  { display: "Schedule", to: { name: "schedule"} },
+  { display: "Profile", to: { name: "profile"}}
 ]
 
 </script>

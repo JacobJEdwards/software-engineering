@@ -14,10 +14,10 @@ const toggleScheduleGenerator = () => {
 
 <template>
 <v-container>
+    <ScheduleUpload />
     <v-row>
       <v-col>
         <v-btn @click="toggleScheduleGenerator">{{ showScheduleGenerator ? "Hide" : "Show"}} Schedule Generator</v-btn>
-        <ScheduleUpload />
       </v-col>
     </v-row>
     <v-row v-if="showScheduleGenerator">

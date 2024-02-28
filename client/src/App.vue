@@ -18,9 +18,11 @@ const isAuth = computed(() => {
 
 router.beforeEach((to, _, next) => {
   if (!isAuth.value && to.path !== "/login" && to.path !== "/signup") {
-    next("/login");
+    next({
+      path: "/login"
+    });
   } else {
-    next();
+    next()
   }
 });
 
