@@ -12,6 +12,7 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { md3 } from "vuetify/blueprints";
 import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 const vuetify = createVuetify({
   components,
@@ -23,6 +24,7 @@ const vuetify = createVuetify({
 })
 
 const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
 
 import 'primevue/resources/themes/aura-light-green/theme.css'
 

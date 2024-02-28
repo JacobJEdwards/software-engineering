@@ -1,28 +1,25 @@
 import {defineStore} from 'pinia'
-import {useCookies} from '../utils/utils.ts'
 
 export type AuthState = {
-    token: string
+    token?: string
 }
-
-const $cookies = useCookies()
 
 export const useAuthStore = defineStore("auth", {
     state: (): AuthState => ({
-        token: $cookies?.get("auth")
+        token: undefined
     }),
     getters: {
-        isLoggedIn: state => !!state.token
+        isLoggedIn: state => !!state.token,
+        authToken: state => state.token
     },
     actions: {
         login(token: string) {
-            $cookies?.set("auth", token)
             this.token = token
         },
         logout() {
-            $cookies?.remove("auth")
             this.token = ""
         }
-    }
+    },
+    persist: true,
 })
 
