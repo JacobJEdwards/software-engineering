@@ -4,12 +4,11 @@ import { useRouter } from "vue-router"
 import { ref } from 'vue'
 import { useLoading, useSuccessErrorMessage } from "../utils/utils.ts"
 import { emailRules } from "../utils/form.ts"
-import { useStore } from "../store"
+import { useAuthStore } from "../stores/auth.ts"
 
 const { loading } = useLoading();
 const router = useRouter()
-const store = useStore()
-
+const authStore = useAuthStore()
 const { error, success } = useSuccessErrorMessage()
 
 const email = ref("");
@@ -52,8 +51,7 @@ const login = async () => {
             throw new Error("Error on login")
         }
 
-        store.commit("user/loginUser", { token })
-
+        authStore.login(token)
         success.value = "Login successful"
 
         await router.push("/")

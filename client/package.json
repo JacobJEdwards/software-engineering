@@ -13,6 +13,7 @@
     "@fullcalendar/interaction": "^6.1.10",
     "@fullcalendar/timegrid": "^6.1.10",
     "@fullcalendar/vue3": "^6.1.10",
+    "pinia": "^2.1.7",
     "primevue": "^3.47.2",
     "vee-validate": "^4.12.5",
     "vue": "^3.3.11",
@@ -20,7 +21,7 @@
     "vue-router": "^4.2.5",
     "vuetify": "^3.5.4",
     "vuetify-sonner": "^0.3.13",
-    "vuex": "^4.0.2"
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.22",

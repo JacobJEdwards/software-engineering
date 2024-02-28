@@ -2,10 +2,10 @@
 import Header from "./components/Header.vue";
 
 import { useRouter } from "vue-router";
-import { computed } from "vue";
-import { useStore } from "./store"
+import { computed, onUpdated } from "vue";
+import { useAuthStore } from "./stores/auth.ts";
 
-const store = useStore()
+const authStore = useAuthStore()
 const router = useRouter();
 
 const isLoginPage = computed(() => {
@@ -13,7 +13,7 @@ const isLoginPage = computed(() => {
 });
 
 const isAuth = computed(() => {
-  return !!store.getters["user/token"]
+  return authStore.isLoggedIn
 });
 
 router.beforeEach((to, _, next) => {
