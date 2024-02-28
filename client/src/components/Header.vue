@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router"
-import { VueCookies } from "vue-cookies";
-import { inject } from 'vue'
+import { useCookies } from "../utils/utils.ts"
 
-const $cookies = inject<VueCookies>("$cookies")
 
+const $cookies = useCookies()
 const router = useRouter();
 
 const logout = async () => {

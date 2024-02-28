@@ -10,40 +10,6 @@ const loading = ref(true)
 const $cookies = inject<VueCookies>("$cookies");
 const router = useRouter()
 
-const getUserInfo = async () => {
-  const token = $cookies?.get("auth");
-  if (!token) {
-    await router.push("/login");
-    return;
-  }
-  try {
-
-    const data = $cookies?.get("user-info")
-
-    if (data) {
-      return JSON.parse(data);
-    }
-
-    const res = await fetch(`${API_ROUTE}/user`, {
-      headers: {
-        "Authorization": token
-      }
-    })
-
-    if (!res.ok) {
-      throw new Error("Error fetching")
-    }
-
-    const userData = await res.json();
-    $cookies?.set("user-info", JSON.stringify(userData))
-
-    return userData;
-  } catch (e) {
-    console.error(e)
-  } finally {
-    loading.value = false;
-  }
-}
 </script>
 
 <template>

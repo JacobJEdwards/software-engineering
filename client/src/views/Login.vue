@@ -1,43 +1,26 @@
 <script setup lang="ts">
 import { API_ROUTE } from "../config.ts"
-import { VueCookies } from "vue-cookies";
 import { useRouter } from "vue-router"
-import { ref, inject } from 'vue'
+import { ref } from 'vue'
+import { useCookies, useLoading, useSuccessErrorMessage } from "../utils/utils.ts"
+import { emailRules } from "../utils/form.ts"
 
-const $cookies = inject<VueCookies>("$cookies")
+const $cookies = useCookies()
+const { loading } = useLoading();
+const router = useRouter()
 
-const loading = ref(false);
-const error = ref("")
-const successMessage = ref("")
+const { error, success } = useSuccessErrorMessage()
 
 const email = ref("");
 const password = ref("");
 
-const router = useRouter()
 
 // const useApi = import.meta.env.VITE_IGNORE_API_LOGIN
-
-const emailRules = [
-  (value: string) => {
-    if (value.includes("@")) return true
-
-    return "Invalid email"
-  },
-]
-
-const passwordRules = [
-  (value: string) => {
-      if (value?.length > 6) return true
-
-    return "Password too short"
-  }
-]
-
 
 const login = async () => {
     loading.value = true;
     error.value = ""
-    successMessage.value = ""
+    success.value = ""
 
     if (!email.value || !password.value) {
         error.value = 'Please fill in all fields';
@@ -69,7 +52,7 @@ const login = async () => {
         }
 
         $cookies?.set("auth", token)
-        successMessage.value = "Login successful"
+        success.value = "Login successful"
 
         await router.push("/")
 
@@ -99,11 +82,11 @@ const redirectToSignup = () => {
                     <v-card-text>
                         <v-form @submit.prevent="login">
                             <v-text-field v-model="email" validate-on="input" :rules="emailRules" type="email" label="Email" required></v-text-field>
-                            <v-text-field v-model="password" validate-on="input" :rules="passwordRules" label="Password" type="password" required></v-text-field>
+                            <v-text-field v-model="password" label="Password" type="password" required></v-text-field>
                             <v-btn type="submit" color="primary" class="mr-4">Login</v-btn>
                             <v-btn @click="redirectToSignup">Sign up</v-btn>
                             <v-alert v-if="error" type="error" dismissible>{{ error }}</v-alert>
-                            <v-alert v-if="successMessage" type="success" dismissible>{{ successMessage }}</v-alert>
+                            <v-alert v-if="success" type="success" dismissible>{{ success }}</v-alert>
                         </v-form>
                     </v-card-text>
                 </v-card>

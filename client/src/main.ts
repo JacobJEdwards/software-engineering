@@ -11,6 +11,7 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { md3 } from "vuetify/blueprints";
+import { store, key } from './store'
 
 const vuetify = createVuetify({
   components,
@@ -23,12 +24,12 @@ const vuetify = createVuetify({
 
 import 'primevue/resources/themes/aura-light-green/theme.css'
 
-
 const app = createApp(App)
 app.use(VueCookies)
 app.use(PrimeVue)
 app.use(router)
 app.use(vuetify)
+app.use(store, key)
 
 app.mount("#app")
 

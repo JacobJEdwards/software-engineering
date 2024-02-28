@@ -2,10 +2,10 @@
 import Header from "./components/Header.vue";
 
 import { useRouter } from "vue-router";
-import { VueCookies } from "vue-cookies";
-import {computed, inject} from "vue";
+import { computed } from "vue";
+import { useCookies } from "./utils/utils.ts"
 
-const $cookies = inject<VueCookies>("$cookies");
+const $cookies = useCookies()
 const router = useRouter();
 
 const isLoginPage = computed(() => {
