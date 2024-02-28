@@ -1,60 +1,78 @@
 <script setup lang="ts">
-    import { ref, computed } from "vue"
+import {inject, ref} from "vue"
+import {API_ROUTE} from "../config.ts"
+import {VueCookies} from "vue-cookies"
 
-    const file = ref<File | null>(null);
-    const errorMessage = ref("")
-    const loading = ref(false)
+// move get token into separate file
+const $cookies = inject<VueCookies>("$cookies");
 
-    const fileName = computed(() => file.value?.name);
+const file = ref<File | null>(null);
+const errorMessage = ref("")
+const successMessage = ref("")
+const loading = ref(false)
 
-    const uploadFile = (event: Event) => {
-        const target = event.target as HTMLInputElement;
-        if (!target.files) return;
-        file.value = target.files[0]
+const uploadFile = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  if (!target.files) return;
+  file.value = target.files[0]
+
+  successMessage.value = ""
+  errorMessage.value = ""
+}
+
+const submitFile = async () => {
+  loading.value = true;
+  errorMessage.value = ""
+
+  if (!file.value) {
+    errorMessage.value = "Please upload a file"
+    loading.value = false;
+    return;
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append("file", file.value);
+
+    const response = await fetch(`${API_ROUTE}/protected/upload`, {
+      method: "POST",
+      body: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "Authorization": $cookies?.get("auth")
+      }
+    })
+
+    if (!response.ok) {
+      throw new Error("Error uploading file")
     }
 
-    const submitFile = async () => {
-        loading.value = true;
-        errorMessage.value = ""
+    const data = await response.json();
+    console.log(data)
+    successMessage.value = "Schedule uploaded"
 
-        if (!file.value) {
-            errorMessage.value = "Please upload a file"
-            loading.value = false;
-            return;
-        }
-
-        try {
-            const formData = new FormData();
-            formData.append("file", file.value);
-
-            const response = await fetch("", {
-                 method: "POST",
-                 body: formData,
-                 headers: {
-                   "Content-Type": "multipart/form-data"
-                }
-            })
-
-            const data = await response.json();
-            console.log(data);
-        } catch (e) {
-            console.error(e)
-        } finally {
-          loading.value = false;
-        }
-    }
+  } catch (e: unknown) {
+    console.error(e)
+    errorMessage.value = "Error uploading file"
+  } finally {
+    loading.value = false;
+  }
+}
 
 </script>
 
 <template>
-    <v-form @submit.prevent="submitFile">
-    <v-file-input 
-            label="Schedule Upload"
-            @change="uploadFile"
-            required>
+  <v-form @submit.prevent="submitFile">
+    <v-file-input
+        label="Schedule Upload"
+        @change="uploadFile"
+        required>
     </v-file-input>
     <v-btn type="submit" :loading="loading">Upload</v-btn>
-    </v-form>
+    <v-alert type="error" v-if="errorMessage">{{ errorMessage }}</v-alert>
+    <v-alert type="success" v-if="successMessage">{{ successMessage }}</v-alert>
+  </v-form>
+
 </template>
 <style scoped>
 

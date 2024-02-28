@@ -1,31 +1,58 @@
 <script setup lang="ts">
-import ScheduleGenerator from "../components/ScheduleGenerator.vue";
-import ScheduleUpload from "../components/ScheduleUpload.vue"
+import Task from "../components/Task.vue"
+import { VueCookies } from "vue-cookies";
+import { useRouter } from "vue-router"
+import { inject, ref } from "vue"
+import { API_ROUTE } from "../config.ts"
 
-import { ref } from "vue";
+const loading = ref(true)
 
-const showScheduleGenerator = ref(false);
+const $cookies = inject<VueCookies>("$cookies");
+const router = useRouter()
 
-const toggleScheduleGenerator = () => {
-  showScheduleGenerator.value = !showScheduleGenerator.value;
-};
+const getUserInfo = async () => {
+  const token = $cookies?.get("auth");
+  if (!token) {
+    await router.push("/login");
+    return;
+  }
+  try {
 
+    const data = $cookies?.get("user-info")
+
+    if (data) {
+      return JSON.parse(data);
+    }
+
+    const res = await fetch(`${API_ROUTE}/user`, {
+      headers: {
+        "Authorization": token
+      }
+    })
+
+    if (!res.ok) {
+      throw new Error("Error fetching")
+    }
+
+    const userData = await res.json();
+    $cookies?.set("user-info", JSON.stringify(userData))
+
+    return userData;
+  } catch (e) {
+    console.error(e)
+  } finally {
+    loading.value = false;
+  }
+}
 </script>
 
 <template>
-<v-container>
-    <ScheduleUpload />
-    <v-row>
-      <v-col>
-        <v-btn @click="toggleScheduleGenerator">{{ showScheduleGenerator ? "Hide" : "Show"}} Schedule Generator</v-btn>
-      </v-col>
-    </v-row>
-    <v-row v-if="showScheduleGenerator">
-      <v-col>
-        <ScheduleGenerator />
-      </v-col>
-    </v-row>
-  </v-container>
-</template>
+  <!-- move into component -->
+  <v-container v-if="loading">
 
-<style scoped></style>
+  </v-container>
+  <v-container v-else>
+
+  </v-container>
+
+</template>
