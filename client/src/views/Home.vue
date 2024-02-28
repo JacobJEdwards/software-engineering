@@ -1,14 +1,24 @@
 <script setup lang="ts">
 import Task from "../components/Task.vue"
-import { VueCookies } from "vue-cookies";
-import { useRouter } from "vue-router"
-import { inject, ref } from "vue"
-import { API_ROUTE } from "../config.ts"
+import { useLoading } from "../utils/utils.ts"
+import { useStore } from "../store"
+import { onMounted} from "vue";
 
-const loading = ref(true)
+const { loading } = useLoading()
 
-const $cookies = inject<VueCookies>("$cookies");
-const router = useRouter()
+const store = useStore()
+
+const init = async () => {
+  const user = store.getters.user
+
+  if (!user) {
+    loading.value = true;
+    await store.dispatch("user/getUser")
+    loading.value = false;
+  }
+}
+
+onMounted(init)
 
 </script>
 

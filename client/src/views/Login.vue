@@ -2,12 +2,13 @@
 import { API_ROUTE } from "../config.ts"
 import { useRouter } from "vue-router"
 import { ref } from 'vue'
-import { useCookies, useLoading, useSuccessErrorMessage } from "../utils/utils.ts"
+import { useLoading, useSuccessErrorMessage } from "../utils/utils.ts"
 import { emailRules } from "../utils/form.ts"
+import { useStore } from "../store"
 
-const $cookies = useCookies()
 const { loading } = useLoading();
 const router = useRouter()
+const store = useStore()
 
 const { error, success } = useSuccessErrorMessage()
 
@@ -51,7 +52,8 @@ const login = async () => {
             throw new Error("Error on login")
         }
 
-        $cookies?.set("auth", token)
+        store.commit("user/loginUser", { token })
+
         success.value = "Login successful"
 
         await router.push("/")

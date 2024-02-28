@@ -2,7 +2,6 @@ import { InjectionKey } from 'vue'
 import { createStore, createLogger, Store, useStore as baseUseStore } from 'vuex'
 import user from './modules/user.ts'
 
-// write state interfaces
 
 // const debug = process.env.NODE_ENV !== 'production'
 

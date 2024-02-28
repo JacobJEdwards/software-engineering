@@ -3,9 +3,9 @@ import Header from "./components/Header.vue";
 
 import { useRouter } from "vue-router";
 import { computed } from "vue";
-import { useCookies } from "./utils/utils.ts"
+import { useStore } from "./store"
 
-const $cookies = useCookies()
+const store = useStore()
 const router = useRouter();
 
 const isLoginPage = computed(() => {
@@ -13,7 +13,7 @@ const isLoginPage = computed(() => {
 });
 
 const isAuth = computed(() => {
-  return !!$cookies?.get("auth");
+  return !!store.getters["user/token"]
 });
 
 router.beforeEach((to, _, next) => {
