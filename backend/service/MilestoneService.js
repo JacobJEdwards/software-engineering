@@ -3,12 +3,9 @@ import userSchema from "../models/User.js";
 import {model} from "mongoose";
 
 class MilestoneService {
-
- async static addMilestone(moduleId, milestone) {
-     const module = await this.findById(moduleId);
-     module.milestones.push(milestone);
-     await module.save();
- }
+     static addMilestone(module, milestoneData) {
+         module.milestones.push(milestoneData);
+     }
 }
 
 export default MilestoneService;

@@ -24,12 +24,12 @@ class UserService {
     }
 
 
-    static async getUserByEmail(email) {
+    static getUserByEmail(email) {
         return this.findOne({email});
     }
 
 
-    static async getUserById(userId) {
+    static getUserById(userId) {
         return this.findById(userId);
     }
 
