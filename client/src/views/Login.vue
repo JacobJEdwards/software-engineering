@@ -38,13 +38,6 @@ const login = async () => {
     loading.value = true;
     error.value = ""
     successMessage.value = ""
-  console.log("here")
-
-if (true) {
-  $cookies?.set("auth", "token")
-  await router.push("/")
-  return;
-  }
 
     if (!email.value || !password.value) {
         error.value = 'Please fill in all fields';
