@@ -41,7 +41,6 @@ const login = async () => {
         const res = await fetch(`${API_ROUTE}/auth/login`, options);
 
         if (!res.ok) {
-            console.log(res);
             throw new Error("Error on login")
         }
 
