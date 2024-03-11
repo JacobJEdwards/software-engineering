@@ -31,10 +31,47 @@ class ModuleService {
     }
 
 
-    editModule(moduleCode, newModuleName, user) {
+    editModuleName(moduleCode, newModuleName, user) {
         const module = user.modules.find(module => module.moduleCode === moduleCode);
         if (module) {
             module.moduleName = newModuleName;
+            console.log("Module updated successfully");
+            return user;
+        } else {
+            console.log("Module does not exist");
+            return null;
+        }
+    }
+
+    editModuleCode(moduleCode, newModuleCode, user) {
+        const module = user.modules.find(module => module.moduleCode === moduleCode);
+        if (module) {
+            module.moduleCode = newModuleCode;
+            console.log("Module updated successfully");
+            return user;
+        } else {
+            console.log("Module does not exist");
+            return null;
+        }
+    }
+
+
+    editModuleStartDate(moduleCode, newStartDate, user) {
+        const module = user.modules.find(module => module.moduleCode === moduleCode);
+        if (module) {
+            module.startDate = newStartDate;
+            console.log("Module updated successfully");
+            return user;
+        } else {
+            console.log("Module does not exist");
+            return null;
+        }
+    }
+
+    editModuleEndDate(moduleCode, newEndDate, user) {
+        const module = user.modules.find(module => module.moduleCode === moduleCode);
+        if (module) {
+            module.endDate = newEndDate;
             console.log("Module updated successfully");
             return user;
         } else {
