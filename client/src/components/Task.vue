@@ -5,6 +5,7 @@ defineProps<{
   title: string
   milestone: string
 }>()
+
 </script>
 
 <template>

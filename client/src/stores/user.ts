@@ -1,12 +1,12 @@
-import {defineStore} from 'pinia'
-import {API_ROUTE} from '../config.ts'
-import type {User} from '../typings/user.ts'
+import { defineStore } from 'pinia'
+import { API_ROUTE } from '../config.ts'
+import type { User } from '../typings/user.ts'
 import { useAuthStore } from "./auth.ts";
 
 export type UserState = {
-    userId: string | null;
-    user: User | null;
-    loading: boolean
+  userId: string | null;
+  user: User | null;
+  loading: boolean
 }
 
 export const useUserStore = defineStore("user", {
