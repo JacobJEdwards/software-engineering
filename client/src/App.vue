@@ -2,8 +2,8 @@
 import Header from "./components/Header.vue";
 
 import { useRouter } from "vue-router";
-import { computed, onMounted } from "vue";
-import { useAuthStore, useUserStore, useLoading } from "./stores";
+import { computed } from "vue";
+import { useAuthStore, useUserStore } from "./stores";
 
 
 const authStore = useAuthStore()
@@ -14,41 +14,30 @@ const isLoginPage = computed(() => {
   return router.currentRoute.value.path === "/login" || router.currentRoute.value.path === "/signup"
 });
 
+
 const isAuth = computed(() => {
   return authStore.isLoggedIn
 });
 
-const init = async () => {
-  if (!isAuth) {
-    return;
-  }
-
-  const user = userStore.user;
-
-  try {
-    if (!user) {
-      await userStore.getUser()
-    }
-  } catch (e) {
-    console.error(e)
-  } 
-}
-
-onMounted(init)
-
-
-router.beforeEach(async (to, _, next) => {
+router.beforeEach(async (to, from, next) => {
   if (!isAuth.value && to.path !== "/login" && to.path !== "/signup") {
     next({
       path: "/login"
     });
   } else {
-    // if (!userStore.user) {
-      // await userStore.getUser()
-    // }
     next()
   }
 });
+
+router.afterEach(async () => {
+  if (!isLoginPage.value && isAuth.value && !userStore.user) {
+      try {
+        await userStore.getUser()
+      } catch (e) {
+        console.error(e)
+      }
+  }
+})
 
 </script>
 
