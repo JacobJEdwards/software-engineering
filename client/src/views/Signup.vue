@@ -7,20 +7,46 @@ import {inject, ref} from 'vue'
 const $cookies = inject<VueCookies>("$cookies")
 
 const loading = ref(false);
-const username = ref('')
-const email = ref("")
-const password = ref('')
+const name = ref("");
+const email = ref("");
+const password = ref("");
+
 const error = ref("")
 const successMessage = ref("")
 
 const router = useRouter()
+
+const usernameRules = [
+  (value: string) => {
+    if (value.length > 6) return true
+
+    return "Username too short"
+  }
+]
+
+const emailRules = [
+  (value: string) => {
+  if (value.includes("@")) return true
+
+    return "Invalid email"
+  }
+]
+
+const passwordRules = [
+  (value: string) => {
+  if (value.length > 6) return true
+
+    return "Password too short"
+  }
+]
+
 
 const signup = async () => {
   loading.value = true;
   error.value = ""
   successMessage.value = ""
 
-   if (!username.value || !email.value || !password.value) {
+   if (!name.value || !email.value || !password.value) {
         error.value = 'Please fill in all fields';
         return;
    }
@@ -32,7 +58,7 @@ const signup = async () => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        username: username.value, password: password.value, email: email.value
+        name: name.value, password: password.value, email: email.value
       })
     }
 
@@ -42,15 +68,15 @@ const signup = async () => {
       throw new Error("Error on login")
     }
 
-    const {token} = await res.json();
+    const {userId} = await res.json();
 
-    if (!token) {
+    if (!userId) {
       throw new Error("Error on login")
     }
 
-    $cookies?.set("auth", token)
+    $cookies?.set("user-id", userId)
     successMessage.value = "Signup successful"
-    await router.push("/")
+    await redirectToLogin()
 
   } catch {
     error.value = "Error on signup"
@@ -76,9 +102,9 @@ const redirectToLogin = async () => {
           </v-toolbar>
           <v-card-text>
             <v-form @submit.prevent="signup">
-              <v-text-field v-model="username" label="Username" required></v-text-field>
-              <v-text-field v-model="email" label="Email" required></v-text-field>
-              <v-text-field v-model="password" label="Password" type="password" required></v-text-field>
+              <v-text-field v-model="name" validate-on="input" :rules="usernameRules" :counter="6" label="Name" required></v-text-field>
+              <v-text-field v-model="email" validate-on="input" :rules="emailRules" label="Email" type="email" required></v-text-field>
+              <v-text-field v-model="password" validate-on="input" :rules="passwordRules" label="Password" type="password" required></v-text-field>
               <v-btn type="submit" color="primary" class="mr-4">Sign Up</v-btn>
               <v-btn @click="redirectToLogin">Login</v-btn>
               <v-alert v-if="error" type="error" dismissible>{{ error }}</v-alert>

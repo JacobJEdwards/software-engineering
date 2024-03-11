@@ -18,9 +18,11 @@ const isAuth = computed(() => {
 
 router.beforeEach((to, _, next) => {
   if (!isAuth.value && to.path !== "/login" && to.path !== "/signup") {
-    next("/login");
+    next({
+      path: "/login"
+    });
   } else {
-    next();
+    next()
   }
 });
 
@@ -29,7 +31,9 @@ router.beforeEach((to, _, next) => {
 <template>
   <v-app>
     <Header v-if="!isLoginPage" />
+    <v-main>
     <router-view />
+    </v-main>
   </v-app>
 </template>
 
