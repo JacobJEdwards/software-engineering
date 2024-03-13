@@ -5,11 +5,6 @@ import { useUserStore } from "../stores/user.ts"
 
 const userStore = useUserStore()
 
-const semester = userStore.user?.semester
-
-console.log(semester);
-console.log(userStore.user);
-
 </script>
 
 <template>
