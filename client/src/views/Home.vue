@@ -1,24 +1,31 @@
 <script setup lang="ts">
 import Task from "../components/Task.vue"
+import UserLoading from "../components/UserLoading.vue"
 import { useUserStore } from "../stores/user.ts"
 
 const userStore = useUserStore()
-console.log(userStore.loading)
+
+const semester = userStore.user?.semester
+
+console.log(semester);
+console.log(userStore.user);
 
 </script>
 
 <template>
-  <!-- move into component -->
-  <v-container v-if="userStore.loading">
-    <v-skeleton-loader
-          :loading="userStore.loading"
-          type="list-item-two-line"
-        >
-          <v-list-item rounded></v-list-item>
-        </v-skeleton-loader>
-  </v-container>
+  <UserLoading v-if="userStore.loading" />
+
   <v-container v-else>
-    No tasks to display
+    <!-- welcome back message -->
+    <v-row>
+      <v-col>
+        <v-card>
+          <v-card-title>
+            <span class="title">Welcome back, {{ userStore.user?.name }}</span>
+          </v-card-title>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 
 </template>

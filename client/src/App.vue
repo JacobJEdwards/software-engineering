@@ -19,7 +19,7 @@ const isAuth = computed(() => {
   return authStore.isLoggedIn
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _, next) => {
   if (!isAuth.value && to.path !== "/login" && to.path !== "/signup") {
     next({
       path: "/login"
