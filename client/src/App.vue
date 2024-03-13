@@ -4,6 +4,7 @@ import Header from "./components/Header.vue";
 import { useRouter } from "vue-router";
 import { computed } from "vue";
 import { useAuthStore, useUserStore } from "./stores";
+import Sidebar from "./components/Sidebar.vue";
 
 
 const authStore = useAuthStore()
@@ -44,6 +45,7 @@ router.afterEach(async () => {
 <template>
   <v-app>
     <Header v-if="!isLoginPage" />
+    <Sidebar v-if="!isLoginPage" />
     <v-main>
     <router-view />
     </v-main>

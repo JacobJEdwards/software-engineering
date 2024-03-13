@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Task from "../components/Task.vue"
+import Sidebar from "../components/Sidebar.vue"
 import UserLoading from "../components/UserLoading.vue"
 import { useUserStore } from "../stores/user.ts"
 
@@ -16,7 +17,7 @@ const userStore = useUserStore()
       <v-col>
         <v-card>
           <v-card-title>
-            <span class="title">Welcome back, {{ userStore.user?.name }}</span>
+            <span class="title">Welcome back, {{ userStore.user?.name ?? "Unknown" }}</span>
           </v-card-title>
         </v-card>
       </v-col>
