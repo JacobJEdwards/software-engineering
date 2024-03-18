@@ -9,10 +9,8 @@ const taskSchema = new Schema({
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
     status: { type: String, required: true, enum: ['Started', 'In Progress', 'Completed'] },
-    notes: [{
-        date: { type: Date, default: Date.now },
-        content: { type: String }
-    }]
+    hours: { type: Number, required: true },
+    activities: { type: mongoose.Types.ObjectId, required: true },
 }, { timestamps: true });
 
 

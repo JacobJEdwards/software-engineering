@@ -3,32 +3,27 @@ import userSchema from "../models/User.js";
 import {model} from "mongoose";
 import Module from "../service/ModuleService.js";
 import Semester from "../service/SemesterService.js";
+import Milestone from "../service/MilestoneService.js";
+import User from "./UserService.js";
 
 class ImportService {
     static async addFileData(file, user_id) {
+        let user = await User.findById(user_id);
+        for (let element of file) {
+            await Semester.createSemester(element.SemesterName, element.SemesterStartDate, element.SemesterEndDate, user);
+        }
 
         for (let element of file) {
-            const semester = {
-                semesterName: element.Semester,
-                modules: [],
-            }
-
-            await Semester.addSemester(element.Semester, user_id);
-
-            let module = {
-                moduleCode: element.ModuleCode,
-                moduleName: element.ModuleName,
-                milestones: [],
-                startDate: Date.now(),
-            }
-
-            await Module.addModule(element.Semester, module, user_id);
-
+            await Module.createModule(element.SemesterName, element.ModuleName, element.ModuleCode, element.ModuleStartDate, element.ModuleEndDate, user);
         }
+
+       for (let element of file)  {
+           await Milestone.createMilestone(element.ModuleCode, element.MilestoneTitle, element.MilestoneType, element.MilestoneStartDate, element.MilestoneEndDate, true, user);
+       }
+
+
     }
 }
-
-
 
 userSchema.loadClass(ImportService);
 const Import = model('import', userSchema);
