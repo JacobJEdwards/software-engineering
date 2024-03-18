@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import {inject, ref} from "vue"
 import {API_ROUTE} from "../config.ts"
-import {VueCookies} from "vue-cookies"
+import {useAuthStore} from "../stores"
 
-// move get token into separate file
-const $cookies = inject<VueCookies>("$cookies");
 
 const file = ref<File | null>(null);
 const errorMessage = ref("")
 const successMessage = ref("")
 const loading = ref(false)
+
+const authStore = useAuthStore()
 
 const uploadFile = (event: Event) => {
   const target = event.target as HTMLInputElement;
@@ -38,12 +38,12 @@ const submitFile = async () => {
       method: "POST",
       body: formData,
       headers: {
-        "Content-Type": "multipart/form-data",
-        "Authorization": $cookies?.get("auth")
+        "Authorization": authStore.authToken
       }
     })
 
     if (!response.ok) {
+      // add text
       throw new Error("Error uploading file")
     }
 
