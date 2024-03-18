@@ -5,9 +5,9 @@ import {model} from "mongoose";
 class MilestoneService {
     static async createMilestone(moduleCode, milestoneName, milestoneType, milestoneStartDate, milestoneEndDate, ltsDefined, user) {
        let milestoneExists =  user.semester.find(semester => semester.modules.find(module => module.moduleCode === moduleCode));
-        if (!milestoneExists) {
+        if (milestoneExists) {
             const newMilestone = {
-                milestoneName: milestoneName,
+                milestoneTitle: milestoneName,
                 milestoneType: milestoneType,
                 startDate: milestoneStartDate,
                 endDate: milestoneEndDate,
@@ -16,11 +16,12 @@ class MilestoneService {
             user.semester.find(semester => {
                 semester.modules.find(module => {
                    if(module.moduleCode === moduleCode) {
-                       module.push(newMilestone);
-                       user.save();
+                       module.milestones.push(newMilestone);
                    }
                 })
             });
+
+           await user.save();
         } else {
             console.log("Module does not exist");
         }
