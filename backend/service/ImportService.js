@@ -14,11 +14,11 @@ class ImportService {
         }
 
         for (let element of file) {
-            await Module.createModule(element.SemesterName, element.Module, element.ModuleCode, element.ModuleStartDate, element.ModuleEndDate, user);
+            await Module.createModule(element.SemesterName, element.ModuleName, element.ModuleCode, element.ModuleStartDate, element.ModuleEndDate, user);
         }
 
        for (let element of file)  {
-           await Milestone.createMilestone(element.ModuleCode, element.MilestoneTitle, element.MilestoneType, element.MilestoneStartDate, element.MilestoneEndDate, true);
+           await Milestone.createMilestone(element.ModuleCode, element.MilestoneTitle, element.MilestoneType, element.MilestoneStartDate, element.MilestoneEndDate, true, user);
        }
 
 

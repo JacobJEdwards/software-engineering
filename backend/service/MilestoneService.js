@@ -3,9 +3,8 @@ import userSchema from "../models/User.js";
 import {model} from "mongoose";
 
 class MilestoneService {
-    static async createMilestone(module, milestoneName, milestoneType, milestoneStartDate, milestoneEndDate, ltsDefined) {
-
-        const milestoneExists = module.milestones.some(milestone => milestone.milestoneName === milestoneName);
+    static async createMilestone(moduleCode, milestoneName, milestoneType, milestoneStartDate, milestoneEndDate, ltsDefined, user) {
+       let milestoneExists =  user.semester.find(semester => semester.modules.find(module => module.moduleCode === moduleCode));
         if (!milestoneExists) {
             const newMilestone = {
                 milestoneName: milestoneName,
@@ -14,10 +13,16 @@ class MilestoneService {
                 endDate: milestoneEndDate,
                 ltsDefined: ltsDefined
             };
-            module.milestones.push(newMilestone);
-            await module.save();
+            user.semester.find(semester => {
+                semester.modules.find(module => {
+                   if(module.moduleCode === moduleCode) {
+                       module.push(newMilestone);
+                       user.save();
+                   }
+                })
+            });
         } else {
-            console.log("Milestone already exists");
+            console.log("Module does not exist");
         }
     }
 

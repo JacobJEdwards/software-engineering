@@ -47,7 +47,8 @@ const schema = Joi.object({
         .min('now')  // optional: ensures the deadline is not in the past
         .required(),
 
-    MileStoneEndDate: Joi.date()
+    MilestoneEndDate: Joi.date()
+
         .iso()  // ensures the date is in ISO 8601 format
         .min('now')  // optional: ensures the deadline is not in the past
         .required(),
