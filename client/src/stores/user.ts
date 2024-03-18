@@ -45,7 +45,9 @@ export const useUserStore = defineStore("user", {
                     throw new Error('Error getting profile')
                 }
 
-                this.user = await response.json();
+                const data = await response.json();
+
+                this.user = data.user;
             } catch (e) {
                 console.error(e)
             } finally {
