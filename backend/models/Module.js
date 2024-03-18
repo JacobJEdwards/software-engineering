@@ -8,8 +8,8 @@ const moduleSchema = new Schema({
     moduleName: {type: String, required: true},
     moduleCode: {type: String, required: true, unique: true},
     milestones: [milestones],
-    startDate: {type: Date},
-    endDate: {type: Date},
+    startDate: {type: Date, required: true},
+    endDate: {type: Date, required: true},
 }, {timestamps: true});
 
 

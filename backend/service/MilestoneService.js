@@ -3,14 +3,15 @@ import userSchema from "../models/User.js";
 import {model} from "mongoose";
 
 class MilestoneService {
-    static async createMilestone(module, milestoneName, milestoneDescription, milestoneDate) {
+    static async createMilestone(module, milestoneName, milestoneType, milestoneStartDate, milestoneEndDate) {
 
         const milestoneExists = module.milestones.some(milestone => milestone.milestoneName === milestoneName);
         if (!milestoneExists) {
             const newMilestone = {
                 milestoneName: milestoneName,
-                milestoneDescription: milestoneDescription,
-                milestoneDate: milestoneDate
+                milestoneType: milestoneType,
+                startDate: milestoneStartDate,
+                endDate: milestoneEndDate
             };
             module.milestones.push(newMilestone);
             await module.save();
@@ -19,6 +20,7 @@ class MilestoneService {
         }
     }
 
+    // YC -> can you add another read method that takes name as parameter
 
     static async readMilestone(module, milestoneId) {
         const milestone = module.milestones.find(milestone => milestone.id === milestoneId);
@@ -30,12 +32,16 @@ class MilestoneService {
         }
     }
 
-    static async updateMilestone(module, milestoneId, newMilestoneName, newMilestoneDescription, newMilestoneDate) {
+    static async updateMilestone(module, milestoneId, newMilestoneName, newStartDate, newEndDate, milestoneType) {
         const milestone = module.milestones.find(milestone => milestone.id === milestoneId);
         if (milestone) {
+            if (milestone.ltsDefined) {
+                return false;
+            }
             milestone.milestoneName = newMilestoneName;
-            milestone.milestoneDescription = newMilestoneDescription;
-            milestone.deadline = newMilestoneDate;
+            milestone.milestoneType = milestoneType;
+            milestone.startDate = newStartDate;
+            milestone.endDate = newEndDate
             console.log("Milestone updated successfully");
             await module.save();
         } else {
@@ -46,6 +52,9 @@ class MilestoneService {
     static async updateMilestoneName(module, milestoneName, newMilestoneName) {
         const milestone = module.milestones.find(milestone => milestone.milestoneName === milestoneName);
         if (milestone) {
+            if (milestone.ltsDefined) {
+                return false;
+            }
             milestone.milestoneName = newMilestoneName;
             console.log("Milestone updated successfully");
             await module.save();
@@ -54,20 +63,12 @@ class MilestoneService {
         }
     }
 
-    static async updateMilestoneDescription(module, milestoneName, newMilestoneDescription) {
-        const milestone = module.milestones.find(milestone => milestone.milestoneName === milestoneName);
-        if (milestone) {
-            milestone.milestoneDescription = newMilestoneDescription;
-            console.log("Milestone updated successfully");
-            await module.save();
-        } else {
-            console.log("Milestone does not exist");
-        }
-    }
-
-    static async updateMilestoneDate(module, milestoneId, newMilestoneDate) {
+    static async updateMilestoneStartDate(module, milestoneId, newStartDate) {
         const milestone = module.milestones.find(milestone => milestone.milestoneId === milestoneId);
         if (milestone) {
+            if (milestone.ltsDefined) {
+                return false;
+            }
             milestone.milestoneDate = newMilestoneDate;
             console.log("Milestone updated successfully");
             await module.save();
