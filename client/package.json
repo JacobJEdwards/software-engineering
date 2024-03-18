@@ -25,6 +25,8 @@
         "vuetify-sonner": "^0.3.13"
     },
     "devDependencies": {
+        "@mdi/font": "^7.4.47",
+        "@mdi/js": "^7.4.47",
         "@types/node": "^20.11.22",
         "@vitejs/plugin-vue": "^4.5.2",
         "autoprefixer": "^10.4.17",

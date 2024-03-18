@@ -1,41 +1,101 @@
 <script setup lang="ts">
-import Task from "../components/Task.vue"
-import Sidebar from "../components/Sidebar.vue"
 import UserLoading from "../components/UserLoading.vue"
 import { useUserStore } from "../stores/user.ts"
 import Semester from "../components/Semester.vue"
+import { onMounted, ref } from "vue"
+
+import FullCalendar from "@fullcalendar/vue3";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
+
+// just basic calendar options for now, no edit, no drag and drop, no nothing, no header
+const calendarOptions = ref({
+    plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
+    initialView: "dayGridMonth",
+    headerToolbar: {
+        left: "prev,next",
+        center: "title",
+        right: "dayGridMonth",
+    },
+    editable: false,
+    selectable: false,
+    selectMirror: false,
+    dayMaxEvents: true,
+    weekends: true,
+    initialEvents: [],
+})
+
+
 
 const userStore = useUserStore()
 
-console.log(userStore.user)
+const tasks = ref([])
+
+for (const semester of userStore.user?.semester) {
+    for (const module of semester.modules) {
+        for (const milestone of module.milestones) {
+            for (const task of milestone.tasks) {
+                tasks.value.push(task)
+            }
+        }
+    }
+}
+
 </script>
 
 <template>
-  <UserLoading v-if="userStore.loading" />
+<v-container>
+    <UserLoading v-if="userStore.loading" />
 
-  <v-container v-else>
-    <!-- welcome back message -->
-    <v-row>
-      <v-col>
-        <v-card>
-          <v-card-title>
-            <span class="title">Welcome back, {{ userStore.user?.name ?? "Unknown" }}</span>
-          </v-card-title>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row>
-        <v-col>
+    <v-row v-else>
+        <v-col cols="12" md="6">
             <v-card>
-                <v-card-title>
-                    <span class="title">Semesters</span>
-                </v-card-title>
+                <v-card-title>Current Semester</v-card-title>
                 <v-card-text>
-                    <Semester v-for="sem in userStore.user?.semester" :semester="sem" />
+                    <Semester v-if="userStore.user?.semester?.length" :semester="userStore.user?.semester[0]" />
+                    <span v-else>No semester found</span>
                 </v-card-text>
             </v-card>
         </v-col>
+        <v-col cols="12" md="6">
+            <v-row>
+            <v-col cols="12">
+                <v-card>
+                    <v-card-title>Upcoming Tasks</v-card-title>
+                    <v-card-text>
+                        <v-list>
+                            <v-list-item v-if="tasks.length" v-for="task in tasks" :key="task.id" :title="task.name" :subtitle="task.endDate" >
+                            </v-list-item>
+                            <v-list-item v-else title="No tasks!"></v-list-item>
+                        </v-list>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+                <v-col cols="12">
+                    <v-card>
+                        <v-card-title>Calender</v-card-title>
+                        <v-card-text>
+                            <FullCalendar :options="calendarOptions" class="fc" />
+                        </v-card-text>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-col>
     </v-row>
-  </v-container>
 
+</v-container>
 </template>
+
+<style scoped>
+.fc .fc-daygrid-event {
+    background-color: #3f51b5;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px;
+    cursor: pointer;
+    max-height: 100px;
+}
+</style>

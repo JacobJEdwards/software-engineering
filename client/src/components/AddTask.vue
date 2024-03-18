@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { useUserStore } from "../stores"
 import { ref } from "vue"
 // import { Task, Module, Milestone } from "../typings/user"

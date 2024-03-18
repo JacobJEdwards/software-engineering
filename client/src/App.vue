@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import Header from "./components/Header.vue";
+import Footer from "./components/Footer.vue";
 
 import { useRouter } from "vue-router";
 import { computed } from "vue";
 import { useAuthStore, useUserStore } from "./stores";
-import Sidebar from "./components/Sidebar.vue";
+import Navbar from "./components/Navbar.vue";
 
 
 const authStore = useAuthStore()
@@ -30,7 +31,7 @@ router.beforeEach(async (to, _, next) => {
   }
 });
 
-router.afterEach(async () => {
+router.beforeEach(async () => {
   if (!isLoginPage.value && isAuth.value && !userStore.user) {
       try {
         await userStore.getUser()
@@ -45,10 +46,11 @@ router.afterEach(async () => {
 <template>
   <v-app>
     <Header v-if="!isLoginPage" />
-    <Sidebar v-if="!isLoginPage" />
+    <Navbar v-if="!isLoginPage" />
     <v-main>
     <router-view />
     </v-main>
+    <Footer />
   </v-app>
 </template>
 

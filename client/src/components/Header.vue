@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router"
 import { useAuthStore } from "../stores/auth"
+import { useTheme } from 'vuetify'
+import { ref } from 'vue'
+
+const theme = useTheme()
+
+
+function toggleTheme () {
+  theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
+}
 
 const router = useRouter();
 const authStore = useAuthStore()
@@ -10,24 +19,16 @@ const logout = async () => {
     await router.push("/login");
 }
 
-const links = [
-  { display: "Home", to: { name: "home"} },
-  { display: "Tasks", to: { name: "tasks"} },
-  { display: "Schedule", to: { name: "schedule"} },
-  { display: "Profile", to: { name: "profile"}}
-]
-
+// add a bottom border
 </script>
 
 <template>
-  <v-app-bar app color="primary">
+  <v-app-bar app color="primary" dark class="elevation-0">
     <v-container class="mx-auto d-flex align-center justify-center">
       <v-toolbar-title>Wonderful Tasks</v-toolbar-title>
       <v-spacer></v-spacer>
-
-      <v-btn v-for="link in links" :key="link.display" :to="link.to" varient="text">{{ link.display }}</v-btn>
-      <v-spacer></v-spacer>
-      <v-btn @click="logout">Logout</v-btn>
+      <v-btn @click="logout" class="" >Logout</v-btn>
     </v-container>
+    <v-btn @click="toggleTheme" :icon="!theme.global.current.value.dark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'"></v-btn>
   </v-app-bar>
 </template>

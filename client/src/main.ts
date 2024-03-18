@@ -13,14 +13,23 @@ import * as directives from 'vuetify/directives'
 import { md3 } from "vuetify/blueprints";
 import { createPinia } from 'pinia'
 import piniaPluginPersistedState from 'pinia-plugin-persistedstate'
+import { aliases, mdi } from 'vuetify/iconsets/mdi'
+import '@mdi/font/css/materialdesignicons.css'
 
 const vuetify = createVuetify({
-  components,
-  directives,
-  theme: {
-    defaultTheme: 'light'
-  },
-  blueprint: md3
+    components,
+    directives,
+    theme: {
+        defaultTheme: 'dark'
+    },
+    icons: {
+        defaultSet: 'mdi',
+        aliases,
+        sets: {
+            mdi
+        },
+    },
+    blueprint: md3
 })
 
 const pinia = createPinia()
@@ -36,4 +45,3 @@ app.use(vuetify)
 app.use(pinia)
 
 app.mount("#app")
-
