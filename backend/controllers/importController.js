@@ -10,6 +10,7 @@ export class ImportController {
 
         try {
             const file = req.file;
+            console.log(req.from);
             let output = [];
             let readStream = await fs.createReadStream(file.path).pipe(csv.parse({headers: true})).on('data', (row) => {
                 output.push(row);

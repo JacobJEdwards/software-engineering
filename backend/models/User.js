@@ -8,7 +8,8 @@ const userSchema = new Schema({
     email: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     password: { type: String, required: true },
-    semester: [Semester] // Embedding Module schema here
+    auth: { type: Boolean, default: false },
+    semester: [Semester]
 }, { timestamps: true });
 
 
