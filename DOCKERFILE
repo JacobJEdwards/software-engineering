@@ -1,0 +1,9 @@
+
+# Use the official MongoDB image from Docker Hub
+FROM mongo:latest
+
+# Set a specific name for the MongoDB database
+ENV MONGO_INITDB_DATABASE=wonderfultasksdb
+
+# Expose the default MongoDB port (27017)
+EXPOSE 27017
