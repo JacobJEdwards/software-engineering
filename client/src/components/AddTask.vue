@@ -1,14 +1,16 @@
 <script setup>
 import { useUserStore } from "../stores"
 import { ref } from "vue"
-import type { Task, Module, Milestone } from "../typings/user"
+// import { Task, Module, Milestone } from "../typings/user"
 
+/*
 type TaskForm = {
     title: string
     milestone: string
     startDate: Date | null
     endDate: Date | null
 }
+*/
 
 const userStore = useUserStore()
 
@@ -17,15 +19,15 @@ const semester = userStore.semester
 
 const modelVisible = ref(false)
 
-const formData = ref<TaskForm>({
+const formData = ref({
     title: "",
     endDate: null,
     startDate: null,
     milestone: "",
 })
 
-const selectedModule = ref<Module | null>(null)
-const selectedModuleMilestones = ref<Milestone[]>([])
+const selectedModule = ref(null)
+const selectedModuleMilestones = ref([])
 
 const menu = ref(false)
 const startDate = ref(null)
@@ -84,7 +86,9 @@ const createTask = () => {
                     <v-btn type="submit" color="primary">Create</v-btn>
                     <v-btn color="primary" @click="modelVisible = false">Cancel</v-btn>
                 </v-form>
+                </v-card-text>
         </v-card>
+        </v-container>
 </template>
 
 <style scoped>

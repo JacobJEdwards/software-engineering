@@ -48,7 +48,6 @@ const submitFile = async () => {
     }
 
     const data = await response.json();
-    console.log(data)
     successMessage.value = "Schedule uploaded"
 
   } catch (e: unknown) {
