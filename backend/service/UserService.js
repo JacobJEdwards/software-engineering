@@ -24,13 +24,13 @@ class UserService {
     }
 
 
-    static getUserByEmail(email) {
-        return this.findOne({email});
+    static async getUserByEmail(email) {
+        return await this.findOne({email});
     }
 
 
-    static getUserById(userId) {
-        return this.findById(userId);
+    static async getUserById(userId) {
+        return await this.findById(userId);
     }
 
     static async updateUser(userId, email, name, password) {

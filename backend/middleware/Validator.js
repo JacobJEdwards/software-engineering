@@ -1,7 +1,17 @@
 import Joi from "joi"
 
 const schema = Joi.object({
-    Semester: Joi.string()
+    SemesterName: Joi.string()
+        .required(),
+
+    SemesterStartDate: Joi.date()
+        .iso()  // ensures the date is in ISO 8601 format
+        .min('now')  // optional: ensures the deadline is not in the past
+        .required(),
+
+    SemesterEndDate: Joi.date()
+        .iso()  // ensures the date is in ISO 8601 format
+        .min('now')  // optional: ensures the deadline is not in the past
         .required(),
     ModuleCode: Joi.string()
         .alphanum()
@@ -14,6 +24,15 @@ const schema = Joi.object({
         .max(50)
         .required(),
 
+    ModuleStartDate: Joi.date()
+        .iso()  // ensures the date is in ISO 8601 format
+        .min('now')  // optional: ensures the deadline is not in the past
+        .required(),
+
+    ModuleEndDate: Joi.date()
+        .iso()  // ensures the date is in ISO 8601 format
+        .min('now')  // optional: ensures the deadline is not in the past
+        .required(),
     MilestoneTitle: Joi.string()
         .min(3)
         .max(50)
@@ -23,10 +42,15 @@ const schema = Joi.object({
         .valid('Coursework', 'Exam')
         .required(),
 
-    Deadline: Joi.date()
+    MilestoneStartDate: Joi.date()
         .iso()  // ensures the date is in ISO 8601 format
         .min('now')  // optional: ensures the deadline is not in the past
-        .required()
+        .required(),
+
+    MileStoneEndDate: Joi.date()
+        .iso()  // ensures the date is in ISO 8601 format
+        .min('now')  // optional: ensures the deadline is not in the past
+        .required(),
 });
 
 

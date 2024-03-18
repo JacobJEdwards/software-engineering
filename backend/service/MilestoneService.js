@@ -3,7 +3,7 @@ import userSchema from "../models/User.js";
 import {model} from "mongoose";
 
 class MilestoneService {
-    static async createMilestone(module, milestoneName, milestoneType, milestoneStartDate, milestoneEndDate) {
+    static async createMilestone(module, milestoneName, milestoneType, milestoneStartDate, milestoneEndDate, ltsDefined) {
 
         const milestoneExists = module.milestones.some(milestone => milestone.milestoneName === milestoneName);
         if (!milestoneExists) {
@@ -11,7 +11,8 @@ class MilestoneService {
                 milestoneName: milestoneName,
                 milestoneType: milestoneType,
                 startDate: milestoneStartDate,
-                endDate: milestoneEndDate
+                endDate: milestoneEndDate,
+                ltsDefined: ltsDefined
             };
             module.milestones.push(newMilestone);
             await module.save();

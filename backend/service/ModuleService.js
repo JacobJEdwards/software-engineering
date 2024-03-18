@@ -3,18 +3,18 @@ import {model} from "mongoose";
 import UserService from "./UserService.js";
 
 class ModuleService {
-    createModule(moduleName, moduleCode, user) {
+    static async createModule(moduleName, moduleCode, moduleStartDate, moduleEndDate, user) {
         const moduleExists = user.modules.some(module => module.moduleCode === moduleCode);
         if (!moduleExists) {
             const newModule = {
                 moduleName: moduleName,
                 moduleCode: moduleCode,
                 milestones: [],
-                startDate: Date.now(),
-                endDate: Date.now()
+                startDate: moduleStartDate,
+                endDate: moduleEndDate
             };
             user.modules.push(newModule);
-            return user;
+            await user.save();
         } else {
             console.log("Module already exists");
         }

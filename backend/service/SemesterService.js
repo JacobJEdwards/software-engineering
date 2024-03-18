@@ -2,10 +2,10 @@ import userSchema from "../models/User.js";
 import {model} from "mongoose";
 
 class SemesterService {
-    static async createSemester(semesterName, user) {
+    static async createSemester(semesterName, semesterStartDate, semesterEndDate,  user) {
         const semesterExists = user.semester.some(semester => semester.semesterName === semesterName);
         if (!semesterExists) {
-            const newSemester = {semesterName: semesterName, modules: []};
+            const newSemester = {semesterName: semesterName, modules: [], startDate: semesterStartDate, endDate: semesterEndDate};
             user.semester.push(newSemester);
             await user.save();
         } else {
