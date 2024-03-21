@@ -1,23 +1,12 @@
-<script setup>
+<script setup lang="ts">
 import { ref, defineProps } from 'vue'
 import Module from './Module.vue'
+import type { Semester } from '../typings/user'
 
-/*
-export type Semester = {
-  semesterName: string;
-  modules: Array<Module>
-}
-props
-*/
 
-defineProps({
-    semester: {
-        type: Object,
-        required: true
-    }
-})
+defineProps<{ semester: Semester }>()
 
-const showModule = ref(false)
+const showModule = ref<boolean>(false)
 
 </script>
 

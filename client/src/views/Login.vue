@@ -4,18 +4,16 @@ import { useRouter } from "vue-router"
 import { ref } from 'vue'
 import { useLoading, useSuccessErrorMessage } from "../utils/utils.ts"
 import { emailRules } from "../utils/form.ts"
-import { useAuthStore } from "../stores/auth.ts"
+import { useAuthStore } from "../stores"
 
 const { loading } = useLoading();
 const router = useRouter()
 const authStore = useAuthStore()
 const { error, success } = useSuccessErrorMessage()
 
-const email = ref("");
-const password = ref("");
+const email = ref<string>("");
+const password = ref<string>("");
 
-
-// const useApi = import.meta.env.VITE_IGNORE_API_LOGIN
 
 const login = async () => {
     loading.value = true;

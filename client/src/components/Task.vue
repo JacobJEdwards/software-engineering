@@ -1,25 +1,8 @@
 <script setup lang="ts">
 import { defineProps } from "vue"
+import type { Task } from "../typings/user"
 
-/*
-export type Task = {
-  name: string;
-  startDate: Date;
-  endDate: Date;
-  status: TaskStatus;
-  notes: {
-    date: Date;
-    content: string
-  };
-}
-*/
-
-defineProps({
-    task: {
-        type: Object,
-        required: true
-    }
-})
+defineProps<{ task: Task }>()
 
 </script>
 

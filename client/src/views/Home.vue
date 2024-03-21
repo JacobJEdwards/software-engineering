@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import UserLoading from "../components/UserLoading.vue"
-import { useUserStore } from "../stores/user.ts"
+import { useUserStore } from "../stores"
 import Semester from "../components/Semester.vue"
-import { onMounted, ref } from "vue"
+import { ref } from "vue"
+import type { Task } from "../typings/user.ts"
 
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -30,9 +31,9 @@ const calendarOptions = ref({
 
 const userStore = useUserStore()
 
-const tasks = ref([])
+const tasks = ref<Task[]>([])
 
-for (const semester of userStore.user?.semester) {
+for (const semester of (userStore.user?.semester ?? [])) {
     for (const module of semester.modules) {
         for (const milestone of module.milestones) {
             for (const task of milestone.tasks) {
@@ -65,7 +66,7 @@ for (const semester of userStore.user?.semester) {
                     <v-card-title>Upcoming Tasks</v-card-title>
                     <v-card-text>
                         <v-list>
-                            <v-list-item v-if="tasks.length" v-for="task in tasks" :key="task.id" :title="task.name" :subtitle="task.endDate" >
+                            <v-list-item v-if="tasks.length" v-for="task in tasks" :key="task._id" :title="task.name" :subtitle="task.endDate?.toDateString()">
                             </v-list-item>
                             <v-list-item v-else title="No tasks!"></v-list-item>
                         </v-list>
@@ -88,14 +89,4 @@ for (const semester of userStore.user?.semester) {
 </template>
 
 <style scoped>
-.fc .fc-daygrid-event {
-    background-color: #3f51b5;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 5px;
-    margin: 5px;
-    cursor: pointer;
-    max-height: 100px;
-}
 </style>

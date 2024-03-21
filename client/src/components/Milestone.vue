@@ -1,25 +1,15 @@
-<script setup>
-import {ref, defineProps} from "vue"
+<script setup lang="ts">
+import {defineProps} from "vue"
+import type { Milestone } from "../typings/user"
 import Task from "./Task.vue"
 
-/*
-export type Milestone = {
-  name: string;
 
-  milestoneType: string;
-  tasks: Array<Task>;
-  deadline: Date;
-}
-*/
-
-defineProps({
-  milestone: {
-    type: Object,
-    required: true
-  }
-})
+defineProps<{
+    milestone: Milestone
+}>()
 
 </script>
+
 <template>
     <v-card>
         <v-card-title>
@@ -41,11 +31,9 @@ defineProps({
             <v-row v-if="milestone.tasks.length > 0">
                 <v-col>
                     <v-list>
-                        <v-list-item-group>
-                            <v-list-item v-for="task in milestone.tasks" :key="task.id">
+                            <v-list-item v-for="task in milestone.tasks" :key="task._id">
                                 <Task :task="task" />
                             </v-list-item>
-                        </v-list-item-group>
                     </v-list>
                 </v-col>
             </v-row>

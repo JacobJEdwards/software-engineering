@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useUserStore } from "../stores/user.ts"
+import { useUserStore } from "../stores"
 import UserLoading from "./UserLoading.vue";
 
 const userStore = useUserStore()

@@ -11,9 +11,9 @@ const router = useRouter()
 const { loading } = useLoading()
 const { success, error } = useSuccessErrorMessage()
 
-const name = ref("");
-const email = ref("");
-const password = ref("");
+const name = ref<string>("");
+const email = ref<string>("");
+const password = ref<string>("");
 
 const signup = async () => {
   loading.value = true;

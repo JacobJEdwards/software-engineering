@@ -56,6 +56,3 @@ export const useUserStore = defineStore("user", {
         }
     },
 })
-
-// Export the store instance
-export default useUserStore

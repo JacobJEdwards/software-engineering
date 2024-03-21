@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {inject, ref} from "vue"
+import {ref} from "vue"
 import {API_ROUTE} from "../config.ts"
 import {useAuthStore} from "../stores"
 
@@ -38,7 +38,7 @@ const submitFile = async () => {
       method: "POST",
       body: formData,
       headers: {
-        "Authorization": authStore.authToken
+        "Authorization": authStore.authToken ?? "",
       }
     })
 

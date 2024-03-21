@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router"
-import { useAuthStore } from "../stores/auth"
+import { useAuthStore } from "../stores"
 import { useTheme } from 'vuetify'
-import { ref } from 'vue'
 
 const theme = useTheme()
 

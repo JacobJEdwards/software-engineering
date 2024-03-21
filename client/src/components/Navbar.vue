@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// side nav bars
 import { useUserStore } from "../stores"
 
 const userStore = useUserStore()

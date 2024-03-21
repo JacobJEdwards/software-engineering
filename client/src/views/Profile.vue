@@ -4,7 +4,7 @@ import ScheduleUpload from "../components/ScheduleUpload.vue"
 
 import { ref } from "vue";
 
-const showScheduleGenerator = ref(false);
+const showScheduleGenerator = ref<boolean>(false);
 
 const toggleScheduleGenerator = () => {
   showScheduleGenerator.value = !showScheduleGenerator.value;

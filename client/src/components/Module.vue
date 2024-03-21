@@ -1,26 +1,14 @@
-<script setup>
+<script setup lang="ts">
 import {defineProps, ref} from "vue"
+import type { Module } from "../typings/user"
 import Milestone from "./Milestone.vue"
 
-/*
-export type Module = {
-  moduleName: string;
-  moduleCode: string;
-  milestones: Array<Milestone>;
-  startDate: Date;
-  endDate: Date;
-}
-props
-*/
 
-defineProps({
-    module: {
-        type: Object,
-        required: true
-    }
-})
+defineProps<{
+    module: Module
+}>()
 
-const show = ref(false)
+const show = ref<boolean>(false)
 
 
 </script>
