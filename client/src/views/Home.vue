@@ -4,6 +4,7 @@ import { useUserStore } from "../stores"
 import Semester from "../components/Semester.vue"
 import { ref } from "vue"
 import type { Task } from "../typings/user.ts"
+import { useRouter } from "vue-router"
 
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -30,6 +31,7 @@ const calendarOptions = ref({
 
 
 const userStore = useUserStore()
+const router = useRouter()
 
 const tasks = ref<Task[]>([])
 
@@ -51,27 +53,33 @@ for (const semester of (userStore.user?.semester ?? [])) {
 
     <v-row v-else>
         <v-col cols="12" md="6">
-            <v-card>
-                <v-card-title>Current Semester</v-card-title>
-                <v-card-text>
-                    <Semester v-if="userStore.user?.semester?.length" :semester="userStore.user?.semester[0]" />
-                    <span v-else>No semester found</span>
-                </v-card-text>
-            </v-card>
+          <v-card>
+            <v-card-title>Upcoming Tasks</v-card-title>
+            <v-card-text>
+              <v-list>
+                <v-list-item v-if="tasks.length" v-for="task in tasks" :key="task._id" :title="task.name" :subtitle="task.endDate?.toDateString()">
+                </v-list-item>
+                <v-list-item v-else title="No tasks!"></v-list-item>
+              </v-list>
+            </v-card-text>
+          </v-card>
         </v-col>
         <v-col cols="12" md="6">
             <v-row>
             <v-col cols="12">
-                <v-card>
-                    <v-card-title>Upcoming Tasks</v-card-title>
-                    <v-card-text>
-                        <v-list>
-                            <v-list-item v-if="tasks.length" v-for="task in tasks" :key="task._id" :title="task.name" :subtitle="task.endDate?.toDateString()">
-                            </v-list-item>
-                            <v-list-item v-else title="No tasks!"></v-list-item>
-                        </v-list>
-                    </v-card-text>
-                </v-card>
+              <v-card>
+                <v-card-title>Current Semester</v-card-title>
+                <v-card-text>
+                  <Semester v-if="userStore.user?.semester?.length" :semester="userStore.user?.semester[0]" />
+                  <div class="p-4" v-else>
+                    <p class="text-lg">No semester found!</p>
+                      <div class="my-4">
+                        <v-divider class="my-4"></v-divider>
+                      </div>
+                    <router-link to="/profile" class="text-blue-500 underline text-sm hover:text-blue-700 focus:outline-none">Create a semester</router-link>
+                  </div>
+                </v-card-text>
+              </v-card>
             </v-col>
                 <v-col cols="12">
                     <v-card>

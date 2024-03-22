@@ -31,6 +31,7 @@ router.beforeEach(async (to, _, next) => {
   }
 });
 
+// fix if condition as doesnt load when signing in
 router.beforeEach(async () => {
   if (!isLoginPage.value && isAuth.value && !userStore.user) {
       try {

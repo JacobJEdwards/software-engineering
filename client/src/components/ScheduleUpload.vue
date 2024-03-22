@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref} from "vue"
 import {API_ROUTE} from "../config.ts"
-import {useAuthStore} from "../stores"
+import {useAuthStore, useUserStore} from "../stores"
 
 
 const file = ref<File | null>(null);
@@ -10,6 +10,7 @@ const successMessage = ref("")
 const loading = ref(false)
 
 const authStore = useAuthStore()
+const userStore = useUserStore()
 
 const uploadFile = (event: Event) => {
   const target = event.target as HTMLInputElement;
@@ -49,6 +50,8 @@ const submitFile = async () => {
 
     const data = await response.json();
     successMessage.value = "Schedule uploaded"
+
+    await userStore.getUser()
 
   } catch (e: unknown) {
     console.error(e)

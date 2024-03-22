@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { useUserStore } from "../stores"
+import { useUserStore, useAuthStore } from "../stores"
+import { useRouter } from "vue-router"
 
 const userStore = useUserStore()
+const authStore = useAuthStore()
+const router = useRouter()
 
 const links = [
   { display: "Home", to: { name: "home"}, icon: "mdi-home" },
@@ -9,11 +12,16 @@ const links = [
   { display: "Schedule", to: { name: "schedule"}, icon: "mdi-calendar" },
   { display: "Profile", to: { name: "profile"}, icon: "mdi-account" },
 ]
+
+const logout = async () => {
+  authStore.logout()
+  await router.push("/login")
+}
 //
 
 </script>
 <template>
-<v-navigation-drawer expand-on-hover rail>
+<v-navigation-drawer expand-on-hover rail class="relative">
     <v-list>
         <v-list-item prepend-icon="mdi-account" :title="userStore.user?.name"></v-list-item>
     </v-list>
@@ -30,5 +38,12 @@ const links = [
             link
         ></v-list-item>
     </v-list>
+
+  <template v-slot:append>
+    <v-list dense nav>
+      <v-list-item @click="logout"  prepend-icon="mdi-logout" title="Logout" link></v-list-item>
+    </v-list>
+  </template>
+
 </v-navigation-drawer>
 </template>
