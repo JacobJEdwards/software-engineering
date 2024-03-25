@@ -9,6 +9,7 @@ import ImportRoutes from "./routes/ImportRoutes.js";
 import CronJob from './utils/CronJobSetup.js';
 import UserRoutes from "./routes/userRoutes.js";
 import user from "./models/User.js";
+import Mailer from "./middleware/Mailer.js";
 const cronJob = new CronJob();
 cronJob.startAllJobs();
 dotenv.config({path: "../.env"});
@@ -32,7 +33,8 @@ const authRoutes = new AuthRoutes();
 const importRoutes = new ImportRoutes();
 const userRoutes = new UserRoutes();
 const PORT = 3000;
-
+let mail = new Mailer();
+mail.mail();
 app.use('/api/protected', AuthMiddleware.authenticate, authRoutes.router);
 
 app.use('/api/protected', AuthMiddleware.authenticate, importRoutes.router);
