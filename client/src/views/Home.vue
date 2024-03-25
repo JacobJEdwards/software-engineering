@@ -1,31 +1,27 @@
 <script setup lang="ts">
-import ScheduleGenerator from "../components/ScheduleGenerator.vue";
-import ScheduleUpload from "../components/ScheduleUpload.vue"
+import Task from "../components/Task.vue"
+import Sidebar from "../components/Sidebar.vue"
+import UserLoading from "../components/UserLoading.vue"
+import { useUserStore } from "../stores/user.ts"
 
-import { ref } from "vue";
-
-const showScheduleGenerator = ref(false);
-
-const toggleScheduleGenerator = () => {
-  showScheduleGenerator.value = !showScheduleGenerator.value;
-};
+const userStore = useUserStore()
 
 </script>
 
 <template>
-<v-container>
-    <ScheduleUpload />
+  <UserLoading v-if="userStore.loading" />
+
+  <v-container v-else>
+    <!-- welcome back message -->
     <v-row>
       <v-col>
-        <v-btn @click="toggleScheduleGenerator">{{ showScheduleGenerator ? "Hide" : "Show"}} Schedule Generator</v-btn>
-      </v-col>
-    </v-row>
-    <v-row v-if="showScheduleGenerator">
-      <v-col>
-        <ScheduleGenerator />
+        <v-card>
+          <v-card-title>
+            <span class="title">Welcome back, {{ userStore.user?.name ?? "Unknown" }}</span>
+          </v-card-title>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
-</template>
 
-<style scoped></style>
+</template>

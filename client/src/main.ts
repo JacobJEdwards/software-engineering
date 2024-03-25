@@ -11,6 +11,8 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { md3 } from "vuetify/blueprints";
+import { createPinia } from 'pinia'
+import piniaPluginPersistedState from 'pinia-plugin-persistedstate'
 
 const vuetify = createVuetify({
   components,
@@ -21,14 +23,17 @@ const vuetify = createVuetify({
   blueprint: md3
 })
 
-import 'primevue/resources/themes/aura-light-green/theme.css'
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedState)
 
+import 'primevue/resources/themes/aura-light-green/theme.css'
 
 const app = createApp(App)
 app.use(VueCookies)
 app.use(PrimeVue)
 app.use(router)
 app.use(vuetify)
+app.use(pinia)
 
 app.mount("#app")
 

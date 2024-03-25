@@ -1,33 +1,37 @@
 {
-  "name": "client",
-  "private": true,
-  "version": "0.0.0",
-  "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc && vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@fullcalendar/core": "^6.1.10",
-    "@fullcalendar/daygrid": "^6.1.10",
-    "@fullcalendar/interaction": "^6.1.10",
-    "@fullcalendar/timegrid": "^6.1.10",
-    "@fullcalendar/vue3": "^6.1.10",
-    "primevue": "^3.47.2",
-    "vee-validate": "^4.12.5",
-    "vue": "^3.3.11",
-    "vue-cookies": "^1.8.3",
-    "vue-router": "^4.2.5",
-    "vuetify": "^3.5.4",
-    "vuetify-sonner": "^0.3.13"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-vue": "^4.5.2",
-    "autoprefixer": "^10.4.17",
-    "postcss": "^8.4.35",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.8",
-    "vue-tsc": "^1.8.25"
-  }
+    "name": "client",
+    "private": true,
+    "version": "0.0.0",
+    "scripts": {
+        "dev": "vite",
+        "build": "vue-tsc && vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@fullcalendar/core": "^6.1.10",
+        "@fullcalendar/daygrid": "^6.1.10",
+        "@fullcalendar/interaction": "^6.1.10",
+        "@fullcalendar/timegrid": "^6.1.10",
+        "@fullcalendar/vue3": "^6.1.10",
+        "@vueuse/core": "^10.9.0",
+        "pinia": "^2.1.7",
+        "pinia-plugin-persistedstate": "^3.2.1",
+        "primevue": "^3.47.2",
+        "vee-validate": "^4.12.5",
+        "vue": "^3.3.11",
+        "vue-cookies": "^1.8.3",
+        "vue-router": "^4.2.5",
+        "vuetify": "^3.5.4",
+        "vuetify-sonner": "^0.3.13"
+    },
+    "devDependencies": {
+        "@types/node": "^20.11.22",
+        "@vitejs/plugin-vue": "^4.5.2",
+        "autoprefixer": "^10.4.17",
+        "postcss": "^8.4.35",
+        "tailwindcss": "^3.4.1",
+        "typescript": "^5.2.2",
+        "vite": "^5.0.8",
+        "vue-tsc": "^1.8.25"
+    }
 }

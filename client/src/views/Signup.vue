@@ -1,50 +1,24 @@
 <script setup lang="ts">
 import {API_ROUTE} from "../config.ts"
-import {VueCookies} from "vue-cookies";
 import {useRouter} from "vue-router"
-import {inject, ref} from 'vue'
+import {ref} from 'vue'
+import { useLoading, useCookies, useSuccessErrorMessage } from "../utils/utils.ts"
+import { nameRules, emailRules, passwordRules } from "../utils/form.ts"
 
-const $cookies = inject<VueCookies>("$cookies")
+const $cookies = useCookies()
+const router = useRouter()
 
-const loading = ref(false);
+const { loading } = useLoading()
+const { success, error } = useSuccessErrorMessage()
+
 const name = ref("");
 const email = ref("");
 const password = ref("");
 
-const error = ref("")
-const successMessage = ref("")
-
-const router = useRouter()
-
-const usernameRules = [
-  (value: string) => {
-    if (value.length > 6) return true
-
-    return "Username too short"
-  }
-]
-
-const emailRules = [
-  (value: string) => {
-  if (value.includes("@")) return true
-
-    return "Invalid email"
-  }
-]
-
-const passwordRules = [
-  (value: string) => {
-  if (value.length > 6) return true
-
-    return "Password too short"
-  }
-]
-
-
 const signup = async () => {
   loading.value = true;
   error.value = ""
-  successMessage.value = ""
+  success.value = ""
 
    if (!name.value || !email.value || !password.value) {
         error.value = 'Please fill in all fields';
@@ -75,7 +49,7 @@ const signup = async () => {
     }
 
     $cookies?.set("user-id", userId)
-    successMessage.value = "Signup successful"
+    success.value = "Signup successful"
     await redirectToLogin()
 
   } catch {
@@ -102,13 +76,13 @@ const redirectToLogin = async () => {
           </v-toolbar>
           <v-card-text>
             <v-form @submit.prevent="signup">
-              <v-text-field v-model="name" validate-on="input" :rules="usernameRules" :counter="6" label="Name" required></v-text-field>
+              <v-text-field v-model="name" validate-on="input" :rules="nameRules" :counter="6" label="Name" required></v-text-field>
               <v-text-field v-model="email" validate-on="input" :rules="emailRules" label="Email" type="email" required></v-text-field>
               <v-text-field v-model="password" validate-on="input" :rules="passwordRules" label="Password" type="password" required></v-text-field>
               <v-btn type="submit" color="primary" class="mr-4">Sign Up</v-btn>
               <v-btn @click="redirectToLogin">Login</v-btn>
               <v-alert v-if="error" type="error" dismissible>{{ error }}</v-alert>
-              <v-alert v-if="successMessage" type="success" dismissible>{{ successMessage }}</v-alert>
+              <v-alert v-if="success" type="success" dismissible>{{ success }}</v-alert>
             </v-form>
           </v-card-text>
         </v-card>

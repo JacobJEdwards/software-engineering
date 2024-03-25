@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router"
-import { VueCookies } from "vue-cookies";
-import { inject } from 'vue'
-
-const $cookies = inject<VueCookies>("$cookies")
+import { useAuthStore } from "../stores/auth"
 
 const router = useRouter();
+const authStore = useAuthStore()
 
 const logout = async () => {
-    $cookies?.remove("auth")
+    authStore.logout()
     await router.push("/login");
 }
 
