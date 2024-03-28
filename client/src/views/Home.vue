@@ -4,14 +4,12 @@ import { useUserStore } from "../stores"
 import Semester from "../components/Semester.vue"
 import { ref } from "vue"
 import type { Task } from "../typings/user.ts"
-import { useRouter } from "vue-router"
 
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 
-// just basic calendar options for now, no edit, no drag and drop, no nothing, no header
 const calendarOptions = ref({
     plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
     initialView: "dayGridMonth",
@@ -31,7 +29,6 @@ const calendarOptions = ref({
 
 
 const userStore = useUserStore()
-const router = useRouter()
 
 const tasks = ref<Task[]>([])
 

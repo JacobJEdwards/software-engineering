@@ -7,7 +7,6 @@ import { computed } from "vue";
 import { useAuthStore, useUserStore } from "./stores";
 import Navbar from "./components/Navbar.vue";
 
-
 const authStore = useAuthStore()
 const router = useRouter();
 const userStore = useUserStore()

@@ -21,9 +21,9 @@ const logout = async () => {
 
 </script>
 <template>
-<v-navigation-drawer expand-on-hover rail class="relative">
+<v-navigation-drawer expand-on-hover rail class="full-height relative bg-grey-darken-4 pt-8">
     <v-list>
-        <v-list-item prepend-icon="mdi-account" :title="userStore.user?.name"></v-list-item>
+        <v-list-item prepend-icon="mdi-account" :title="userStore.user?.name ?? 'Unknown'"></v-list-item>
     </v-list>
 
     <v-divider></v-divider>
@@ -36,12 +36,13 @@ const logout = async () => {
             :title="link.display"
             :prepend-icon="link.icon"
             link
+            class="hover:bg-gray-800 hover:text-white"
         ></v-list-item>
     </v-list>
 
   <template v-slot:append>
     <v-list dense nav>
-      <v-list-item @click="logout"  prepend-icon="mdi-logout" title="Logout" link></v-list-item>
+      <v-list-item @click="logout"  prepend-icon="mdi-logout" title="Logout" link class="hover:bg-gray-800"></v-list-item>
     </v-list>
   </template>
 
