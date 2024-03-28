@@ -35,6 +35,7 @@ const submitFile = async () => {
     const formData = new FormData();
     formData.append("file", file.value);
 
+
     const response = await fetch(`${API_ROUTE}/protected/upload`, {
       method: "POST",
       body: formData,
@@ -64,16 +65,30 @@ const submitFile = async () => {
 </script>
 
 <template>
-  <v-form @submit.prevent="submitFile">
-    <v-file-input
-        label="Schedule Upload"
-        @change="uploadFile"
-        required>
-    </v-file-input>
-    <v-btn type="submit" :loading="loading">Upload</v-btn>
-    <v-alert type="error" v-if="errorMessage">{{ errorMessage }}</v-alert>
-    <v-alert type="success" v-if="successMessage">{{ successMessage }}</v-alert>
-  </v-form>
+  <v-container>
+    <v-row>
+      <v-col cols="12">
+        <v-file-input
+          label="Upload schedule"
+          @change="uploadFile"
+          accept=".csv"
+          aria-required="true"
+          prepend-icon="mdi-file-upload"
+        ></v-file-input>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
+        <v-btn @click="submitFile" :loading="loading" color="primary">Submit</v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
+        <v-alert v-if="errorMessage" type="error">{{ errorMessage }}</v-alert>
+        <v-alert v-if="successMessage" type="success">{{ successMessage }}</v-alert>
+      </v-col>
+    </v-row>
+  </v-container>
 
 </template>
 <style scoped>

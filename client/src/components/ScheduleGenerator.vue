@@ -6,7 +6,7 @@
       <v-text-field v-model="formData.milestoneTitle" label="Milestone Title"></v-text-field>
       <v-select v-model="formData.milestoneType" :items="MilestoneTypes" label="Milestone Type"></v-select>
       <v-date-picker v-model="formData.deadline" label="Deadline" scrollable></v-date-picker>
-      <v-btn color="primary" @click="saveEntry">Save Entry</v-btn>
+      <v-btn color="black" @click="saveEntry" :disabled="!formData.moduleCode || !formData.moduleName || !formData.milestoneTitle || !formData.milestoneType || !formData.deadline">Save Entry</v-btn>
     </v-form>
 
     <v-container v-if="entries.length > 0">
@@ -34,7 +34,9 @@
       </v-row>
     </v-container>
 
+    <v-divider class="my-2"></v-divider>
     <v-btn color="success" @click="exportCSV">Export All to CSV</v-btn>
+
   </v-container>
 </template>
 
@@ -61,6 +63,10 @@ const formData = ref({
 const entries = ref<Array<FormData>>([]);
 
 const saveEntry = () => {
+  if (!formData.value.moduleCode || !formData.value.moduleName || !formData.value.milestoneTitle || !formData.value.milestoneType || !formData.value.deadline) {
+    return;
+  }
+
   const newEntry = { ...formData.value };
   entries.value.push(newEntry);
 
