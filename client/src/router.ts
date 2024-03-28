@@ -54,6 +54,52 @@ const routes: Array<RouteRecordRaw> = [
             requiresAuth: true,
             title: "Profile"
         }
+    },
+    {
+        path: "/privacy",
+        name: "privacy",
+        component: () => import("./views/Privacy.vue"),
+        meta: {
+            requiresAuth: false,
+            title: "Privacy Policy"
+        }
+    },
+    {
+        path: "/terms",
+        name: "terms",
+        component: () => import("./views/Terms.vue"),
+        meta: {
+            requiresAuth: false,
+            title: "Terms of Service"
+        }
+    },
+    {
+        path: "/about",
+        name: "about",
+        component: () => import("./views/About.vue"),
+        meta: {
+            requiresAuth: false,
+            title: "About"
+        }
+    },
+    {
+        path: "/contact",
+        name: "contact",
+        component: () => import("./views/Contact.vue"),
+        meta: {
+            requiresAuth: false,
+            title: "Contact"
+        }
+    },
+    {
+        path: "/:pathMatch(.*)*",
+        name: "not-found",
+        component: () => import("./views/NotFound.vue"),
+        meta: {
+            requiresAuth: false,
+            title: "404 Not Found"
+        }
+
     }
 ]
 
@@ -64,5 +110,5 @@ export const router: Router = createRouter({
 
 router.onError(async (err) => {
     console.error(err)
-    await router.push("/")
+    await router.push("home")
 })

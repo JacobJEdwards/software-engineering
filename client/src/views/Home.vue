@@ -50,8 +50,7 @@ for (const semester of (userStore.user?.semester ?? [])) {
 
     <v-row v-else>
         <v-col cols="12" md="6">
-          <v-card>
-            <v-card-title>Upcoming Tasks</v-card-title>
+          <v-card title="Upcoming Tasks" prepend-icon="mdi-checkbox-marked-circle-outline">
             <v-card-text>
               <v-list>
                 <v-list-item v-if="tasks.length" v-for="task in tasks" :key="task._id" :title="task.name" :subtitle="task.endDate?.toDateString()">
@@ -64,8 +63,7 @@ for (const semester of (userStore.user?.semester ?? [])) {
         <v-col cols="12" md="6">
             <v-row>
             <v-col cols="12">
-              <v-card>
-                <v-card-title>Current Semester</v-card-title>
+              <v-card title="Current Semester" prepend-icon="mdi-clipboard-outline">
                 <v-card-text>
                   <Semester v-if="userStore.user?.semester?.length" :semester="userStore.user?.semester[0]" />
                   <div class="p-4" v-else>
@@ -79,8 +77,7 @@ for (const semester of (userStore.user?.semester ?? [])) {
               </v-card>
             </v-col>
                 <v-col cols="12">
-                    <v-card>
-                        <v-card-title>Calender</v-card-title>
+                    <v-card title="Calender" prepend-icon="mdi-calendar">
                         <v-card-text>
                             <FullCalendar :options="calendarOptions" class="fc" />
                         </v-card-text>

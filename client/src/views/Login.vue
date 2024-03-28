@@ -66,17 +66,13 @@ const login = async () => {
     }
 }
 
-const redirectToSignup = () => {
-    router.push("/signup")
-}
-
 </script>
 
 <template>
-    <v-container>
-        <v-row class="w-full h-full" align="center" justify="center"> <!-- center the content -->
-            <v-col cols="12" md="6" v-if="!mdAndDown">
-                <v-img src="https://via.placeholder.com/500" class="elevation-12" height="100%" width="100%"></v-img>
+    <v-container fluid>
+        <v-row align="center" justify="center"> <!-- center the content -->
+            <v-col cols="12" md="6" v-if="!mdAndDown" class="hidden md:block d-flex justify-center align-center">
+                <v-img src="https://via.placeholder.com/500" height="50%" width="50%"></v-img>
             </v-col>
             <v-col cols="12" md="6">
                 <v-row>
@@ -106,9 +102,3 @@ const redirectToSignup = () => {
         </v-row>
     </v-container>
 </template>
-
-<style scoped>
-.elevation-12 {
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-}
-</style>

@@ -11,7 +11,7 @@ const showModule = ref<boolean>(false)
 </script>
 
 <template>
-<v-card class="mb-4">
+<v-card class="mb-4" flat>
     <v-card-title>
         {{ semester.semesterName }}
     </v-card-title>
