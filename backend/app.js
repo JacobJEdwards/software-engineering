@@ -11,7 +11,7 @@ import UserRoutes from "./routes/userRoutes.js";
 import user from "./models/User.js";
 const cronJob = new CronJob();
 cronJob.startAllJobs();
-dotenv.config({path: "./.env"});
+dotenv.config({path: "../.env"});
 
 const mongoDBUri = 'mongodb://localhost:27017/wonderfultasksdb';
 
