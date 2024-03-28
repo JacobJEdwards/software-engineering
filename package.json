@@ -2,10 +2,10 @@
   "name": "study_planner",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "backend/app.js",
   "type": "module",
   "scripts": {
-    "dev": "node backend/app.js && cd client && npm run dev",
+    "dev": "concurrently \"nodemon backend/app.js\" \"cd client && npm run dev\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -31,5 +31,9 @@
   "repository": {
     "type": "git",
     "url": "."
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.0"
   }
 }
