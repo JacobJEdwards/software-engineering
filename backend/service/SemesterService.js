@@ -1,78 +1,111 @@
 import userSchema from "../models/User.js";
-import {model} from "mongoose";
+import { model } from "mongoose";
+import Response from "../utils/Response.js";
+import { watch } from "gulp";
 
 class SemesterService {
-    static async createSemester(semesterName, semesterStartDate, semesterEndDate,  user) {
-        const semesterExists = user.semester.some(semester => semester.semesterName === semesterName);
+    static createSemester(semesterName, semesterStartDate, semesterEndDate, user) {
+        const semesterExists = user.semester.find(semester => semester.semesterName === semesterName);
         if (!semesterExists) {
-            const newSemester = {semesterName: semesterName, modules: [], startDate: semesterStartDate, endDate: semesterEndDate};
+            const newSemester = { semesterName: semesterName, modules: [], startDate: semesterStartDate, endDate: semesterEndDate };
             user.semester.push(newSemester);
-            await user.save();
+            return new Response("Semester created successfully", 200, {});
         } else {
-            console.log("Semester already exists");
+            return new Response("Semester already exists", 400, {});
+        }
+    }
+
+    static async createSemesterByUserId(userId, semesterName, semesterStartDate, semesterEndDate) {
+        const user = await UserService.getUserInternal(userId);
+        if (user) {
+            let response = this.createSemester(semesterName, semesterStartDate, semesterEndDate, user);
+            if (response.code === 200) {
+                user.save();
+                return response;
+            } else {
+                return response;
+            }
+        } else {
+            return new Response("User does not exist", 400, {});
         }
     }
 
     static readSemesterByName(semesterName, user) {
         const semester = user.semester.find(semester => semester.semesterName === semesterName);
         if (semester) {
-            return semester;
+            return Response("Semester found", 200, semester);
         } else {
-            console.log("Semester does not exist");
-            return null;
+            return Response("Semester does not exist", 404, {});
         }
     }
 
-    readSemesterByModule(moduleCode, user) {
+    static readSemesterByModule(moduleCode, user) {
         const semester = user.semester.find(semester => semester.modules.some(module => module.moduleCode === moduleCode));
         if (semester) {
-            return semester;
+            return Response("Semester found", 200, semester);
         } else {
-            console.log("Semester does not exist");
-            return null;
+            return Response("Semester not found", 404, {});
         }
     }
 
-    readSemesterByMilestone(milestoneName, user) {
+    static readSemesterByMilestone(milestoneName, user) {
         const semester = user.semester.find(semester => semester.modules.some(module => module.milestones.some(milestone => milestone.milestoneName === milestoneName)));
         if (semester) {
-            return semester;
+            return new Response("Semester found", 200, semester)
         } else {
-            console.log("Semester does not exist");
-            return null;
+            return new Response("Semester not found", 404, {});
         }
     }
 
-
-    readSemesterByIdo(semesterId, user) {
-        const semester = user.semester.find(semester => semester.some(semester => semester.id === semesterId));
-        if (semester) {
-            return semester;
+    static async readSemesterByUserId(userId, semesterName) {
+        const user = await UserService.getUserInternal(userId);
+        if (user) {
+            let response = this.readSemesterByName(semesterName, user);
+            return response;
         } else {
-            console.log("Semester does not exist");
-            return null;
+            return new Response("User does not exist", 404, {});
         }
     }
 
-    static async updateSemester(semesterName, newSemesterName, user) {
+    static updateSemester(semesterName, newSemesterName, user) {
         const semester = user.semester.find(semester => semester.semesterName === semesterName);
         if (semester) {
             semester.semesterName = newSemesterName;
-            console.log("Semester updated successfully");
-            await user.save();
+            return new Response("Semester updated", 200, {});
         } else {
-            console.log("Semester does not exist");
+            return new Response("Semester does not exist", 404, {});
         }
     }
 
-    static async deleteSemester(semesterName, user) {
+    static async updateSemesterByUserId(userId, semesterName, newSemesterName) {
+        const user = await UserService.getUserInternal(userId);
+        if (user) {
+            let response = this.updateSemester(semesterName, newSemesterName, user);
+            if (response.code === 200) {
+                user.save();
+            }
+            return response;
+        }
+    }
+
+    static deleteSemester(semesterName, user) {
         const semester = user.semester.find(semester => semester.semesterName === semesterName);
         if (semester) {
             user.semester.pull(semester);
-            console.log("Semester deleted successfully");
-            await user.save();
+            return new Response("Semester deleted", 200, {});
         } else {
-            console.log("Semester does not exist");
+            return new Response("Semester does not exist", 404, {});
+        }
+    }
+
+
+    static async deleteSemesterByUserId(userId, semesterName) {
+        const user = await UserService.getUserInternal(userId);
+        if (user) {
+            let response = this.deleteSemester(semesterName, user);
+            return response;
+        } else {
+            return new Response("User does not exist", 404, {});
         }
     }
 }
