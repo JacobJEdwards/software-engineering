@@ -1,27 +1,37 @@
 import bcrypt from "bcryptjs";
 import userSchema from "../models/User.js";
-import {model} from "mongoose";
+import { model } from "mongoose";
 import Module from "../service/ModuleService.js";
 import Semester from "../service/SemesterService.js";
 import Milestone from "../service/MilestoneService.js";
 import User from "./UserService.js";
 
 class ImportService {
-    static async addFileData(file, user_id) {
-        let user = await User.findById(user_id);
+    static async addFileData(file, userid) {
+        let user = await User.getUserInternal(userid);
         for (let element of file) {
-            await Semester.createSemester(element.SemesterName, element.SemesterStartDate, element.SemesterEndDate, user);
+            let response = Semester.createSemester(element.SemesterName, element.SemesterStartDate, element.SemesterEndDate, user);
+            if (response.code != 200) {
+                return response;
+            }
         }
 
         for (let element of file) {
-            await Module.createModule(element.SemesterName, element.ModuleName, element.ModuleCode, element.ModuleStartDate, element.ModuleEndDate, user);
+            let response = Module.createModule(element.SemesterName, element.ModuleName, element.ModuleCode, element.ModuleStartDate, element.ModuleEndDate, user)
+            if (response.code != 200) {
+                return response;
+            }
         }
 
-       for (let element of file)  {
-           await Milestone.createMilestone(element.ModuleCode, element.MilestoneTitle, element.MilestoneType, element.MilestoneStartDate, element.MilestoneEndDate, true, user);
-       }
+        for (let element of file) {
+            let response = Milestone.createMilestone(user, element.ModuleCode, element.MilestoneTitle, element.MilestoneType, element.MilestoneStartDate, element.MilestoneEndDate, true)
+            if (response.code != 200) {
+                return response;
+            }
+        }
 
-
+        await user.save();
+        return new Response(200, "Data added successfully", {});
     }
 }
 

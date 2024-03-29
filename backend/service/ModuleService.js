@@ -1,104 +1,188 @@
 import userSchema from "../models/User.js";
-import {model} from "mongoose";
+import { model } from "mongoose";
+import Response from "../utils/Response.js";
 import UserService from "./UserService.js";
 
 class ModuleService {
-    static async createModule(semesterName, moduleName, moduleCode, moduleStartDate, moduleEndDate, user) {
-        const semesterExists = user.semester.some(semesterObject => semesterObject.semesterName === semesterName);
+    static createModule(
+        semesterName,
+        moduleName,
+        moduleCode,
+        moduleStartDate,
+        moduleEndDate,
+        user) {
+        const semesterExists = user.semester.find(
+            (semesterObject) => semesterObject.semesterName === semesterName,
+        );
         if (semesterExists) {
             const newModule = {
                 moduleName: moduleName,
                 moduleCode: moduleCode,
                 milestones: [],
                 startDate: moduleStartDate,
-                endDate: moduleEndDate
+                endDate: moduleEndDate,
             };
-            const moduleExists = user.semester.find(semester => semester.semesterName === semesterName).modules.some(module => module.moduleCode === moduleCode);
+            const moduleExists = user.semester
+                .find((semester) => semester.semesterName === semesterName)
+                .modules.some((module) => module.moduleCode === moduleCode);
 
             if (!moduleExists) {
-                user.semester.find(semester => semester.semesterName === semesterName).modules.push(newModule);
-                await user.save();
+                user.semester
+                    .find((semester) => semester.semesterName === semesterName)
+                    .modules.push(newModule);
+                return new Response("Module created successfully", 200, {});
             }
         } else {
-            console.log("Module already exists");
+            return new Response("Semester does not exist", 404, {});
         }
     }
 
-    readModule(moduleCode, user) {
-        const module = user.modules.find(module => module.moduleCode === moduleCode);
-        if (module) {
-            return module;
+    static createModuleByUserId(userId, semesterName, moduleName, moduleCode, moduleStartDate, moduleEndDate) {
+        const user = UserService.getUserInternal(userId);
+        if (user) {
+            let response = this.createModule(semesterName, moduleName, moduleCode, moduleStartDate, moduleEndDate, user);
+            if (response.code === 200) {
+                user.save();
+                return response;
+            } else {
+                return response;
+            }
         } else {
-            console.log("Module does not exist");
-            return null;
+            return new Response("User does not exist", 404, {});
+        }
+    }
+
+    static readModule(moduleCode, user) {
+        const module = user.modules.find(
+            (module) => module.moduleCode === moduleCode,
+        );
+        if (module) {
+            return new Response("Module found", 200, module);
+        } else {
+            return new Response("Module does not exist", 404, {});
+        }
+    }
+
+    static async readModuleByUserId(userId, moduleCode) {
+        const user = await UserService.getUserInteral(userId);
+        if (user) {
+            let response = this.readModule(moduleCode, user);
+            return response;
+        } else {
+            return new Response("User does not exist", 404, {});
         }
     }
 
 
-    editModuleName(moduleCode, newModuleName, user) {
-        const module = user.modules.find(module => module.moduleCode === moduleCode);
+    static editModuleName(moduleCode, newModuleName, user) {
+        const module = user.modules.find(
+            (module) => module.moduleCode === moduleCode,
+        );
         if (module) {
             module.moduleName = newModuleName;
-            console.log("Module updated successfully");
-            return user;
+            return new Response("Module name updated successfully", 200, {});
         } else {
-            console.log("Module does not exist");
-            return null;
+            return new Response("Module does not exist", 404, {});
         }
     }
 
-    editModuleCode(moduleCode, newModuleCode, user) {
-        const module = user.modules.find(module => module.moduleCode === moduleCode);
+    static editModuleCode(moduleCode, newModuleCode, user) {
+        const module = user.modules.find(
+            (module) => module.moduleCode === moduleCode,
+        );
         if (module) {
             module.moduleCode = newModuleCode;
-            console.log("Module updated successfully");
-            return user;
+            return new Response("Module code updated successfully", 200, {});
         } else {
-            console.log("Module does not exist");
-            return null;
+            return new Response("Module does not exist", 404, {});
         }
     }
 
+    static editModuleCodeByUserId(userId, moduleCode, newModuleCode) {
+        const user = UserService.getUserInteral(userId);
+        if (user) {
+            let response = this.editModuleCode(moduleCode, newModuleCode, user);
+            if (response.code === 200) {
+                user.save();
+                return response;
+            } else {
+                return response;
+            }
+        } else {
+            return new Response("User does not exist", 404, {});
+        }
+    }
 
-    editModuleStartDate(moduleCode, newStartDate, user) {
-        const module = user.modules.find(module => module.moduleCode === moduleCode);
+    static editModuleStartDate(moduleCode, newStartDate, user) {
+        const module = user.modules.find(
+            (module) => module.moduleCode === moduleCode,
+        );
         if (module) {
             module.startDate = newStartDate;
-            console.log("Module updated successfully");
-            return user;
+            return new Response("Module start date updated successfully", 200, {});
         } else {
-            console.log("Module does not exist");
-            return null;
+            return new Response("Module does not exist", 404, {});
         }
     }
 
-    editModuleEndDate(moduleCode, newEndDate, user) {
-        const module = user.modules.find(module => module.moduleCode === moduleCode);
+    static editModuleEndDate(moduleCode, newEndDate, user) {
+        const module = user.modules.find(
+            (module) => module.moduleCode === moduleCode,
+        );
         if (module) {
             module.endDate = newEndDate;
-            console.log("Module updated successfully");
-            return user;
+            return new Response("Module end date updated successfully", 200, {});
         } else {
-            console.log("Module does not exist");
-            return null;
+            resposneHandler.addError("Module does not exist", 404);
+            return new Response("Module does not exist", 404, {});
         }
     }
 
-    deleteModule(moduleCode, user) {
-        const module = user.modules.find(module => module.moduleCode === moduleCode);
-        if (module) {
-            user.modules.pull(module);
-            console.log("Module deleted successfully");
-            return user;
+    static async editModuleEndDateByUserId(userId, moduleCode, newEndDate) {
+        const user = await UserService.getUserInternal(userId);
+        if (user) {
+            let response = this.editModuleEndDate(moduleCode, newEndDate, user);
+            if (response.code === 200) {
+                user.save();
+                return response;
+            } else {
+                return response;
+            }
         } else {
-            console.log("Module does not exist");
-            return null;
+            return new Response("User does not exist", 404, {});
         }
     }
+    static deleteModule(moduleCode, user) {
+        const module = user.modules.find(
+            (module) => module.moduleCode === moduleCode,
+        );
+        if (module) {
+            return new Response("Module deleted successfully", 200, {});
+        } else {
+            return new Response("Module does not exist", 404, {});
+        }
+    }
+
+
+    static async deleteModuleByUserId(userId, moduleCode) {
+        const user = await UserService.getUserInternal(userId);
+        if (user) {
+            let response = this.deleteModule(moduleCode, user);
+            if (response.code === 200) {
+                user.save();
+                return response;
+            } else {
+                return response;
+            }
+        } else {
+            return new Response("User does not exist", 404, {});
+        }
+    }
+
 }
 
 
 userSchema.loadClass(ModuleService);
-const Module = model('Module', userSchema);
+const Module = model("Module", userSchema);
 
 export default Module;

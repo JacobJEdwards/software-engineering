@@ -1,10 +1,12 @@
-import bcrypt from "bcryptjs";
 import userSchema from "../models/User.js";
-import {model} from "mongoose";
+import Response from "../utils/Response.js";
+import User from "../service/UserService.js";
+import { model } from "mongoose";
 
 class MilestoneService {
-    static async createMilestone(moduleCode, milestoneName, milestoneType, milestoneStartDate, milestoneEndDate, ltsDefined, user) {
-       let milestoneExists =  user.semester.find(semester => semester.modules.find(module => module.moduleCode === moduleCode));
+    static async createMilestone(userid, moduleCode, milestoneName, milestoneType, milestoneStartDate, milestoneEndDate, ltsDefined) {
+        let user = await User.getUserInternal(userid);
+        let milestoneExists = user.semester.find(semester => semester.modules.find(module => module.moduleCode === moduleCode));
         if (milestoneExists) {
             const newMilestone = {
                 milestoneTitle: milestoneName,
@@ -15,84 +17,113 @@ class MilestoneService {
             };
             user.semester.find(semester => {
                 semester.modules.find(module => {
-                   if(module.moduleCode === moduleCode) {
-                       module.milestones.push(newMilestone);
-                   }
+                    if (module.moduleCode === moduleCode) {
+                        module.milestones.push(newMilestone);
+                    }
                 })
             });
-
-           await user.save();
+            await user.save();
+            return new Response("Milestone created successfully", 200, {});
         } else {
-            console.log("Module does not exist");
+            return new Response("Milestone could not find milestone", 404, {});
         }
     }
 
-    // YC -> can you add another read method that takes name as parameter
+    static createMilestone(user, moduleCode, milestoneName, milestoneType, milestoneStartDate, milestoneEndDate, ltsDefined) {
+        let milestoneExists = user.semester.find(semester => semester.modules.find(module => module.moduleCode === moduleCode));
+        if (milestoneExists) {
+            const newMilestone = {
+                milestoneTitle: milestoneName,
+                milestoneType: milestoneType,
+                startDate: milestoneStartDate,
+                endDate: milestoneEndDate,
+                ltsDefined: ltsDefined
+            };
+            user.semester.find(semester => {
+                semester.modules.find(module => {
+                    if (module.moduleCode === moduleCode) {
+                        module.milestones.push(newMilestone);
+                    }
+                })
+            });
+            return new Response("Milestone successfully created", 200, {});
+        } else {
+            return new Response("Cannot find milestone", 400, {});
+        }
+    }
 
-    static async readMilestone(module, milestoneId) {
+    static readMilestone(module, milestoneId) {
         const milestone = module.milestones.find(milestone => milestone.id === milestoneId);
         if (milestone) {
-            return milestone;
+            return new Response("Milestone found", 200, milestone);
         } else {
-            console.log("Milestone does not exist");
-            return null;
+            return new Response("Milestone not found", 400, {});
         }
     }
 
-    static async updateMilestone(module, milestoneId, newMilestoneName, newStartDate, newEndDate, milestoneType) {
-        const milestone = module.milestones.find(milestone => milestone.id === milestoneId);
+
+
+    static async readMilestoneByUserId(userId, milestoneId) {
+        const user = await User.getUserInternal(userId);
+        const milestone = user.module.find(module => module.milestones.find(milestone => milestone.id === milestoneId));
         if (milestone) {
-            if (milestone.ltsDefined) {
-                return false;
-            }
-            milestone.milestoneName = newMilestoneName;
-            milestone.milestoneType = milestoneType;
-            milestone.startDate = newStartDate;
-            milestone.endDate = newEndDate
-            console.log("Milestone updated successfully");
-            await module.save();
+            return new Response("Milestone found", 200, milestone);
         } else {
-            console.log("Milestone does not exist");
-        }
-    }
-
-    static async updateMilestoneName(module, milestoneName, newMilestoneName) {
-        const milestone = module.milestones.find(milestone => milestone.milestoneName === milestoneName);
-        if (milestone) {
-            if (milestone.ltsDefined) {
-                return false;
-            }
-            milestone.milestoneName = newMilestoneName;
-            console.log("Milestone updated successfully");
-            await module.save();
-        } else {
-            console.log("Milestone does not exist");
-        }
-    }
-
-    static async updateMilestoneStartDate(module, milestoneId, newStartDate) {
-        const milestone = module.milestones.find(milestone => milestone.milestoneId === milestoneId);
-        if (milestone) {
-            if (milestone.ltsDefined) {
-                return false;
-            }
-            milestone.milestoneDate = newMilestoneDate;
-            console.log("Milestone updated successfully");
-            await module.save();
-        } else {
-            console.log("Milestone does not exist");
+            return new Response("Milestone does not exist", 404, {});
         }
     }
 
 
-    static async deleteMilestone(module, milestoneName) {
+    static updateMilestone(user, milestoneId, newMilestoneName, newStartDate, newEndDate, milestoneType) {
+        const milestone = user.module.find(module => module.milestones.find(milestone => milestone.id === milestoneId));
+        if (milestone && !milestone.ltsDefined) {
+            milestone.milestoneName = newMilestoneName == null ? milestone.milestoneName : newMilestoneName
+            milestone.milestoneType = milestoneType == null ? milestone.milestoneType : milestoneType
+            milestone.startDate = newStartDate == null ? milestone.startDate : newStartDate
+            milestone.endDate = newEndDate == null ? milestone.endDate : newEndDate;
+            return new Response("Milestone updated successfully", 200, {});
+        } else {
+            return new Response("Milestone updated successfully", 200, {});
+        }
+    }
+
+
+    static async updateMilestoneByUserId(userId, milestoneId, newMilestoneName, newStartDate, newEndDate, milestoneType) {
+        const user = await User.getUserInternal(userId);
+        const milestone = user.module.find(module => module.milestones.find(milestone => milestone.id === milestoneId));
+        if (milestone && !milestone.ltsDefined) {
+            milestone.milestoneName = newMilestoneName == null ? milestone.milestoneName : newMilestoneName
+            milestone.milestoneType = milestoneType == null ? milestone.milestoneType : milestoneType
+            milestone.startDate = newStartDate == null ? milestone.startDate : newStartDate
+            milestone.endDate = newEndDate == null ? milestone.endDate : newEndDate;
+            await user.save();
+            return new Response("Milestone updated successfully", 200, {});
+        } else {
+            return new Response("Could not updated Milestone", 400, {});
+        }
+    }
+
+
+    static deleteMilestone(module, milestoneName) {
         const milestone = module.milestones.find(milestone => milestone.milestoneName === milestoneName);
         if (milestone) {
             module.milestones.pull(milestone);
-            console.log("Milestone deleted successfully");
-            await module.save();
+            return new Response("Milestone deleted successfully", 200, {});
         } else {
-            console.log("Milestone does not exist");
+            return new Response("Milestone not found", 404, {});
+        }
+    }
+
+
+    static async deleteMilestoneByUserId(userId, milestoneId) {
+        const user = await User.getUserInternal(userId);
+        const milestone = user.module.find(module => module.milestones.find(milestone => milestone.id === milestoneId));
+        if (milestone) {
+            module.milestones.pull(milestone);
+            await user.save();
+            return new Response("Milestone deleted successfully", 200, {});
+        } else {
+            return new Response("Milestone not found", 404, {});
         }
     }
 }
