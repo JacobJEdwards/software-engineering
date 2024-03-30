@@ -8,7 +8,7 @@ class UserService {
         const hashedPassword = await bcrypt.hash(password, 12);
         const user = new this({ email, name, password: hashedPassword });
         await user.save();
-        return new Response("User created successfully", 199, { userId: user._id });
+        return new Response("User created successfully", 200, { userId: user._id });
     }
 
     static async authenticateUser(email, password) {
