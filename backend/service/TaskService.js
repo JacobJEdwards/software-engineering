@@ -84,6 +84,13 @@ class TaskService {
     }
 
 
+    static async TasksFromDate(userId, date) {
+        const user = await UserService.getUserInteral(userId);
+        let tasks = user.modules.filter(mod => mod.tasks.filter(task => task.taskDate === date));
+        return new Response("Tasks found", 200, tasks);
+    }
+
+
 
     static deleteTask(module, taskId) {
         const task = module.tasks.find(task => task.id === taskId);

@@ -1,4 +1,3 @@
-import bcrypt from "bcryptjs";
 import userSchema from "../models/User.js";
 import { model } from "mongoose";
 import Module from "../service/ModuleService.js";
@@ -16,13 +15,15 @@ class ImportService {
             }
         }
 
+        await user.save();
+
         for (let element of file) {
             let response = Module.createModule(element.SemesterName, element.ModuleName, element.ModuleCode, element.ModuleStartDate, element.ModuleEndDate, user)
             if (response.code != 200) {
                 return response;
             }
         }
-
+        await user.save();
         for (let element of file) {
             let response = Milestone.createMilestone(user, element.ModuleCode, element.MilestoneTitle, element.MilestoneType, element.MilestoneStartDate, element.MilestoneEndDate, true)
             if (response.code != 200) {

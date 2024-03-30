@@ -1,7 +1,6 @@
 import userSchema from "../models/User.js";
 import { model } from "mongoose";
 import Response from "../utils/Response.js";
-import { watch } from "gulp";
 
 class SemesterService {
     static createSemester(semesterName, semesterStartDate, semesterEndDate, user) {
