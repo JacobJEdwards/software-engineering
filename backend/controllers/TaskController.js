@@ -1,9 +1,12 @@
-import Tasks from '../service/TaskService';
+import Task from '../service/TaskService.js';
 
 class TaskController {
     static async getTasks(req, res) {
         let startDate = req.query.startDate;
-        let elements = await Tasks.TasksFromDate(req.userId, startDate);
-        console.log(elements);
+        console.log(req.userData);
+        // let elements = await Task.tasksFromDate(req, startDate);
     }
 }
+
+
+export default TaskController

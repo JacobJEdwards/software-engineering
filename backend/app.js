@@ -8,11 +8,13 @@ import User from "./service/UserService.js";
 import ImportRoutes from "./routes/ImportRoutes.js";
 import CronJob from './utils/CronJobSetup.js';
 import UserRoutes from "./routes/userRoutes.js";
+import TaskRoutes from "./routes/TaskRoutes.js";
 import UserService from "./service/UserService.js";
 import Mailer from "./middleware/Mailer.js";
+
 const cronJob = new CronJob();
 cronJob.startAllJobs();
-dotenv.config({ path: "../.env" });
+dotenv.config({path: "../.env"});
 
 const mongoDBUri = 'mongodb://localhost:27017/wonderfultasksdb';
 
@@ -32,12 +34,16 @@ app.use(cors());
 const authRoutes = new AuthRoutes();
 const importRoutes = new ImportRoutes();
 const userRoutes = new UserRoutes();
+const taskRoutes = new TaskRoutes();
+
 const PORT = 3000;
 app.use('/api/protected', AuthMiddleware.authenticate, authRoutes.router);
 
 app.use('/api/protected', AuthMiddleware.authenticate, importRoutes.router);
 
 app.use('/api/protected', AuthMiddleware.authenticate, userRoutes.router);
+
+app.use('/api/protected', AuthMiddleware.authenticate, taskRoutes.router);
 app.use('/api/protected/test', (req, res) => {
     const users = User.getUserByEmail('testu@test.com').then((user) => {
         res.status(200).send(user);

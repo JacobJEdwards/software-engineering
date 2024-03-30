@@ -1,19 +1,20 @@
+import UserService from "./UserService.js";
 import userSchema from "../models/User.js";
-import {model} from "mongoose";
+import { model } from "mongoose";
 import Response from "../utils/Response.js";
 
 class TaskService {
     static createTask(user, milestoneId, taskName, taskDescription, taskDate) {
         let milestoneFound = user.semester.find(sem => sem.module.find(module => module.milestoneId === milestoneId));
         if (!milestoneFound) {
-            return new Response("Milestone does not exist", 404, {milestoneId});
+            return new Response("Milestone does not exist", 404, { milestoneId });
         }
 
         const newTask = {
             taskName, taskDescription, taskDate
         };
         milestoneFound.tasks.push(newTask);
-        return new Response("Task created successfully", 200, {newTask});
+        return new Response("Task created successfully", 200, { newTask });
     }
 
     static async createTaskByUserId(userId, milestoneId, taskName, taskDescription, taskDate) {
@@ -27,7 +28,7 @@ class TaskService {
                 return response;
             }
         } else {
-            return new Response("User does not exist", 404, {userId});
+            return new Response("User does not exist", 404, { userId });
         }
     }
 
@@ -42,7 +43,7 @@ class TaskService {
             task.hours = newHours == null ? task.hours : newHours;
             return new Response("Task updated successfully", 200, {});
         } else {
-            return new Response("Task does not exist", 404, {taskId});
+            return new Response("Task does not exist", 404, { taskId });
         }
     }
 
@@ -56,7 +57,7 @@ class TaskService {
             }
             return response;
         } else {
-            return new Response("User does not exist", 404, {taskId});
+            return new Response("User does not exist", 404, { taskId });
         }
     }
 
@@ -65,7 +66,7 @@ class TaskService {
         if (task) {
             return Response("Task found", 200, task);
         } else {
-            return Response("Task does not exist", 404, {taskId});
+            return Response("Task does not exist", 404, { taskId });
         }
     }
 
@@ -76,29 +77,26 @@ class TaskService {
             let response = this.readTask(user, taskId);
             return response;
         } else {
-            return new Response("User does not exist", 404, {taskId});
+            return new Response("User does not exist", 404, { taskId });
         }
     }
 
 
-<<<<<<< HEAD
-    static async TasksFromDate(userId, date) {
-        const user = await UserService.getUserInteral(userId);
-        let tasks = user.modules.filter(mod => mod.tasks.filter(task => task.taskDate === date));
+    static async tasksFromDate(userId, date) {
+        const user = await UserService.getUserInternal(userId);
+        let tasks = user.semester.filter(mod => mod.milestones.filter(milestone => milestone.filter(milestone.task.startDate > date)));
         return new Response("Tasks found", 200, tasks);
     }
 
 
 
-=======
->>>>>>> back-end
     static deleteTask(module, taskId) {
         const task = module.tasks.find(task => task.id === taskId);
         if (task) {
             module.tasks.pull(task);
             return new Response("Task deleted successfully", 200, {});
         } else {
-            return new Response("Task does not exist", 404, {taskId});
+            return new Response("Task does not exist", 404, { taskId });
         }
     }
 
@@ -112,7 +110,7 @@ class TaskService {
             }
             return response;
         } else {
-            return new Response("User does not exist", 404, {taskId});
+            return new Response("User does not exist", 404, { taskId });
         }
     }
 }
