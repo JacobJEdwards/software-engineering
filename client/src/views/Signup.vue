@@ -2,10 +2,10 @@
 import {API_ROUTE} from "../config.ts"
 import {useRouter} from "vue-router"
 import {ref} from 'vue'
-import { useLoading, useCookies, useSuccessErrorMessage } from "../utils/utils.ts"
+import { useLoading, useSuccessErrorMessage } from "../utils/utils.ts"
 import { emailRules } from "../utils/form.ts"
+import {useDisplay} from "vuetify";
 
-const $cookies = useCookies()
 const router = useRouter()
 
 const { loading } = useLoading()
@@ -15,6 +15,8 @@ const name = ref<string>("");
 const email = ref<string>("");
 const password = ref<string>("");
 const showPassword = ref<boolean>(false);
+
+const { mdAndDown } = useDisplay()
 
 const signup = async () => {
   loading.value = true;
@@ -44,13 +46,15 @@ const signup = async () => {
       throw new Error("Error on login")
     }
 
-    const {userId} = await res.json();
+
+    const json = await res.json();
+
+    const userId = json?.data?.userId;
 
     if (!userId) {
       throw new Error("Error on login")
     }
 
-    $cookies?.set("user-id", userId)
     success.value = "Signup successful"
     await redirectToLogin()
 
@@ -69,9 +73,9 @@ const redirectToLogin = async () => {
 </script>
 
 <template>
-    <v-container>
-        <v-row class="w-full h-full" align="center" justify="center"> <!-- center the content -->
-            <v-col cols="12" md="6">
+      <v-container class="h-full d-flex justify-center align-center"> <!-- center the content -->
+        <v-row align="center" justify="center">
+          <v-col cols="12" md="6" v-if="!mdAndDown" class="hidden md:block d-flex justify-center align-center">
                 <v-img src="https://via.placeholder.com/500" class="elevation-12" height="100%" width="100%"></v-img>
             </v-col>
             <v-col cols="12" md="6">

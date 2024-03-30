@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from "vue"
 import type { Task } from "../typings/user"
 
 defineProps<{ task: Task }>()
