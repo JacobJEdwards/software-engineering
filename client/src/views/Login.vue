@@ -69,12 +69,12 @@ const login = async () => {
 </script>
 
 <template>
-    <v-container fluid>
-        <v-row align="center" justify="center"> <!-- center the content -->
+    <v-container class="h-full d-flex justify-center align-center"> <!-- center the content -->
+        <v-row align="center" justify="center" class=""> <!-- center the content -->
             <v-col cols="12" md="6" v-if="!mdAndDown" class="hidden md:block d-flex justify-center align-center">
                 <v-img src="https://via.placeholder.com/500" height="50%" width="50%"></v-img>
             </v-col>
-            <v-col cols="12" md="6">
+            <v-col cols="12" md="6" class="">
                 <v-row>
                     <v-col cols="12" class="text-center">
                         <h1 class="text-3xl font-bold">Log in</h1>
