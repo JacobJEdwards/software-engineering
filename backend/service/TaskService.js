@@ -1,38 +1,35 @@
 import userSchema from "../models/User.js";
-import { model } from "mongoose";
+import {model} from "mongoose";
 import Response from "../utils/Response.js";
 
 class TaskService {
     static createTask(user, milestoneId, taskName, taskDescription, taskDate) {
-        const milestone = user.modules.find(module => module.find(milestone => milestone.id === milestoneId));
-        if (!milestone) {
-            return new Response("Milestone does not exist", 404,);
+        let milestoneFound = user.semester.find(sem => sem.module.find(module => module.milestoneId === milestoneId));
+        if (!milestoneFound) {
+            return new Response("Milestone does not exist", 404, {milestoneId});
         }
-        const newTask = {
-            taskName: taskName,
-            taskDescription: taskDescription,
-            taskDate: taskDate
-        };
-        milestone.tasks.push(newTask);
-        return new Response("Task created successfully", 200, {});
-    }
 
+        const newTask = {
+            taskName, taskDescription, taskDate
+        };
+        milestoneFound.tasks.push(newTask);
+        return new Response("Task created successfully", 200, {newTask});
+    }
 
     static async createTaskByUserId(userId, milestoneId, taskName, taskDescription, taskDate) {
         const user = await UserService.getUserInternal(userId);
         if (user) {
             let response = this.createTask(user, milestoneId, taskName, taskDescription, taskDate);
-            if (response.status === 200) {
-                user.save();
+            if (response.statusCode === 200) {
+                await user.save();
                 return response;
             } else {
                 return response;
             }
         } else {
-            return new Response("User does not exist", 404, {});
+            return new Response("User does not exist", 404, {userId});
         }
     }
-
 
 
     static updateTask(user, taskId, newTaskName, newStartDate, newEndDate, newStatus, newHours) {
@@ -45,7 +42,7 @@ class TaskService {
             task.hours = newHours == null ? task.hours : newHours;
             return new Response("Task updated successfully", 200, {});
         } else {
-            return new Response("Task does not exist", 404, {});
+            return new Response("Task does not exist", 404, {taskId});
         }
     }
 
@@ -59,7 +56,7 @@ class TaskService {
             }
             return response;
         } else {
-            return new Response("User does not exist", 404, {});
+            return new Response("User does not exist", 404, {taskId});
         }
     }
 
@@ -68,7 +65,7 @@ class TaskService {
         if (task) {
             return Response("Task found", 200, task);
         } else {
-            return Response("Task does not exist", 404, {});
+            return Response("Task does not exist", 404, {taskId});
         }
     }
 
@@ -79,11 +76,12 @@ class TaskService {
             let response = this.readTask(user, taskId);
             return response;
         } else {
-            return new Response("User does not exist", 404, {});
+            return new Response("User does not exist", 404, {taskId});
         }
     }
 
 
+<<<<<<< HEAD
     static async TasksFromDate(userId, date) {
         const user = await UserService.getUserInteral(userId);
         let tasks = user.modules.filter(mod => mod.tasks.filter(task => task.taskDate === date));
@@ -92,13 +90,15 @@ class TaskService {
 
 
 
+=======
+>>>>>>> back-end
     static deleteTask(module, taskId) {
         const task = module.tasks.find(task => task.id === taskId);
         if (task) {
             module.tasks.pull(task);
             return new Response("Task deleted successfully", 200, {});
         } else {
-            return new Response("Task does not exist", 404, {});
+            return new Response("Task does not exist", 404, {taskId});
         }
     }
 
@@ -112,10 +112,9 @@ class TaskService {
             }
             return response;
         } else {
-            return new Response("User does not exist", 404, {});
+            return new Response("User does not exist", 404, {taskId});
         }
     }
-
 }
 
 userSchema.loadClass(TaskService);

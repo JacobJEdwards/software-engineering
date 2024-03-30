@@ -1,5 +1,5 @@
 import userSchema from "../models/User.js";
-import { model } from "mongoose";
+import {model} from "mongoose";
 import Response from "../utils/Response.js";
 import UserService from "./UserService.js";
 
@@ -31,9 +31,11 @@ class ModuleService {
                     .find((semester) => semester.semesterName === semesterName)
                     .modules.push(newModule);
                 return new Response("Module created successfully", 200, {});
+            } else {
+                return new Response("Module already exists", 404, {});
             }
         } else {
-            return new Response("Semester does not exist", 404, {});
+           return new Response("Semester Does not Exist", 404, {})
         }
     }
 
@@ -63,7 +65,8 @@ class ModuleService {
         }
     }
 
-    static async readModuleByUserId(userId, moduleCode) {
+    static
+    async readModuleByUserId(userId, moduleCode) {
         const user = await UserService.getUserInteral(userId);
         if (user) {
             let response = this.readModule(moduleCode, user);
@@ -138,7 +141,8 @@ class ModuleService {
         }
     }
 
-    static async editModuleEndDateByUserId(userId, moduleCode, newEndDate) {
+    static
+    async editModuleEndDateByUserId(userId, moduleCode, newEndDate) {
         const user = await UserService.getUserInternal(userId);
         if (user) {
             let response = this.editModuleEndDate(moduleCode, newEndDate, user);
@@ -152,6 +156,7 @@ class ModuleService {
             return new Response("User does not exist", 404, {});
         }
     }
+
     static deleteModule(moduleCode, user) {
         const module = user.modules.find(
             (module) => module.moduleCode === moduleCode,
@@ -164,7 +169,8 @@ class ModuleService {
     }
 
 
-    static async deleteModuleByUserId(userId, moduleCode) {
+    static
+    async deleteModuleByUserId(userId, moduleCode) {
         const user = await UserService.getUserInternal(userId);
         if (user) {
             let response = this.deleteModule(moduleCode, user);
@@ -182,7 +188,10 @@ class ModuleService {
 }
 
 
-userSchema.loadClass(ModuleService);
-const Module = model("Module", userSchema);
+userSchema
+    .loadClass(ModuleService);
+
+const
+    Module = model("Module", userSchema);
 
 export default Module;
