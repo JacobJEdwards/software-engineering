@@ -1,17 +1,23 @@
 export type TaskStatus = "Started" | "In Progress" | "Completed";
 
+// TODO timestampes
+
+type Base = {
+    _id: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 export type Task = {
-  _id: string;
   name: string;
   startDate: Date;
   endDate: Date;
   status: TaskStatus;
   hours: number;
-  // activities
-}
+  // TODO activities
+} & Base
 
 export type Milestone = {
-  _id: string;
   milestoneTitle: string;
   milestoneType: string;
   milestoneProgress: number;
@@ -19,24 +25,22 @@ export type Milestone = {
   tasks: Array<Task>;
   startDate: Date;
   endDate: Date;
-}
+} & Base
 
 export type Module = {
-  _id: string;
   moduleName: string;
   moduleCode: string;
   milestones: Array<Milestone>;
   startDate: Date;
   endDate: Date;
-}
+} & Base
 
 export type Semester = {
-  _id: string;
   semesterName: string;
   modules: Array<Module>
   startDate: Date;
   endDate: Date;
-}
+} & Base
 
 export type User = {
   email: string;
@@ -44,9 +48,9 @@ export type User = {
   password?: string;
   auth?: boolean;
   semester: Array<Semester>;
-}
+} & Base
 
 export type unAuthedUser = {
   email: string;
   key: string;
-}
+} & Base
