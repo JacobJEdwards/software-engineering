@@ -2,7 +2,7 @@
 import { useUserStore } from "../stores"
 import { ref } from "vue"
 
-import { Module, Milestone } from "../typings/user"
+import { Module, Milestone, Task } from "../typings/user"
 
 type TaskForm = {
     title: string
@@ -15,6 +15,7 @@ const userStore = useUserStore()
 
 // change this
 const semester = userStore.user?.semester[0]
+const moduleSelections = semester?.modules?.map((module) => module.moduleName) ?? []
 
 const modelVisible = ref<boolean>(false)
 
@@ -25,10 +26,15 @@ const formData = ref<TaskForm>({
     milestone: "",
 })
 
+const persist = ref<boolean>(false)
+// on any change to the form, set persist to false
+const persistForm = () => {
+    persist.value = true
+}
+
 const selectedModule = ref<Module | null>(null)
 const selectedModuleMilestones = ref<Milestone[]>([])
 
-const menu = ref<boolean>(false)
 const startDate = ref<Date | null>(null)
 const endDate = ref<Date | null>(null)
 
@@ -42,51 +48,84 @@ const createTask = () => {
     modelVisible.value = false
 }
 
+const closeForm = () => {
+  formData.value = {
+    title: "",
+    milestone: "",
+    startDate: null,
+    endDate: null,
+  }
+    modelVisible.value = false
+}
+
 </script>
 
 <template>
     <v-container>
-        <v-dialog v-model="modelVisible" max-width="500px">
-            <template v-slot:activator="{ isActive }">
-                <v-btn v-on="isActive" color="primary">Create Task</v-btn>
-            </template>
-        </v-dialog>
-        <v-card>
-            <v-card-title>
-                <span class="headline"> Create Task </span>
-            </v-card-title>
-            <v-card-text>
-                <v-form @submit.prevent="createTask">
-                    <v-text-field v-model="formData.title" label="Title"></v-text-field>
-                    <v-menu v-model="menu" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px">
-                        <template v-slot:activator="{ isActive, props }">
-                            <v-text-field v-model="startDate" label="Date" v-bind="props" v-on="isActive" readonly></v-text-field>
-                        </template>
-                        <v-date-picker v-model="startDate" no-title scrollable>
-                            <v-spacer></v-spacer>
-                            <v-btn text="Cancel" color="primary" @click="menu = false"></v-btn>
-                            <v-btn text="OK" color="primary" @click="menu = false"></v-btn>
-                        </v-date-picker>
-                    </v-menu>
-                    <v-menu v-model="menu" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px">
-                        <template v-slot:activator="{ isActive, props }">
-                            <v-text-field v-model="endDate" label="Date" v-bind="props" v-on="isActive" readonly></v-text-field>
-                        </template>
-                        <v-date-picker v-model="endDate" no-title scrollable>
-                            <v-spacer></v-spacer>
-                            <v-btn text="Cancel" color="primary" @click="menu = false"></v-btn>
-                            <v-btn text="OK" color="primary" @click="menu = false"></v-btn>
-                        </v-date-picker>
-                    </v-menu>
-                    <v-select v-model="selectedModule" :items="semester?.modules ?? []" label="Module" @change="populateMilestones"></v-select>
-                    <v-select v-model="formData.milestone" :items="selectedModuleMilestones"  label="Milestone">
-                    </v-select>
-                    <v-btn type="submit" color="primary">Create</v-btn>
-                    <v-btn color="primary" @click="modelVisible = false">Cancel</v-btn>
-                </v-form>
+        <v-btn @click="modelVisible = !modelVisible">Add Task</v-btn>
+        <v-dialog v-model="modelVisible" max-width="800" class="p-4" :persistent="persist">
+            <v-card>
+                <v-card-title>
+                    <span>Create Task</span>
+                </v-card-title>
+                <v-card-text>
+                    <v-form @change="persistForm">
+                        <v-text-field
+                            v-model="formData.title"
+                            label="Title"
+                            outlined
+                            required
+                            variant="solo-filled"
+                        ></v-text-field>
+                        <v-select
+                            v-model="selectedModule"
+                            :items="semester?.modules ?? []"
+                            item-title="moduleName"
+                            item-value="moduleCode"
+                            label="Module"
+                            required
+                            @change="populateMilestones"
+                            variant="solo-filled"
+                        ></v-select>
+                        <v-select
+                            v-if="selectedModule"
+                            v-model="formData.milestone"
+                            :items="selectedModuleMilestones ?? []"
+                            item-title="milestoneName"
+                            item-value="milestoneName"
+                            label="Milestone"
+                            required
+                            variant="solo-filled"
+                        ></v-select>
+                      <v-row class="justify-center items-center">
+                        <v-col cols="6" class="">
+                          <p class="text-center">Start Date</p>
+                          <v-date-picker
+                              v-model="startDate"
+                              title="Start Date"
+                              required
+                              hide-header
+                          ></v-date-picker>
+                        </v-col>
+                        <v-col cols="6" class="">
+                          <p class="text-center">End Date</p>
+                          <v-date-picker
+                              v-model="endDate"
+                              title="End Date"
+                              required
+                              hide-header
+                          ></v-date-picker>
+                        </v-col>
+                      </v-row>
+                    </v-form>
                 </v-card-text>
-        </v-card>
-        </v-container>
+                <v-card-actions>
+                    <v-btn text="Cancel" @click="closeForm"></v-btn>
+                    <v-btn color="primary" @click="createTask">Create</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+    </v-container>
 </template>
 
 <style scoped>
