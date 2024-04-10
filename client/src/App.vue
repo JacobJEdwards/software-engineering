@@ -30,7 +30,6 @@ router.beforeEach(async (to, _, next) => {
   }
 });
 
-// fix if condition as doesnt load when signing in
 router.beforeEach(async () => {
   if (!isLoginPage.value && isAuth.value && !userStore.user) {
       try {
@@ -45,8 +44,8 @@ router.beforeEach(async () => {
 
 <template>
   <v-app>
-    <Header v-if="!isLoginPage" />
     <Navbar v-if="!isLoginPage" />
+    <Header v-if="!isLoginPage" />
     <v-main>
     <router-view />
     </v-main>

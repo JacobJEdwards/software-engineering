@@ -2,7 +2,7 @@
 import { useUserStore } from "../stores"
 import { ref } from "vue"
 
-import { Module, Milestone, Task } from "../typings/user"
+import { Module, Milestone } from "../typings/user"
 
 type TaskForm = {
     title: string
@@ -15,7 +15,6 @@ const userStore = useUserStore()
 
 // change this
 const semester = userStore.user?.semester[0]
-const moduleSelections = semester?.modules?.map((module) => module.moduleName) ?? []
 
 const modelVisible = ref<boolean>(false)
 

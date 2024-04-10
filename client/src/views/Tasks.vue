@@ -5,9 +5,6 @@ import { ref } from "vue"
 import AddTask from "../components/AddTask.vue";
 import type { Task } from "../typings/user.ts"
 
-
-
-
 const userStore = useUserStore()
 
 const tasks = ref<Task[]>([])
