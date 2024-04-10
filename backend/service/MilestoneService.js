@@ -61,6 +61,15 @@ class MilestoneService {
         }
     }
 
+    static readMilestoneByUser(user, milestoneId) {
+        const milestone = user.semester.flatMap(semester => semester.modules.flatMap(module => module.milestones.find(milestone => milestone.id === milestoneId)));
+        if (milestone) {
+            return new Response("Milestone found", 200, milestone);
+        } else {
+            return new Response("Milestone does not exist", 404, {});
+        }
+    }
+
 
 
     static async readMilestoneByUserId(userId, milestoneId) {

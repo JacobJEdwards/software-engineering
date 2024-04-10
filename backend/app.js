@@ -1,4 +1,12 @@
-import express from 'express';
+import dotenv from "dotenv";
+import Application from "./Application.js";
+
+dotenv.config({ path: "../.env" });
+const app = new Application(3006);
+app.start();
+
+/*
+ * import express from 'express';
 import cors from "cors"
 import AuthMiddleware from "./middleware/AuthMiddleware.js"
 import AuthRoutes from "./routes/AuthRoutes.js";
@@ -10,6 +18,11 @@ import CronJob from './utils/CronJobSetup.js';
 import UserRoutes from "./routes/userRoutes.js";
 import UserService from "./service/UserService.js";
 import Mailer from "./middleware/Mailer.js";
+import TaskRoutes from "./routes/TaskRoutes.js"
+
+
+
+
 const cronJob = new CronJob();
 cronJob.startAllJobs();
 dotenv.config({ path: "../.env" });
@@ -21,23 +34,24 @@ mongoose.connect(mongoDBUri,)
     .catch(err => console.error('MongoDB connection error:', err));
 
 
-/*
 User.getUserById("65d0806b86702881cfe60fed").then((user) => {
     console.log(user.semester[0].modules);
 });
-*/
+
 const app = express();
 app.use(express.json());
 app.use(cors());
 const authRoutes = new AuthRoutes();
 const importRoutes = new ImportRoutes();
 const userRoutes = new UserRoutes();
-const PORT = 3000;
+const taskRoutes = new TaskRoutes();
+const PORT = 3001;
+
 app.use('/api/protected', AuthMiddleware.authenticate, authRoutes.router);
-
 app.use('/api/protected', AuthMiddleware.authenticate, importRoutes.router);
-
 app.use('/api/protected', AuthMiddleware.authenticate, userRoutes.router);
+app.use('api/protected', AuthMiddleware.authenticate, taskRoutes.router);
+
 app.use('/api/protected/test', (req, res) => {
     const users = User.getUserByEmail('testu@test.com').then((user) => {
         res.status(200).send(user);
@@ -61,3 +75,4 @@ app.all("/api", (req, res, next) => {
 //})
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+*/

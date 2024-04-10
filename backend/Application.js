@@ -1,0 +1,43 @@
+import express from 'express';
+import cors from "cors"
+import AuthMiddleware from "./middleware/AuthMiddleware.js"
+import AuthRoutes from "./routes/AuthRoutes.js";
+import mongoose from 'mongoose';
+import ImportRoutes from "./routes/ImportRoutes.js";
+import CronJob from './utils/CronJobSetup.js';
+import UserRoutes from "./routes/userRoutes.js";
+import TaskRoutes from './routes/TaskRoutes.js';
+
+class Application {
+    constructor(port) {
+        this.app = express();
+        this.app.use(express.json());
+        this.app.use(cors());
+        this.cronJob = new CronJob();
+        this.authRoutes = new AuthRoutes();
+        this.importRoutes = new ImportRoutes();
+        this.userRoutes = new UserRoutes();
+        this.taskRoutes = new TaskRoutes();
+        this.PORT = port;
+        this.mongoDBUri = 'mongodb://localhost:27017/wonderfultasksdb';
+
+    }
+    start() {
+        this.cronJob.startAllJobs();
+        this.app.use('/api/auth', this.authRoutes.router);
+        this.app.use('/api/protected', AuthMiddleware.authenticate, this.authRoutes.router);
+        this.app.use('/api/protected', AuthMiddleware.authenticate, this.importRoutes.router);
+        this.app.use('/api/protected', AuthMiddleware.authenticate, this.userRoutes.router);
+        this.app.use('/api/protected', AuthMiddleware.authenticate, this.taskRoutes.router);
+        mongoose.connect(this.mongoDBUri,)
+            .then(() => console.log('MongoDB connected'))
+            .catch(err => console.error('MongoDB connection error:', err));
+        this.app.listen(this.PORT, () => {
+            console.log('Server is running on port: ' + this.PORT);
+        });
+
+    }
+}
+
+export default Application;
+

@@ -40,7 +40,12 @@ class UserService {
 
 
     static async getUserInternal(userId) {
-        return await this.findById(userId);
+        try {
+            let user = await this.findById(userId);
+            return user;
+        } catch (err) {
+            return null;
+        }
     }
 
     static async updateUser(userId, email, name, password) {
