@@ -1,5 +1,5 @@
 import express from 'express';
-import TaskController from '../controllers/TaskController.js';
+import TaskController from '../controllers/TaskController.js'
 
 class TaskRoutes {
     constructor() {
@@ -11,6 +11,5 @@ class TaskRoutes {
         this.router.get('/task', TaskController.getTasks);
     }
 }
-
 
 export default TaskRoutes;

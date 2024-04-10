@@ -1,5 +1,5 @@
 import userSchema from "../models/User.js";
-import {model} from "mongoose";
+import { model } from "mongoose";
 import Response from "../utils/Response.js";
 import UserService from "./UserService.js";
 
@@ -35,7 +35,7 @@ class ModuleService {
                 return new Response("Module already exists", 404, {});
             }
         } else {
-           return new Response("Semester Does not Exist", 404, {})
+            return new Response("Semester Does not Exist", 404, {})
         }
     }
 
@@ -54,10 +54,8 @@ class ModuleService {
         }
     }
 
-    static readModule(moduleCode, user) {
-        const module = user.modules.find(
-            (module) => module.moduleCode === moduleCode,
-        );
+    static readModule(user, moduleCode) {
+        const module = user.semester.find(semester => semester.modules.find(module => module.moduleCode === moduleCode));
         if (module) {
             return new Response("Module found", 200, module);
         } else {
@@ -66,7 +64,7 @@ class ModuleService {
     }
 
     static
-    async readModuleByUserId(userId, moduleCode) {
+        async readModuleByUserId(userId, moduleCode) {
         const user = await UserService.getUserInteral(userId);
         if (user) {
             let response = this.readModule(moduleCode, user);
@@ -142,7 +140,7 @@ class ModuleService {
     }
 
     static
-    async editModuleEndDateByUserId(userId, moduleCode, newEndDate) {
+        async editModuleEndDateByUserId(userId, moduleCode, newEndDate) {
         const user = await UserService.getUserInternal(userId);
         if (user) {
             let response = this.editModuleEndDate(moduleCode, newEndDate, user);
@@ -170,7 +168,7 @@ class ModuleService {
 
 
     static
-    async deleteModuleByUserId(userId, moduleCode) {
+        async deleteModuleByUserId(userId, moduleCode) {
         const user = await UserService.getUserInternal(userId);
         if (user) {
             let response = this.deleteModule(moduleCode, user);

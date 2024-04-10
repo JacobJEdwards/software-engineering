@@ -1,7 +1,9 @@
-import UserService from "./UserService.js";
 import userSchema from "../models/User.js";
 import { model } from "mongoose";
 import Response from "../utils/Response.js";
+import User from "./UserService.js";
+import Module from "./ModuleService.js";
+import Milestone from "./MilestoneService.js";
 
 class TaskService {
     static createTask(user, milestoneId, taskName, taskDescription, taskDate) {
@@ -18,7 +20,7 @@ class TaskService {
     }
 
     static async createTaskByUserId(userId, milestoneId, taskName, taskDescription, taskDate) {
-        const user = await UserService.getUserInternal(userId);
+        const user = await User.getUserInternal(userId);
         if (user) {
             let response = this.createTask(user, milestoneId, taskName, taskDescription, taskDate);
             if (response.statusCode === 200) {
@@ -49,7 +51,7 @@ class TaskService {
 
 
     static async updateTaskByUserId(userId, taskId, newTaskName, newStartDate, newEndDate, newStatus, newHours) {
-        const user = await UserService.getUserInteral(userId);
+        const user = await User.getUserInteral(userId);
         if (user) {
             let response = this.updateTask(user, taskId, newTaskName, newStartDate, newEndDate, newStatus, newHours);
             if (response.status === 200) {
@@ -72,7 +74,7 @@ class TaskService {
 
 
     static async readTaskByUserId(userId, taskId) {
-        const user = await UserService.getUserInteral(userId);
+        const user = await User.getUserInteral(userId);
         if (user) {
             let response = this.readTask(user, taskId);
             return response;
@@ -81,12 +83,56 @@ class TaskService {
         }
     }
 
-
-    static async tasksFromDate(userId, date) {
-        const user = await UserService.getUserInternal(userId);
-        let tasks = user.semester.filter(mod => mod.milestones.filter(milestone => milestone.filter(milestone.task.startDate > date)));
+    static async TasksFromDate(userId, date) {
+        let user = await User.getUserInternal(userId);
+        if (!user) {
+            return new Response("User does not exist", 404, { userId });
+        } else if (date < new Date()) {
+            return new Response("Invalid date", 400, { date });
+        }
+        let tasks = user.modules.filter(mod => mod.tasks.filter(task => task.taskDate === date));
         return new Response("Tasks found", 200, tasks);
     }
+
+    static async TaskFromToDate(userId, fromDate, toDate) {
+        let user = await User.getUserInternal(userId);
+        if (!user) {
+            return new Response("User does not exist", 404, { userId });
+        } else if (fromDate > toDate) {
+            return new Response("Invalid date range", 400, { fromDate, toDate });
+        };
+
+        let tasks = user.semester.flatMap(sem => sem.modules.flatMap(mod => mod.milestones.flatMap(mil => mil.tasks.filter(task => task.taskDate >= fromDate && task.taskDate <= toDate))));
+        return new Response("Tasks found", 200, tasks);
+    };
+
+
+    static async readTasksByModuleId(userId, moduleId) {
+        let user = await User.getUserInternal(userId);
+        if (!user) {
+            return new Response("User does not exist", 404, { userId });
+        }
+        let response = Module.readModule(user, moduleId);
+        if (response.status !== 200) {
+            return response;
+        }
+        let tasks = user.modules.flatMap(mod => mod.moduleCode === moduleId).milestones.flatMap(mil => mil.tasks);
+        return new Response("Tasks found", 200, tasks);
+    }
+
+    static async readTasksByMilestoneId(userId, milestoneId) {
+        let user = await User.getUserInternal(userId);
+        if (!user) {
+            return new Response("User does not exist", 404, { userId });
+        }
+        let response = Milestone.readMilestoneByUser(user, milestoneId);
+        if (response.status !== 200) {
+            return response;
+        }
+        return new Response("Tasks found", 200, response.message.tasks);
+    }
+
+
 
 
 
