@@ -47,13 +47,14 @@ class ActivityService {
     }
 
     static getActivityById(activityId) {
-        try {
-            const activity = this.findById(activityId)
-            return new Response("Activity found", 200, activity);
-        } catch (error) {
-            return new Response("Activity not found", 404, { activityId });
+        const { activity, error } = this.findById(activityId)
+        if (error) {
+            return new Response("Error finding activity", 400, { error });
         }
+        return new Response("Activity found", 200, activity);
     }
+
+
 
     static async updateActivity(activityId, newActivityName, newStartDate, newEndDate, newStatus, newHours) {
         let response = getActivityById(activityId);

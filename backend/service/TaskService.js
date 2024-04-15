@@ -4,26 +4,56 @@ import Response from "../utils/Response.js";
 import User from "./UserService.js";
 import Module from "./ModuleService.js";
 import Milestone from "./MilestoneService.js";
+import Validator from "../middleware/Validator.js";
 
 class TaskService {
-    static createTask(user, milestoneId, taskName, taskDescription, taskDate) {
-        let milestoneFound = user.semester.find(sem => sem.module.find(module => module.milestoneId === milestoneId));
-        if (!milestoneFound) {
-            return new Response("Milestone does not exist", 404, { milestoneId });
+    static async createTask(user, milestoneId, title, startDate, endDate, progress, hrsCompleted, hrsRequired) {
+        let tasks = null;
+        for (let semester of user.semester) {
+            for (let module of semester.modules) {
+                for (let milestone of module.milestones) {
+                    if (milestone.id === milestoneId) {
+                        tasks = milestone.tasks;
+                        break;
+                    }
+                }
+                if (tasks) break;
+            }
+
+            if (tasks) break;
         }
 
+
+        if (!tasks) {
+            return new Response("Milestone does not exist", 404, { milestoneId });
+        }
         const newTask = {
-            taskName, taskDescription, taskDate
+            title: title,
+            startDate: startDate,
+            endDate: endDate,
+            status: progress,
+            hrsCompleted: hrsCompleted,
+            hrsRequired: hrsRequired,
+            activities: [],
         };
-        milestoneFound.tasks.push(newTask);
+
+        const response = await Validator.validateTaskObject(newTask);
+        if (response.code !== 200) {
+            return response;
+        }
+
+        tasks.push(newTask);
         return new Response("Task created successfully", 200, { newTask });
     }
-
-    static async createTaskByUserId(userId, milestoneId, taskName, taskDescription, taskDate) {
+    static async createTaskByUserId(userId, milestoneId, title, startDate, endDate, progress, hrsCompleted, hrsRequired) {
+        const response = await Validator.validateUser(userId, null, null, null);
+        if (response.code !== 200) {
+            return response;
+        }
         const user = await User.getUserInternal(userId);
         if (user) {
-            let response = this.createTask(user, milestoneId, taskName, taskDescription, taskDate);
-            if (response.statusCode === 200) {
+            let response = await this.createTask(user, milestoneId, title, startDate, endDate, progress, hrsCompleted, hrsRequired);
+            if (response.code === 200) {
                 await user.save();
                 return response;
             } else {
@@ -35,7 +65,11 @@ class TaskService {
     }
 
 
-    static updateTask(user, taskId, newTaskName, newStartDate, newEndDate, newStatus, hrsRequired, hrsCompleted) {
+    static async updateTask(user, taskId, newTaskName, newStartDate, newEndDate, newStatus, hrsRequired, hrsCompleted) {
+        const response = await Validator.validateTask(taskId, null, null, null);
+        if (response.code !== 200) {
+            return response;
+        }
         const task = user.modules(milestones => milestones.find(tasks => tasks.id === taskId));
         if (task) {
             task.taskName = newTaskName == null ? task.taskName : newTaskName;
@@ -44,17 +78,17 @@ class TaskService {
             task.status = newStatus == null ? task.status : newStatus;
             task.hrsRequired = hrsRequired == null ? task.hrsRequired : hrsRequired;
             task.hrsCompleted = hrsCompleted = null ? task.hrsCompleted : hrsCompleted;
-            return new Response("Task updated successfully", 200, {});
+            return await Validator.validateTask(task);
         } else {
             return new Response("Task does not exist", 404, { taskId });
         }
     }
 
 
-    static async updateTaskByUserId(userId, taskId, newTaskName, newStartDate, newEndDate, newStatus, newHours) {
+    static async updateTaskByUserId(userId, taskId, newTaskName, newStartDate, newEndDate, newStatus, newHrsRequired, newHrsCompleted) {
         const user = await User.getUserInteral(userId);
         if (user) {
-            let response = this.updateTask(user, taskId, newTaskName, newStartDate, newEndDate, newStatus, newHours);
+            let response = this.updateTask(user, taskId, newTaskName, newStartDate, newEndDate, newStatus, newHrsRequired, newHrsCompleted);
             if (response.status === 200) {
                 user.save();
             }
@@ -64,7 +98,12 @@ class TaskService {
         }
     }
 
-    static readTask(module, taskId) {
+    static async readTask(module, taskId) {
+        const response = await Validator.validateTask(taskId, null, null, null);
+        if (response.code !== 200) {
+            return response;
+        }
+
         const task = module.tasks.find(task => task.id === taskId);
         if (task) {
             return Response("Task found", 200, task);
@@ -75,6 +114,10 @@ class TaskService {
 
 
     static async readTaskByUserId(userId, taskId) {
+        const response = await Validator.validateUser(userId, null, null, null);
+        if (response.code !== 200) {
+            return response;
+        }
         const user = await User.getUserInteral(userId);
         if (user) {
             let response = this.readTask(user, taskId);
@@ -85,6 +128,10 @@ class TaskService {
     }
 
     static async TasksFromDate(userId, date) {
+        const response = await Validator.validateUser();
+        if (response.code !== 200) {
+            return response;
+        }
         let user = await User.getUserInternal(userId);
         if (!user) {
             return new Response("User does not exist", 404, { userId });
@@ -133,36 +180,67 @@ class TaskService {
         return new Response("Tasks found", 200, response.message.tasks);
     }
 
-    static async addHrs(userid, taskid, hrs) {
-        const user = await User.getUserInternal(userid);
+    static async addHrs(userId, taskId, hrs) {
+        const response = await Validator.validateUser(userId, null, null, null);
+        if (response.code !== 200) {
+            return response;
+        }
+
+        const user = await User.getUserInternal(userId);
         if (!user) {
             return new Response("User does not exist", 404, { userId });
         }
-        let task = user.modules.flatMap(mod => mod.milestones.flatMap(mil => mil.tasks.find(task => task.id === taskid)));
+        let task = user.semester.flatMap(sem => sem.modules.flatMap(mod => mod.milestones.flatMap(mil => mil.tasks.find(task => task.id === taskId))));
         if (!task) {
             return new Response("Task does not exist", 404, { taskId });
         }
         task.hrsCompleted += hrs;
+        if (task.hrsCompleted >= task.hrsRequired) {
+            task.status = "Completed";
+        } else {
+            task.status = "In Progress";
+        }
+        await user.save();
         return new Response("Hours added", 200, { hrs });
     }
 
+    static async deleteTask(user, taskId) {
+        const response = await Validator.validateTask(taskId, null, null, null, null, null, null);
+        if (response.code !== 200) {
+            return response;
+        }
+
+        let deleted = false;
+        for (let semester of user.semester) {
+            for (let module of semester.modules) {
+                for (let milestone of module.milestones) {
+                    const index = milestone.tasks.findIndex(task => task.id === taskId);
+                    if (index !== -1) {
+                        milestone.tasks.splice(index, 1);
+                        deleted = true;
+                        break;
+                    }
+                }
+                if (deleted) break;
+            }
+            if (deleted) break;
+        }
 
 
-
-
-    static deleteTask(module, taskId) {
-        const task = module.tasks.find(task => task.id === taskId);
-        if (task) {
-            module.tasks.pull(task);
-            return new Response("Task deleted successfully", 200, {});
-        } else {
+        if (!deleted) {
             return new Response("Task does not exist", 404, { taskId });
+        } else {
+            return new Response("Task deleted successfully", 200, {});
         }
     }
 
 
     static async deleteTaskByUserId(userId, taskId) {
-        const user = await UserService.getUserInteral(userId);
+        const response = await Validator.validateUser(userId, null, null, null);
+        if (response.code !== 200) {
+            return response
+        }
+        const user = await User.getUserInternal(userId);
         if (user) {
             let response = this.deleteTask(user, taskId);
             if (response.status === 200) {

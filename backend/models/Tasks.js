@@ -10,7 +10,10 @@ const taskSchema = new Schema({
     status: { type: String, required: true, enum: ['Started', 'In Progress', 'Completed'] },
     hrsCompleted: { type: Number, required: true, default: 0 },
     hrsRequired: { type: Number, required: true },
-    activities: { type: mongoose.Types.ObjectId, required: true },
+    activities: {
+        type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Activity' }],
+        default: []
+    }
 }, { timestamps: true });
 
 
