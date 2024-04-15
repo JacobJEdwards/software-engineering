@@ -7,7 +7,7 @@ class AuthMiddleware {
             req.userData = jwt.verify(token, process.env.JWT_SECRET);
             next();
         } catch (e) {
-            return res.status(401).json({message: 'Authentication failed'})
+            return res.status(401).json({ message: 'Authentication failed' })
         }
     }
 }

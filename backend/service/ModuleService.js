@@ -63,8 +63,7 @@ class ModuleService {
         }
     }
 
-    static
-        async readModuleByUserId(userId, moduleCode) {
+    static async readModuleByUserId(userId, moduleCode) {
         const user = await UserService.getUserInteral(userId);
         if (user) {
             let response = this.readModule(moduleCode, user);
@@ -73,6 +72,21 @@ class ModuleService {
             return new Response("User does not exist", 404, {});
         }
     }
+
+
+    static async editModule(moduleCode, newModuleName, newModuleCode, newStartDate, newEndDate, user) {
+        const module = user.semester.find(semester => semester.modules.find(module => module.moduleCode === moduleCode));
+        if (module) {
+            module.moduleName = newModuleName == null ? module.moduleName : newModuleName;
+            module.moduleCode = newModuleCode == null ? module.moduleCode : newModuleCode;
+            module.startDate = newStartDate == null ? module.startDate : newStartDate;
+            module.endDate = newEndDate == null ? module.endDate : newEndDate;
+            return new Response("Module updated successfully", 200, {});
+        } else {
+            return new Response("Module does not exist", 404, {});
+        }
+    };
+
 
 
     static editModuleName(moduleCode, newModuleName, user) {
@@ -139,8 +153,7 @@ class ModuleService {
         }
     }
 
-    static
-        async editModuleEndDateByUserId(userId, moduleCode, newEndDate) {
+    static async editModuleEndDateByUserId(userId, moduleCode, newEndDate) {
         const user = await UserService.getUserInternal(userId);
         if (user) {
             let response = this.editModuleEndDate(moduleCode, newEndDate, user);
@@ -167,8 +180,7 @@ class ModuleService {
     }
 
 
-    static
-        async deleteModuleByUserId(userId, moduleCode) {
+    static async deleteModuleByUserId(userId, moduleCode) {
         const user = await UserService.getUserInternal(userId);
         if (user) {
             let response = this.deleteModule(moduleCode, user);
