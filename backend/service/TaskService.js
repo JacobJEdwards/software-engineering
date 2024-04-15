@@ -35,14 +35,15 @@ class TaskService {
     }
 
 
-    static updateTask(user, taskId, newTaskName, newStartDate, newEndDate, newStatus, newHours) {
+    static updateTask(user, taskId, newTaskName, newStartDate, newEndDate, newStatus, hrsRequired, hrsCompleted) {
         const task = user.modules(milestones => milestones.find(tasks => tasks.id === taskId));
         if (task) {
             task.taskName = newTaskName == null ? task.taskName : newTaskName;
             task.startDate = newStartDate == null ? task.startDate : newStartDate;
             task.endDate = newEndDate == null ? task.endDate : newEndDate;
             task.status = newStatus == null ? task.status : newStatus;
-            task.hours = newHours == null ? task.hours : newHours;
+            task.hrsRequired = hrsRequired == null ? task.hrsRequired : hrsRequired;
+            task.hrsCompleted = hrsCompleted = null ? task.hrsCompleted : hrsCompleted;
             return new Response("Task updated successfully", 200, {});
         } else {
             return new Response("Task does not exist", 404, { taskId });
@@ -130,6 +131,19 @@ class TaskService {
             return response;
         }
         return new Response("Tasks found", 200, response.message.tasks);
+    }
+
+    static async addHrs(userid, taskid, hrs) {
+        const user = await User.getUserInternal(userid);
+        if (!user) {
+            return new Response("User does not exist", 404, { userId });
+        }
+        let task = user.modules.flatMap(mod => mod.milestones.flatMap(mil => mil.tasks.find(task => task.id === taskid)));
+        if (!task) {
+            return new Response("Task does not exist", 404, { taskId });
+        }
+        task.hrsCompleted += hrs;
+        return new Response("Hours added", 200, { hrs });
     }
 
 

@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
 import Application from "./Application.js";
 
-dotenv.config({ path: "../.env" });
-const app = new Application(3006);
+dotenv.config({ path: ".env" });
+const app = new Application(3011);
 app.start();
 
 /*

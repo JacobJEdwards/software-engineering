@@ -1,4 +1,3 @@
-// Milestones.js
 import mongoose from "mongoose";
 import taskSchema from "./Tasks.js";
 
