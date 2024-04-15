@@ -180,6 +180,64 @@ class TaskService {
         return new Response("Tasks found", 200, response.message.tasks);
     }
 
+
+    static async addActivityToTask(userId, taskId, activityId, hrs) {
+        const response = await Validator.validateUser(userId, null, null, null);
+        if (response.code !== 200) {
+            return response;
+        }
+        const user = await User.getUserInternal(userId);
+        if (!user) {
+            return new Response("User does not exist", 404, { userId });
+        }
+        for (let semester of user.semester) {
+            for (let module of semester.modules) {
+                for (let milestone of module.milestones) {
+                    for (let task of milestone.tasks) {
+                        if (task.id === taskId) {
+                            task.activities.push(activityId);
+                            await this.addHrs(userId, taskId, hrs);
+                            await user.save();
+                            return new Response("Activity added to task", 200, { activityId });
+                        }
+                    }
+                }
+            }
+
+        }
+        return new Response("Task does not exist", 404, { taskId });
+    }
+
+
+    static async deleteActivityFromTask(userId, taskId, activityId, hrs) {
+        const response = await Validator.validateUser(userId, null, null, null);
+        if (response.code !== 200) {
+            return response;
+        }
+        const user = await User.getUserInternal(userId);
+        if (!user) {
+            return new Response("User does not exist", 404, { userId });
+        }
+        for (let semester of user.semester) {
+            for (let module of semester.modules) {
+                for (let milestone of module.milestones) {
+                    for (let task of milestone.tasks) {
+                        if (task.id === taskId) {
+                            const index = task.activities.findIndex(activity => activity === activityId);
+                            if (index !== -1) {
+                                task.activities.splice(index, 1);
+                                await this.addHrs(userId, taskId, -hrs);
+                                await user.save();
+                                return new Response("Activity deleted from task", 200, { activityId })
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return new Response("Activity does not exist", 400, {});
+    }
+
     static async addHrs(userId, taskId, hrs) {
         const response = await Validator.validateUser(userId, null, null, null);
         if (response.code !== 200) {

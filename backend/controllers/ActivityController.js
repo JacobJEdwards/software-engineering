@@ -16,19 +16,18 @@ class ActivityController {
 
     static async createActivity(req, res) {
         let userid = req.userData.userId;
-        let moduleCode = req.body.moduleCode;
-        let milestoneId = req.body.milestoneId;
         let tasks = req.body.tasks;
-        let activityName = req.body.activityName;
+        let activityName = req.body.activityTitle;
         let activityType = req.body.activityType;
         let activityDescription = req.body.activityDescription;
-        let activity = await Activity.createActivity(userid, moduleCode, milestoneId, tasks, activityName, activityType, activityDescription);
+        let hrsCompleted = req.body.hrsCompleted;
+        let activity = await Activity.createActivity(userid, tasks, activityName, activityType, activityDescription, hrsCompleted);
         return res.status(activity.code).json({ message: activity.message, data: activity.data });
     }
 
     static async deleteActivity(req, res) {
         let activityId = req.body.activityId;
-        let activity = await Activity.deleteActivity(activityId);
+        let activity = await Activity.deleteActivity(req.userData.userId, activityId);
         return res.status(activity.code).json({ message: activity.message, data: activity.data });
     }
 

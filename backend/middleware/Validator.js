@@ -110,11 +110,7 @@ const fullSchema = Joi.object({
         .required(),
     Notes: Joi.string(),
     hrsCompleted: Joi.number()
-        .required(),
-    actvities: Joi.array()
 });
-
-
 
 class Validator {
     static generateFileValidation() {
@@ -431,8 +427,25 @@ class Validator {
     }
 
 
-    static async validateActivity(activityObject) {
-        const { error } = await fullSchema.validateAsync(activityObject);
+    static async validateActivityObject(activityObject) {
+        const activityUserId = fullSchema.extract('ActivityUserId');
+        const tasksList = fullSchema.extract('TasksList');
+        const activityTitle = fullSchema.extract('ActivityTitle');
+        const activityType = fullSchema.extract('ActivityType');
+        const notes = fullSchema.extract('Notes');
+        const hrsCompleted = fullSchema.extract('hrsCompleted');
+
+        const schema = Joi.object({
+            userId: activityUserId,
+            tasks: tasksList,
+            activityTitle: activityTitle,
+            activityType: activityType,
+            notes: notes,
+            hrsCompleted: hrsCompleted,
+            completed: Joi.boolean()
+        });
+
+        const { error } = schema.validate(activityObject);
         if (error) {
             return new Response(error.message, 400, {});
         } else {
