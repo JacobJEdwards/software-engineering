@@ -7,6 +7,7 @@ import ImportRoutes from "./routes/ImportRoutes.js";
 import CronJob from './utils/CronJobSetup.js';
 import UserRoutes from "./routes/userRoutes.js";
 import TaskRoutes from './routes/TaskRoutes.js';
+import ActivityRoutes from "./routes/ActivityRoutes.js";
 
 class Application {
     constructor(port) {
@@ -18,6 +19,7 @@ class Application {
         this.importRoutes = new ImportRoutes();
         this.userRoutes = new UserRoutes();
         this.taskRoutes = new TaskRoutes();
+        this.activityRoutes = new ActivityRoutes();
         this.PORT = port;
         this.mongoDBUri = 'mongodb://localhost:27017/wonderfultasksdb';
 
@@ -29,6 +31,7 @@ class Application {
         this.app.use('/api/protected', AuthMiddleware.authenticate, this.importRoutes.router);
         this.app.use('/api/protected', AuthMiddleware.authenticate, this.userRoutes.router);
         this.app.use('/api/protected', AuthMiddleware.authenticate, this.taskRoutes.router);
+        this.app.use('/api/protected', AuthMiddleware.authenticate, this.activityRoutes.router);
         mongoose.connect(this.mongoDBUri,)
             .then(() => console.log('MongoDB connected'))
             .catch(err => console.error('MongoDB connection error:', err));

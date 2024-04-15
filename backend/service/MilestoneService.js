@@ -15,6 +15,7 @@ class MilestoneService {
                 endDate: milestoneEndDate,
                 ltsDefined: ltsDefined
             };
+
             user.semester.find(semester => {
                 semester.modules.find(module => {
                     if (module.moduleCode === moduleCode) {
@@ -22,10 +23,11 @@ class MilestoneService {
                     }
                 })
             });
+
             await user.save();
             return new Response("Milestone created successfully", 200, {});
         } else {
-            return new Response("Milestone could not find milestone", 404, {});
+            return new Response("Milestone could not find milestone", 404, { userid: userid, milestoneName: milestoneName });
         }
     }
 
@@ -48,7 +50,7 @@ class MilestoneService {
             });
             return new Response("Milestone successfully created", 200, {});
         } else {
-            return new Response("Cannot find milestone", 400, {});
+            return new Response("Cannot find milestone", 400, { userid: user.id, milestoneName: milestoneName, moduleCode: moduleCode });
         }
     }
 
@@ -92,7 +94,7 @@ class MilestoneService {
             milestone.endDate = newEndDate == null ? milestone.endDate : newEndDate;
             return new Response("Milestone updated successfully", 200, {});
         } else {
-            return new Response("Milestone updated successfully", 200, {});
+            return new Response("Milestone not able to be updated", 400, {});
         }
     }
 
