@@ -12,7 +12,7 @@ class TaskService {
         for (let semester of user.semester) {
             for (let module of semester.modules) {
                 for (let milestone of module.milestones) {
-                    if (milestone.id === milestoneId) {
+                    if (milestone._id.valueOf() === milestoneId) {
                         tasks = milestone.tasks;
                         break;
                     }
@@ -24,7 +24,7 @@ class TaskService {
         }
 
 
-        if (!tasks) {
+        if (tasks === null) {
             return new Response("Milestone does not exist", 404, { milestoneId });
         }
         const newTask = {
