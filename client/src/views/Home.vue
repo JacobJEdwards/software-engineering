@@ -42,6 +42,8 @@ for (const semester of (userStore.user?.semester ?? [])) {
     }
 }
 
+console.log(userStore.user)
+
 </script>
 
 <template>

@@ -50,6 +50,7 @@ export const useUserStore = defineStore("user", {
                 this.user = json.data;
             } catch (e) {
                 console.error(e)
+                authStore.logout()
             } finally {
                 this.loading = false;
             }
