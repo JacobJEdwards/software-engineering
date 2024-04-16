@@ -205,7 +205,9 @@ class TaskService {
             }
 
         }
+
         return new Response("Task does not exist", 404, { taskId });
+
     }
 
 
@@ -214,28 +216,33 @@ class TaskService {
         if (response.code !== 200) {
             return response;
         }
+
         const user = await User.getUserInternal(userId);
         if (!user) {
             return new Response("User does not exist", 404, { userId });
         }
-        for (let semester of user.semester) {
-            for (let module of semester.modules) {
-                for (let milestone of module.milestones) {
-                    for (let task of milestone.tasks) {
+
+        user.semester.forEach(semester => {
+            semester.modules.forEach(module => {
+                module.milestones.forEach(milestone => {
+                    milestone.tasks.forEach(async task => {
                         if (task.id === taskId) {
                             const index = task.activities.findIndex(activity => activity === activityId);
                             if (index !== -1) {
                                 task.activities.splice(index, 1);
                                 await this.addHrs(userId, taskId, -hrs);
                                 await user.save();
-                                return new Response("Activity deleted from task", 200, { activityId })
+                                return new Response("Activity deleted from task", 200, { activityId });
+
                             }
                         }
-                    }
-                }
-            }
-        }
+                    })
+                })
+            })
+        });
+
         return new Response("Activity does not exist", 400, {});
+
     }
 
     static async addHrs(userId, taskId, hrs) {
