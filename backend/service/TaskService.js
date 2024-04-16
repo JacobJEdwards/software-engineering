@@ -308,8 +308,8 @@ class TaskService {
         }
         const user = await User.getUserInternal(userId);
         if (user) {
-            let response = this.deleteTask(user, taskId);
-            if (response.status === 200) {
+            let response = await this.deleteTask(user, taskId);
+            if (response.code === 200) {
                 user.save();
             }
             return response;
