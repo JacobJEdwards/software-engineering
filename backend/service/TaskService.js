@@ -24,7 +24,7 @@ class TaskService {
         }
 
 
-        if (tasks == null) {
+        if (tasks === null) {
             return new Response("Milestone does not exist", 404, { milestoneId });
         }
         const newTask = {
