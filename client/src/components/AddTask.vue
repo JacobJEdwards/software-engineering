@@ -72,7 +72,7 @@ const createTask = async () => {
           endDate: formData.value.endDate,
           progress: formData.value.progress,
           hrsCompleted: formData.value.hrsCompleted,
-          hrsRequired: formData.value.hrsRequired
+          hrsRequired: formData.value.hrsRequired,
       }
 
       const response = await fetch(`${API_ROUTE}/protected/task`, {

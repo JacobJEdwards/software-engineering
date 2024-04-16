@@ -23,7 +23,7 @@ const calendarOptions = ref({
     selectMirror: false,
     dayMaxEvents: true,
     weekends: true,
-    initialEvents: [],
+    events: [],
 })
 
 

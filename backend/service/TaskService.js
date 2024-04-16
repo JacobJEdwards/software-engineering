@@ -47,6 +47,7 @@ class TaskService {
     }
     static async createTaskByUserId(userId, milestoneId, title, startDate, endDate, progress, hrsCompleted, hrsRequired) {
         const response = await Validator.validateUser(userId, null, null, null);
+
         if (response.code !== 200) {
             return response;
         }
