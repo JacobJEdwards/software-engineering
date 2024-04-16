@@ -86,10 +86,9 @@ const fullSchema = Joi.object({
     hrsRequired: Joi.number()
         .required()
         .min(Joi.ref('hrsCompleted')),
-    activites: Joi.array()
+    activities: Joi.array()
         .items(Joi.string())
         .required(),
-
 
     //Activity Validation
     ActivityUserId: Joi.string()
