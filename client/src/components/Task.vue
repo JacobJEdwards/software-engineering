@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { Task, TaskStatuses, TaskStatus } from "../typings/user"
-import { ref } from "vue"
-import { useLoading} from "../utils/utils.ts";
-import { API_ROUTE } from "../config.ts";
-import { useAuthStore, useUserStore } from "../stores";
+import {Task, TaskStatuses, TaskStatus} from "../typings/user"
+import {ref} from "vue"
+import {useLoading, useSuccessErrorMessage} from "../utils/utils.ts";
+import {useAuthStore, useUserStore} from "../stores";
+import { TaskService } from "../services/tasks.ts";
 
-const { loading } = useLoading()
+const { success, error } = useSuccessErrorMessage()
+
+const {loading} = useLoading()
 
 const authStore = useAuthStore()
 const userStore = useUserStore()
@@ -39,43 +41,38 @@ const modelVisible = ref<boolean>(false)
 const edit = ref<boolean>(false)
 
 const deleteTask = async () => {
+  success.value = ""
+  error.value = ""
   loading.value = true
-  // await Tasks.deleteTaskById(task._id)
 
-  try {
-    const taskId = props.task._id
+  const taskId = props.task._id
+  const result = await TaskService.delete(taskId, authStore.authToken)
 
-    const response = await fetch(`${API_ROUTE}/protected/task`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": authStore.token ?? ""
-      },
-      body: JSON.stringify({ taskId })
-    })
-
-
-    if (!response.ok) {
-      throw new Error("Failed to delete task")
-    }
-
-    const data = await response.json()
-    console.log(data)
-
+  if (result.success) {
+    success.value = "Task deleted successfully"
     await userStore.getUser()
-  } catch (error) {
-    console.error(error)
-  } finally {
-    loading.value = false
+    modelVisible.value = false
+  } else {
+    error.value = "Failed to delete task"
   }
+
+  loading.value = false
 }
 
 const updateTask = async () => {
+  success.value = ""
+  error.value = ""
+
+  if (!edit.value) {
+    edit.value = true
+    return
+  }
+
   loading.value = true
-  try {
     const taskId = props.task._id
     const body = {
       taskId,
+      milestoneId: "",
       title: formData.value.title,
       startDate: formData.value.startDate,
       endDate: formData.value.endDate,
@@ -84,29 +81,17 @@ const updateTask = async () => {
       hrsRequired: formData.value.hrsRequired
     }
 
-    const response = await fetch(`${API_ROUTE}/protected/task`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": authStore.token ?? ""
-      },
-      body: JSON.stringify(body)
-    })
+    const result = await TaskService.update(body, authStore.authToken)
 
-    if (!response.ok) {
-      throw new Error("Failed to update task")
-    }
-
-    const data = await response.json()
-    console.log(data)
-
+  if (result.success) {
+    success.value = "Task updated successfully"
     await userStore.getUser()
-  } catch (error) {
-    console.error(error)
-  } finally {
-    loading.value = false
+    modelVisible.value = false
+  } else {
+    error.value = "Failed to update task"
   }
 
+  loading.value = false
 }
 
 
@@ -120,25 +105,31 @@ const updateTask = async () => {
       </v-card-title>
       <v-card-text v-if="props.editable && edit">
         <v-row>
-          <v-col cols="12">
-            <v-text-field v-model="formData.title" label="Title"></v-text-field>
+          <v-col cols="12" v-if="error || success">
+            <v-alert v-if="error" type="error">{{ error }}</v-alert>
+            <v-alert v-if="success" type="success">{{ success }}</v-alert>
           </v-col>
           <v-col cols="12">
-            <v-text-field v-model="formData.startDate" label="Start Date"></v-text-field>
+            <v-text-field :loading="loading" v-model="formData.title" label="Title"></v-text-field>
           </v-col>
           <v-col cols="12">
-            <v-text-field v-model="formData.endDate" label="End Date"></v-text-field>
+            <v-text-field :loading="loading" v-model="formData.startDate" label="Start Date"></v-text-field>
           </v-col>
           <v-col cols="12">
-            <v-select v-model="formData.status" label="Status" :items="Object.values(TaskStatuses)"></v-select>
+            <v-text-field :loading="loading" v-model="formData.endDate" label="End Date"></v-text-field>
           </v-col>
           <v-col cols="12">
-            <v-text-field hint="Please log an activity to update hours." disabled v-model="task.hrsCompleted"
+            <v-select :loading="loading" v-model="formData.status" label="Status"
+                      :items="Object.values(TaskStatuses)"></v-select>
+          </v-col>
+          <v-col cols="12">
+            <v-text-field :loading="loading" hint="Please log an activity to update hours." disabled
+                          v-model="task.hrsCompleted"
                           label="Hours Completed"
                           persistent-hint></v-text-field>
           </v-col>
           <v-col cols="12">
-            <v-text-field v-model="formData.hrsRequired" label="Hours Required"></v-text-field>
+            <v-text-field :loading="loading" v-model="formData.hrsRequired" label="Hours Required"></v-text-field>
           </v-col>
         </v-row>
       </v-card-text>
@@ -166,15 +157,15 @@ const updateTask = async () => {
       </v-card-text>
 
       <v-card-actions v-if="props.editable">
-        <v-btn @click="edit ? edit = false : modelVisible = false" color="blue">
+        <v-btn :loading="loading" @click="edit ? edit = false : modelVisible = false" color="blue">
           {{ edit ? "Cancel" : "Close" }}
         </v-btn>
 
-        <v-btn @click="edit ? edit = false : edit = true" color="green">
+        <v-btn @click="updateTask" :loading="loading" color="green">
           {{ edit ? "Save" : "Edit" }}
         </v-btn>
         <v-spacer></v-spacer>
-        <v-btn @click="deleteTask" color="danger" >Delete</v-btn>
+        <v-btn :loading="loading" @click="deleteTask" color="danger">Delete</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

@@ -69,3 +69,13 @@ export type unAuthedUser = {
   email: string;
   key: string;
 } & Base
+
+export type TaskForm = {
+  title: string
+  milestoneId: string
+  startDate?: Date | string
+  endDate?: Date | string
+  progress: TaskStatus
+  hrsCompleted: number
+  hrsRequired: number
+}

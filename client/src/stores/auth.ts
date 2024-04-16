@@ -10,7 +10,7 @@ export const useAuthStore = defineStore("auth", {
     }),
     getters: {
         isLoggedIn: state => !!state.token,
-        authToken: state => state.token
+        authToken: state => state.token ?? ""
     },
     actions: {
         login(token: string) {

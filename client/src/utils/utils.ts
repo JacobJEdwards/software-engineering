@@ -16,3 +16,17 @@ export function useSuccessErrorMessage(): { success: Ref<string>, error: Ref<str
 
     return { success, error }
 }
+
+export function useSuccessMessage(): { success: Ref<string> } {
+    const success = ref<string>("")
+
+    return { success }
+}
+
+export function useErrorMessage(): { error: Ref<string> } {
+    const error = ref<string>("")
+
+    return { error }
+}
+
+

@@ -5,6 +5,7 @@ import {ref} from 'vue'
 import { useLoading, useSuccessErrorMessage } from "../utils/utils.ts"
 import { emailRules } from "../utils/form.ts"
 import {useDisplay} from "vuetify";
+import {signup} from "../services/auth.ts"
 
 const router = useRouter()
 
@@ -18,7 +19,7 @@ const showPassword = ref<boolean>(false);
 
 const { mdAndDown } = useDisplay()
 
-const signup = async () => {
+const submitForm = async () => {
   loading.value = true;
   error.value = ""
   success.value = ""
@@ -29,41 +30,19 @@ const signup = async () => {
         return;
    }
 
-  try {
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        name: name.value, password: password.value, email: email.value
-      })
-    }
+   const result = await signup(name.value, email.value, password.value)
 
-    const res = await fetch(`${API_ROUTE}/auth/signup`, options);
-
-    if (!res.ok) {
-      throw new Error("Error on login")
-    }
-
-
-    const json = await res.json();
-
-    const userId = json?.data?.userId;
-
-    if (!userId) {
-      throw new Error("Error on login")
-    }
+  if (!result.success) {
+    error.value = result.error ?? "Error on signup"
+    loading.value = false;
+    password.value = ""
+    return;
+  }
 
     success.value = "Signup successful"
     await redirectToLogin()
 
-  } catch {
-    error.value = "Error on signup"
-    password.value = ""
-  } finally {
     loading.value = false;
-  }
 }
 
 const redirectToLogin = async () => {
@@ -94,7 +73,7 @@ const redirectToLogin = async () => {
                         <v-text-field v-model="password" label="Password" :type="showPassword ? 'text' : 'password'" outlined :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append-inner="showPassword = !showPassword" variant="solo-filled"></v-text-field>
                     </v-col>
                     <v-col cols="12">
-                        <v-btn @click="signup" :loading="loading" color="grey-darken-4" rounded="sm" block>Sign up</v-btn>
+                        <v-btn @click="submitForm" :loading="loading" color="grey-darken-4" rounded="sm" block>Sign up</v-btn>
                     </v-col>
                     <v-col cols="12">
                         <v-alert v-if="error" type="error" dismissible>{{ error }}</v-alert>

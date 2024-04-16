@@ -1,43 +1,24 @@
 <script setup lang="ts">
 import { useUserStore, useAuthStore } from "../stores"
 import { ref } from "vue"
-import { useLoading } from "../utils/utils.ts";
-import { API_ROUTE} from "../config.ts";
+import { useLoading, useSuccessErrorMessage } from "../utils/utils.ts";
+import { TaskService } from "../services/tasks.ts";
 
-import { Milestone, TaskStatus, TaskStatuses } from "../typings/user"
+import { Milestone, TaskStatuses, TaskForm } from "../typings/user"
 
 const { loading } = useLoading()
-
+const { error, success } = useSuccessErrorMessage()
 const TaskStatusSelect = Object.values(TaskStatuses)
-
-type TaskForm = {
-    title: string
-    milestoneId: string
-    startDate: Date | null
-    endDate: Date | null
-    progress: TaskStatus
-    hrsCompleted: number
-    hrsRequired: number
-}
 
 const userStore = useUserStore()
 const authStore = useAuthStore()
 
-// change this
 const semester = userStore.user?.semester[0]
 
 const modelVisible = ref<boolean>(false)
 
-/*
-const tasks = await Tasks.createTaskByUserId(req.userData.userId, req.body.milestoneId, req.body.tasktitle,
-    req.body.startDate, req.body.endDate, req.body.progress, req.body.hrsCompleted, req.body.hrsRequired);
- */
-
-
 const formData = ref<TaskForm>({
     title: "",
-    endDate: null,
-    startDate: null,
     milestoneId: "",
     progress: TaskStatuses.STARTED,
     hrsCompleted: 0,
@@ -45,7 +26,7 @@ const formData = ref<TaskForm>({
 })
 
 const persist = ref<boolean>(false)
-// on any change to the form, set persist to false
+
 const persistForm = () => {
     persist.value = true
 }
@@ -62,59 +43,51 @@ const populateMilestones = () => {
     }
 }
 
-const createTask = async () => {
-    console.log(formData.value)
-
-  loading.value = true
-  try {
-      const body = {
-          milestoneId: formData.value.milestoneId,
-          tasktitle: formData.value.title,
-          startDate: formData.value.startDate,
-          endDate: formData.value.endDate,
-          progress: formData.value.progress,
-          hrsCompleted: formData.value.hrsCompleted,
-          hrsRequired: formData.value.hrsRequired,
-      }
-
-      const response = await fetch(`${API_ROUTE}/protected/task`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": authStore.authToken ?? "",
-          },
-          body: JSON.stringify(body),
-      })
-
-      if (!response.ok) {
-          throw new Error("Failed to create task")
-      }
-
-      const data = await response.json()
-      console.log(data)
-
-      await userStore.getUser()
-  } catch (error) {
-      console.error(error)
-  } finally {
-      loading.value = false
-  }
-
-  closeForm()
-}
-
 const closeForm = () => {
   formData.value = {
     title: "",
     milestoneId: "",
-    startDate: null,
-    endDate: null,
+    startDate: undefined,
+    endDate: undefined,
     progress: TaskStatuses.STARTED,
     hrsCompleted: 0,
     hrsRequired: 0
   }
-    modelVisible.value = false
+  modelVisible.value = false
+  loading.value = false
+  success.value = ""
+  error.value = ""
 }
+
+const createTask = async () => {
+  loading.value = true
+  success.value = ""
+  error.value = ""
+
+    const newTask = {
+      title: formData.value.title,
+      milestoneId: formData.value.milestoneId,
+      startDate: formData.value.startDate,
+      endDate: formData.value.endDate,
+      progress: formData.value.progress,
+      hrsCompleted: formData.value.hrsCompleted,
+      hrsRequired: formData.value.hrsRequired
+    }
+
+      const result = await TaskService.create(newTask, authStore.authToken);
+
+    if (result.success) {
+      success.value = "Task created successfully"
+      await userStore.getUser()
+      modelVisible.value = false
+      closeForm()
+    } else {
+      error.value = "Failed to create task"
+    }
+
+    loading.value = false
+}
+
 
 </script>
 
@@ -128,6 +101,9 @@ const closeForm = () => {
                 </v-card-title>
                 <v-card-text>
                     <v-form @change="persistForm">
+                        <v-alert v-if="error" type="error" class="mb-4">{{ error }}</v-alert>
+                        <v-alert v-if="success" type="success" class="mb-4">{{ success }}</v-alert>
+
                         <v-text-field
                             v-model="formData.title"
                             label="Title"

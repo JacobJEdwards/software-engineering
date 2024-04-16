@@ -5,7 +5,7 @@ import AddTask from "../components/AddTask.vue";
 import Task from "../components/Task.vue";
 
 const userStore = useUserStore()
-// split into components
+
 </script>
 
 <template>

@@ -1,7 +1,7 @@
-import { defineStore } from 'pinia'
-import { API_ROUTE } from '../config.ts'
-import type { User, Task } from '../typings/user.ts'
-import { useAuthStore } from "./auth.ts";
+import {defineStore} from 'pinia'
+import type {Task, User} from '../typings/user.ts'
+import {useAuthStore} from "./auth.ts";
+import {getUser} from "../services/user.ts";
 
 export type UserState = {
     userId: string | null;
@@ -23,7 +23,7 @@ export const useUserStore = defineStore("user", {
     },
     actions: {
         async getUser() {
-            const authStore = useAuthStore()
+            const authStore= useAuthStore()
 
             if (!authStore.isLoggedIn) {
                 return;
@@ -32,39 +32,29 @@ export const useUserStore = defineStore("user", {
             const token = authStore.authToken
 
             if (!token) {
-                return
+                return;
             }
 
-            try {
-                this.loading = true;
-                const response = await fetch(`${API_ROUTE}/protected/home`, {
-                    headers: {
-                        Authorization: token
-                    }
-                })
+            this.loading = true;
 
-                if (!response.ok) {
-                    throw new Error('Error getting profile')
-                }
-
-                const json = await response.json();
-
-                this.user = json.data;
-                this.refreshTasks()
-            } catch (e) {
-                console.error(e)
-                authStore.logout()
-            } finally {
+            const result = await getUser(token)
+            if (!result.success || !result.data) {
                 this.loading = false;
+                authStore.logout()
+                return;
             }
+
+            this.user = result.data;
+            this.refreshTasks()
+
+            this.loading = false;
         },
         refreshTasks() {
             if (!this.user) {
                 return;
             }
 
-            const t = this.user.semester.flatMap(s => s.modules.flatMap(m => m.milestones.flatMap(m => m.tasks.flatMap(t => t))))
-            this.tasks = t
+            this.tasks = this.user.semester.flatMap(s => s.modules.flatMap(m => m.milestones.flatMap(m => m.tasks.flatMap(t => t))))
         }
     },
 })

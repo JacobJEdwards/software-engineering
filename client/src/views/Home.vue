@@ -3,7 +3,7 @@ import UserLoading from "../components/UserLoading.vue"
 import { useUserStore } from "../stores"
 import Semester from "../components/Semester.vue"
 import { ref } from "vue"
-import type { Task } from "../typings/user.ts"
+import Task from "../components/Task.vue"
 
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -40,10 +40,7 @@ const userStore = useUserStore()
             <v-divider></v-divider>
             <v-card-text v-if="userStore.tasks.length">
               <v-list v-if="userStore.tasks.length">
-                <v-list-item v-if="userStore.tasks.length" v-for="task in userStore.tasks" :key="task._id"
-                             :title="task.title">
-                </v-list-item>
-                <v-divider></v-divider>
+                <Task v-for="task in userStore.tasks" :task="task" :key="task._id" small />
               </v-list>
             </v-card-text>
             <v-card-text v-else>
