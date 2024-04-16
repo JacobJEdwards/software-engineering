@@ -1,20 +1,28 @@
 export type TaskStatus = "Started" | "In Progress" | "Completed";
 
-// TODO timestampes
-
 type Base = {
     _id: string;
     createdAt: Date;
     updatedAt: Date;
 }
 
+export type Activity = {
+  userId: string;
+  tasks: Array<Task>;
+  activityTitle: string;
+  activityType: string;
+  notes: string;
+  hrsCompleted: number;
+} & Base
+
 export type Task = {
   name: string;
   startDate: Date;
   endDate: Date;
   status: TaskStatus;
-  hours: number;
-  // TODO activities
+  hrsCompleted: number;
+  hrsRequired: number;
+    activities: Array<Activity>;
 } & Base
 
 export type Milestone = {
