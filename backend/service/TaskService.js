@@ -12,7 +12,7 @@ class TaskService {
         for (let semester of user.semester) {
             for (let module of semester.modules) {
                 for (let milestone of module.milestones) {
-                    if (milestone.id === milestoneId) {
+                    if (milestone._id.valueOf() === milestoneId) {
                         tasks = milestone.tasks;
                         break;
                     }
