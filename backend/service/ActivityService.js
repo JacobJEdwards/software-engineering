@@ -166,26 +166,21 @@ class ActivityService {
     }
 
     static async deleteActivity(userid, activityId) {
+        console.log("activityId", activityId);
         let response = await Validator.validateUser(userid, null, null, null, null, null, null);
         if (response.code !== 200) {
             return response;
         }
-        try {
-            const activity = await this.find({ userid });
-            for (let task of activity.tasks) {
-                let response = await Task.deleteActivityFromTask(userid, task, activityId, activity.hrsCompleted)
-                if (response.code !== 200) {
-                    return response;
-                }
+        const activity = await this.findOne({ _id: activityId })
+        activity.tasks.forEach(async task => {
+            let response = await Task.deleteActivityFromTask(userid, task, activityId, activity.hrs);
+            if (response.code !== 200) {
+                return response;
             }
-            await this.findByIdAndDelete(activityId);
-            return new Response("Activity deleted successfully", 200, {});
-        } catch (error) {
-            return new Response("Error deleting activity", 400, { error });
-        }
+        });
+        await this.findByIdAndDelete(activityId);
+        return new Response("Activity deleted successfully", 200, {});
     }
-
-
 }
 
 
