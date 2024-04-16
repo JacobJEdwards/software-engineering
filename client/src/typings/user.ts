@@ -1,4 +1,11 @@
-export type TaskStatus = "Started" | "In Progress" | "Completed";
+
+export const TaskStatuses = {
+    STARTED: "Started",
+    IN_PROGRESS: "In Progress",
+    COMPLETED: "Completed"
+} as const;
+
+export type TaskStatus = typeof TaskStatuses[keyof typeof TaskStatuses];
 
 type Base = {
     _id: string;
@@ -16,9 +23,9 @@ export type Activity = {
 } & Base
 
 export type Task = {
-  name: string;
-  startDate: Date;
-  endDate: Date;
+  title: string;
+  startDate: Date | string;
+  endDate: Date | string;
   status: TaskStatus;
   hrsCompleted: number;
   hrsRequired: number;

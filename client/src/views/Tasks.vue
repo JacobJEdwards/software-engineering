@@ -1,24 +1,10 @@
 <script setup lang="ts">
 import UserLoading from "../components/UserLoading.vue"
 import { useUserStore } from "../stores"
-import { ref } from "vue"
 import AddTask from "../components/AddTask.vue";
-import type { Task } from "../typings/user.ts"
 
 const userStore = useUserStore()
-
-const tasks = ref<Task[]>([])
-
-for (const semester of (userStore.user?.semester ?? [])) {
-    for (const module of semester.modules) {
-        for (const milestone of module.milestones) {
-            for (const task of milestone.tasks) {
-                tasks.value.push(task)
-            }
-        }
-    }
-}
-
+// split into components
 </script>
 
 <template>
@@ -29,9 +15,10 @@ for (const semester of (userStore.user?.semester ?? [])) {
       <v-col cols="12" md="6">
         <v-card title="Upcoming Tasks" prepend-icon="mdi-checkbox-marked-circle-outline">
           <v-divider></v-divider>
-          <v-card-text v-if="tasks.length">
-            <v-list v-if="tasks.length">
-              <v-list-item v-if="tasks.length" v-for="task in tasks" :key="task._id" :title="task.name" :subtitle="task.endDate?.toDateString()">
+          <v-card-text v-if="userStore.tasks.length">
+            <v-list v-if="userStore.tasks.length">
+              <v-list-item v-if="userStore.tasks.length" v-for="task in userStore.tasks" :key="task._id"
+                           :title="task.title">
               </v-list-item>
             </v-list>
           </v-card-text>
@@ -57,7 +44,7 @@ for (const semester of (userStore.user?.semester ?? [])) {
         <v-card title="All tasks" prepend-icon="mdi-dots-horizontal">
           <v-divider></v-divider>
           <v-card-text>
-            <v-data-table :items="tasks"></v-data-table>
+            <v-data-table :loading="userStore.loading" :items="userStore.tasks"></v-data-table>
           </v-card-text>
         </v-card>
       </v-col>

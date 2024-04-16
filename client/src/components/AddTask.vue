@@ -4,16 +4,18 @@ import { ref } from "vue"
 import { useLoading } from "../utils/utils.ts";
 import { API_ROUTE} from "../config.ts";
 
-import { Milestone } from "../typings/user"
+import { Milestone, TaskStatus, TaskStatuses } from "../typings/user"
 
 const { loading } = useLoading()
+
+const TaskStatusSelect = Object.values(TaskStatuses)
 
 type TaskForm = {
     title: string
     milestoneId: string
     startDate: Date | null
     endDate: Date | null
-    progress: number
+    progress: TaskStatus
     hrsCompleted: number
     hrsRequired: number
 }
@@ -37,7 +39,7 @@ const formData = ref<TaskForm>({
     endDate: null,
     startDate: null,
     milestoneId: "",
-    progress: 0,
+    progress: TaskStatuses.STARTED,
     hrsCompleted: 0,
     hrsRequired: 0
 })
@@ -107,7 +109,7 @@ const closeForm = () => {
     milestoneId: "",
     startDate: null,
     endDate: null,
-    progress: 0,
+    progress: TaskStatuses.STARTED,
     hrsCompleted: 0,
     hrsRequired: 0
   }
@@ -173,13 +175,13 @@ const closeForm = () => {
                           ></v-date-picker>
                         </v-col>
                       </v-row>
-                        <v-text-field
+                        <v-select
                             v-model="formData.progress"
+                            :items="TaskStatusSelect"
                             label="Progress"
-                            outlined
                             required
                             variant="solo-filled"
-                        ></v-text-field>
+                        ></v-select>
                         <v-text-field
                             v-model="formData.hrsCompleted"
                             label="Hours Completed"

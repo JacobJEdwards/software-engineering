@@ -26,23 +26,7 @@ const calendarOptions = ref({
     events: [],
 })
 
-
-
 const userStore = useUserStore()
-
-const tasks = ref<Task[]>([])
-
-for (const semester of (userStore.user?.semester ?? [])) {
-    for (const module of semester.modules) {
-        for (const milestone of module.milestones) {
-            for (const task of milestone.tasks) {
-                tasks.value.push(task)
-            }
-        }
-    }
-}
-
-console.log(userStore.user)
 
 </script>
 
@@ -54,10 +38,12 @@ console.log(userStore.user)
         <v-col cols="12" md="6">
           <v-card title="Upcoming Tasks" prepend-icon="mdi-checkbox-marked-circle-outline">
             <v-divider></v-divider>
-            <v-card-text v-if="tasks.length">
-              <v-list v-if="tasks.length">
-                <v-list-item v-if="tasks.length" v-for="task in tasks" :key="task._id" :title="task.name" :subtitle="task.endDate?.toDateString()">
+            <v-card-text v-if="userStore.tasks.length">
+              <v-list v-if="userStore.tasks.length">
+                <v-list-item v-if="userStore.tasks.length" v-for="task in userStore.tasks" :key="task._id"
+                             :title="task.title">
                 </v-list-item>
+                <v-divider></v-divider>
               </v-list>
             </v-card-text>
             <v-card-text v-else>
