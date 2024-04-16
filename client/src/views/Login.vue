@@ -4,12 +4,13 @@ import { useRouter } from "vue-router"
 import { ref } from 'vue'
 import { useLoading, useSuccessErrorMessage } from "../utils/utils.ts"
 import { emailRules } from "../utils/form.ts"
-import { useAuthStore } from "../stores"
+import { useAuthStore, useUserStore } from "../stores"
 import { useDisplay} from "vuetify";
 
 const { loading } = useLoading();
 const router = useRouter()
 const authStore = useAuthStore()
+const userStore = useUserStore()
 const { error, success } = useSuccessErrorMessage()
 
 const email = ref<string>("");
@@ -55,6 +56,7 @@ const login = async () => {
         authStore.login(token)
         success.value = "Login successful"
 
+        await userStore.getUser()
         await router.push("/")
 
     } catch (e) {
@@ -69,8 +71,8 @@ const login = async () => {
 </script>
 
 <template>
-    <v-container class="h-full d-flex justify-center align-center"> <!-- center the content -->
-        <v-row align="center" justify="center" class=""> <!-- center the content -->
+    <v-container class="h-full d-flex justify-center align-center">
+        <v-row align="center" justify="center" class="">
             <v-col cols="12" md="6" v-if="!mdAndDown" class="hidden md:block d-flex justify-center align-center">
                 <v-img src="https://via.placeholder.com/500" height="50%" width="50%"></v-img>
             </v-col>
@@ -88,7 +90,9 @@ const login = async () => {
                         <p class="text-sm text-gray-400">Forgot password? <router-link to="/forgot-password" class="text-blue-500 text-sm hover:text-blue-700 focus:outline-none">Reset password</router-link></p>
                     </v-col>
                     <v-col cols="12">
-                        <v-btn @click="login" :loading="loading" color="grey-darken-4" class="w-full mt-4">Login</v-btn>
+                        <v-btn @click="login" :loading="loading" color="grey-darken-4"
+                               rounded="sm" block>Login
+                        </v-btn>
                     </v-col>
                     <v-col cols="12">
                         <v-alert v-if="error" type="error" dismissible>{{ error }}</v-alert>

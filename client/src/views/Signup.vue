@@ -94,7 +94,7 @@ const redirectToLogin = async () => {
                         <v-text-field v-model="password" label="Password" :type="showPassword ? 'text' : 'password'" outlined :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append-inner="showPassword = !showPassword" variant="solo-filled"></v-text-field>
                     </v-col>
                     <v-col cols="12">
-                        <v-btn @click="signup" :loading="loading" color="grey-darken-4" class="w-full">Sign up</v-btn>
+                        <v-btn @click="signup" :loading="loading" color="grey-darken-4" rounded="sm" block>Sign up</v-btn>
                     </v-col>
                     <v-col cols="12">
                         <v-alert v-if="error" type="error" dismissible>{{ error }}</v-alert>
