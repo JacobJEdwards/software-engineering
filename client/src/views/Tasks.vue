@@ -2,6 +2,7 @@
 import UserLoading from "../components/UserLoading.vue"
 import { useUserStore } from "../stores"
 import AddTask from "../components/AddTask.vue";
+import Task from "../components/Task.vue";
 
 const userStore = useUserStore()
 // split into components
@@ -17,9 +18,7 @@ const userStore = useUserStore()
           <v-divider></v-divider>
           <v-card-text v-if="userStore.tasks.length">
             <v-list v-if="userStore.tasks.length">
-              <v-list-item v-if="userStore.tasks.length" v-for="task in userStore.tasks" :key="task._id"
-                           :title="task.title">
-              </v-list-item>
+              <Task v-for="task in userStore.tasks" :key="task._id" :task="task" small editable />
             </v-list>
           </v-card-text>
           <v-card-text v-else>
