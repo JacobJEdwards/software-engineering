@@ -341,7 +341,7 @@ class Validator {
         const progress = fullSchema.extract('Progress');
         const hrsCompleted = fullSchema.extract('hrsCompleted');
         const hrsRequired = fullSchema.extract('hrsRequired');
-        const activities = fullSchema.extract('actvities');
+        const activities = fullSchema.extract('activities');
 
         const taskSchema = Joi.object({
             title: taskTitle,
