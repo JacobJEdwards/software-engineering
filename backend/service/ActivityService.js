@@ -7,53 +7,59 @@ import { model } from "mongoose";
 import Validator from "../middleware/Validator.js";
 
 class ActivityService {
-    static async createActivity(userid, moduleCode, milestoneId, tasks, activityName, activityType, activityDescription) {
-        let response = Validator.validateUser(userid, null, null, null);
+    static async createActivity(userId, tasks, activityName, activityType, activityDescription, hrsCompleted = null) {
+        let response = await Validator.validateUser(userId, null, null, null);
         if (response.code !== 200) {
             return response;
         }
 
-        let user = await User.getUserInternal(userid);
+        let user = await User.getUserInternal(userId);
         if (!user) {
             return new Response("User does not exist", 404, {});
         }
 
-        let milestoneExisits = user.semester.find(semester => semester.modules.find(module => module.moduleCode === moduleCode).find(milestone => milestone.id === milestoneId));
-        if (!milestoneExisits) {
-            return new Response("Milestone does not exist", 404, {});
-        }
+        const hrs = hrsCompleted == null ? 0 : hrsCompleted;
 
         const newActivity = {
-            userId: userid,
+            userId: userId,
             tasks: tasks,
             activityTitle: activityName,
             activityType: activityType,
             notes: activityDescription,
-            hrsCompleted: 0,
-            completed: false,
+            hrsCompleted: hrs
         };
 
-        response = Validator.validateActivity(newActivity);
+        response = await Validator.validateActivityObject(newActivity);
         if (response.code !== 200) {
             return response;
         }
 
+
         try {
-            await new this({ newActivity }).save()
-            return new Response("Activity created successfully", 200, {});
+            let activity = new this(newActivity);
+            for (let task of tasks) {
+                let response = await Task.addActivityToTask(userId, task, activity._id, hrs);
+                if (response.code !== 200) {
+                    return response;
+                }
+            }
+            await activity.save();
+            return new Response("Activity created successfully", 200, activity);
         } catch (error) {
-            return new Response("Error creating activity", 400, { error: error.message });
+            return new Response("Error creating activity", 400, { error });
         }
     }
 
     static getActivityById(activityId) {
-        try {
-            const activity = this.findById(activityId)
-            return new Response("Activity found", 200, activity);
-        } catch (error) {
-            return new Response("Activity not found", 404, { activityId });
+
+        const { activity, error } = this.findById(activityId)
+        if (error) {
+            return new Response("Error finding activity", 400, { error });
         }
+        return new Response("Activity found", 200, activity);
     }
+
+
 
     static async updateActivity(activityId, newActivityName, newStartDate, newEndDate, newStatus, newHours) {
         let response = getActivityById(activityId);
@@ -102,16 +108,16 @@ class ActivityService {
     }
 
     static async readAllUserActivities(userId) {
-        let response = Validator.validateUser(userId, null, null, null, null, null, null);
+        let response = await Validator.validateUser(userId, null, null, null, null, null, null);
         if (response.code !== 200) {
             return response;
         }
         const user = await User.getUserInternal(userId);
         if (user) {
-            const activities = this.find({ userId: userId });
-            return new Response("Activities found", 200, activities);
+            const activities = await this.find({ userId: userId });
+            return new Response("Activities found", 200, { activities });
         } else {
-            return new Response("User not found", 404, { userId });
+            return new Response("User not found", 404, {});
         }
     };
 
@@ -159,6 +165,22 @@ class ActivityService {
         }
     }
 
+    static async deleteActivity(userid, activityId) {
+        console.log("activityId", activityId);
+        let response = await Validator.validateUser(userid, null, null, null, null, null, null);
+        if (response.code !== 200) {
+            return response;
+        }
+        const activity = await this.findOne({ _id: activityId })
+        activity.tasks.forEach(async task => {
+            let response = await Task.deleteActivityFromTask(userid, task, activityId, activity.hrs);
+            if (response.code !== 200) {
+                return response;
+            }
+        });
+        await this.findByIdAndDelete(activityId);
+        return new Response("Activity deleted successfully", 200, {});
+    }
 }
 
 

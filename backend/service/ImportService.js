@@ -5,10 +5,10 @@ import Semester from "../service/SemesterService.js";
 import Milestone from "../service/MilestoneService.js";
 import User from "./UserService.js";
 import Response from "../utils/Response.js"
-
+import Validator from "../middleware/Validator.js";
 class ImportService {
     static async addFileData(file, userid) {
-        let response = Validator.validateUser(userid, null, null, null);
+        let response = await Validator.validateUser(userid, null, null, null);
         if (response.code !== 200) {
             return response;
         }

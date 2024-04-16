@@ -9,6 +9,8 @@ class ActivityRoutes {
 
     registerRoutes() {
         this.router.get('/activity', ActivityController.getActivity);
+        this.router.post('/activity', ActivityController.createActivity);
+        this.router.delete('/activity', ActivityController.deleteActivity);
     }
 }
 
