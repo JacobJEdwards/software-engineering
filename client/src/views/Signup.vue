@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import {API_ROUTE} from "../config.ts"
 import {useRouter} from "vue-router"
 import {ref} from 'vue'
 import { useLoading, useSuccessErrorMessage } from "../utils/utils.ts"
@@ -55,10 +54,11 @@ const redirectToLogin = async () => {
       <v-container class="h-full d-flex justify-center align-center"> <!-- center the content -->
         <v-row align="center" justify="center">
           <v-col cols="12" md="6" v-if="!mdAndDown" class="hidden md:block d-flex justify-center align-center">
-                <v-img src="https://via.placeholder.com/500" class="elevation-12" height="100%" width="100%"></v-img>
+              <img src="../assets/zigs.jpeg" alt="ZigPhoto" class="w-96 h-96" />
             </v-col>
             <v-col cols="12" md="6">
                 <v-row>
+                  <v-form @submit.prevent="submitForm" class="w-full">
                     <v-col cols="12" class="text-center">
                         <h1 class="text-3xl font-bold">Sign up</h1>
                         <p class="text-sm mt-2 text-gray-400">Sign up now to create an account.</p>
@@ -73,7 +73,8 @@ const redirectToLogin = async () => {
                         <v-text-field v-model="password" label="Password" :type="showPassword ? 'text' : 'password'" outlined :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append-inner="showPassword = !showPassword" variant="solo-filled"></v-text-field>
                     </v-col>
                     <v-col cols="12">
-                        <v-btn @click="submitForm" :loading="loading" color="grey-darken-4" rounded="sm" block>Sign up</v-btn>
+                        <v-btn :loading="loading" color="grey-darken-4" rounded="sm" aria-required="true" block>Sign
+                          up</v-btn>
                     </v-col>
                     <v-col cols="12">
                         <v-alert v-if="error" type="error" dismissible>{{ error }}</v-alert>
@@ -82,6 +83,7 @@ const redirectToLogin = async () => {
                     <v-col cols="12" class="text-center">
                          <p class="text-sm text-gray-400">Already have an account? <router-link to="/login" class="text-blue-500 text-sm hover:text-blue-700 focus:outline-none">Log in.</router-link></p>
                     </v-col>
+                  </v-form>
                 </v-row>
             </v-col>
         </v-row>

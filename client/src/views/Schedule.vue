@@ -22,6 +22,10 @@ const events = tasks.map((task) => {
     allDay: true,
     title: task.title,
     color: task.status === "Completed" ? "green" : "red",
+    id: task._id,
+    extendedProps: {
+      task: task
+    }
   }
 })
 
@@ -43,14 +47,19 @@ const calendarOptions = ref<CalendarOptions>({
   selectMirror: true,
   dayMaxEvents: true,
   weekends: true,
+  eventClick: (event) => {
+    const task = event.event._def.extendedProps.task
+  },
 });
 
+const calendar = ref<typeof FullCalendar | null>(null);
+console.log(calendar)
 
 
 </script>
 
 <template>
   <v-container>
-    <FullCalendar :options="calendarOptions" />
+    <FullCalendar ref="calendar" :options="calendarOptions" />
   </v-container>
 </template>

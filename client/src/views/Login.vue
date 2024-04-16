@@ -54,22 +54,24 @@ const submitForm = async () => {
   <v-container class="h-full d-flex justify-center align-center">
     <v-row align="center" justify="center" class="">
       <v-col cols="12" md="6" v-if="!mdAndDown" class="hidden md:block d-flex justify-center align-center">
-        <v-img src="https://via.placeholder.com/500" height="50%" width="50%"></v-img>
+        <img src="../assets/zigs.jpeg" alt="ZigPhoto" class="w-96 h-96" />
       </v-col>
       <v-col cols="12" md="6" class="">
         <v-row>
+          <v-form @submit.prevent="submitForm" class="w-full">
           <v-col cols="12" class="text-center">
             <h1 class="text-3xl font-bold">Log in</h1>
             <p class="text-sm mt-2 text-gray-400">Welcome back! Log in to your account.</p>
           </v-col>
           <v-col cols="12">
             <v-text-field v-model="email" placeholder="email@email.com" :rules="emailRules" label="Email" type="email"
-                          outlined append-inner-icon="mdi-email" variant="solo-filled"></v-text-field>
+                          outlined append-inner-icon="mdi-email" variant="solo-filled" aria-required="true"></v-text-field>
           </v-col>
           <v-col cols="12">
             <v-text-field v-model="password" label="Password" :type="showPassword ? 'text' : 'password'" outlined
                           :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                          @click:append-inner="showPassword = !showPassword" variant="solo-filled"></v-text-field>
+                          @click:append-inner="showPassword = !showPassword" variant="solo-filled"
+                          aria-required="true"></v-text-field>
             <p class="text-sm text-gray-400">Forgot password?
               <router-link to="/forgot-password" class="text-blue-500 text-sm hover:text-blue-700 focus:outline-none">
                 Reset password
@@ -77,9 +79,8 @@ const submitForm = async () => {
             </p>
           </v-col>
           <v-col cols="12">
-            <v-btn @click="submitForm" :loading="loading" color="grey-darken-4"
-                   rounded="sm" block>Login
-            </v-btn>
+            <v-btn :loading="loading" color="grey-darken-4"
+                   rounded="sm" block type="submit" text="Login" />
           </v-col>
           <v-col cols="12">
             <v-alert v-if="error" type="error" dismissible>{{ error }}</v-alert>
@@ -91,6 +92,7 @@ const submitForm = async () => {
               </router-link>
             </p>
           </v-col>
+          </v-form>
         </v-row>
       </v-col>
     </v-row>
