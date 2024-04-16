@@ -70,7 +70,8 @@ class TaskService {
         if (response.code !== 200) {
             return response;
         }
-        const task = user.modules(milestones => milestones.find(tasks => tasks.id === taskId));
+        const task = user.semester.flatMap(modules => modules.flatMap(mod => mod.milestones.flatMap(mil => mil.tasks.find(task => task._id === taskId))));
+
         if (task) {
             task.taskName = newTaskName == null ? task.taskName : newTaskName;
             task.startDate = newStartDate == null ? task.startDate : newStartDate;
@@ -86,7 +87,7 @@ class TaskService {
 
 
     static async updateTaskByUserId(userId, taskId, newTaskName, newStartDate, newEndDate, newStatus, newHrsRequired, newHrsCompleted) {
-        const user = await User.getUserInteral(userId);
+        const user = await User.getUserInternal(userId);
         if (user) {
             let response = this.updateTask(user, taskId, newTaskName, newStartDate, newEndDate, newStatus, newHrsRequired, newHrsCompleted);
             if (response.status === 200) {

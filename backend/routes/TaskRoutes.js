@@ -11,6 +11,7 @@ class TaskRoutes {
         this.router.get('/task', TaskController.getTasks);
         this.router.post('/task', TaskController.createTask);
         this.router.delete('/task', TaskController.deleteTask);
+        this.router.put('/task', TaskController.updateTask);
     }
 }
 
