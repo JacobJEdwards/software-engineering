@@ -27,8 +27,34 @@ export const getUser = async (token: string): Promise<Result> => {
 
         return {success: true, data}
 
-    } catch (e) {
+    } catch (e: unknown) {
         console.error(e)
         return {success: false}
     }
+}
+
+export const uploadFile = async (token: string, file: File): Promise<Result> => {
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await fetch(`${API_ROUTE}/protected/upload`, {
+            method: 'POST',
+            headers: {
+                Authorization: token
+            },
+            body: formData
+        })
+
+        if (!response.ok) {
+            return {success: false}
+        }
+
+        return {success: true}
+
+    } catch (e: unknown) {
+        console.error(e)
+        return {success: false}
+    }
+
 }

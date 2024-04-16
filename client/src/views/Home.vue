@@ -9,8 +9,26 @@ import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import { CalendarOptions } from "@fullcalendar/core";
 
-const calendarOptions = ref({
+
+const userStore = useUserStore()
+
+const tasks = userStore.tasks
+
+const events = tasks.map((task) => {
+    const startDate = new Date(task.startDate)
+    const endDate = new Date(task.endDate)
+
+    return {
+        start: endDate,
+        allDay: true,
+        title: task.title,
+        color: task.status === "Completed" ? "green" : "red",
+    }
+})
+
+const calendarOptions = ref<CalendarOptions>({
     plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
     initialView: "dayGridMonth",
     headerToolbar: {
@@ -23,10 +41,9 @@ const calendarOptions = ref({
     selectMirror: false,
     dayMaxEvents: true,
     weekends: true,
-    events: [],
+    events: events,
 })
 
-const userStore = useUserStore()
 
 </script>
 
