@@ -9,11 +9,7 @@ import { CalendarOptions } from "@fullcalendar/core";
 import { ref } from "vue";
 
 const calendarOptions = ref<CalendarOptions>({
-  plugins: [
-    dayGridPlugin,
-    timeGridPlugin,
-    interactionPlugin,
-  ],
+  plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
   headerToolbar: {
     left: "prev,next today",
     center: "title",
@@ -27,7 +23,6 @@ const calendarOptions = ref<CalendarOptions>({
   dayMaxEvents: true,
   weekends: true,
 });
-
 </script>
 
 <template>

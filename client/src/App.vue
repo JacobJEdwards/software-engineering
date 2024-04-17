@@ -8,39 +8,40 @@ import { computed } from "vue";
 import { useAuthStore, useUserStore } from "./stores";
 import Navbar from "./components/Navbar.vue";
 
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 const router = useRouter();
-const userStore = useUserStore()
+const userStore = useUserStore();
 
 const isLoginPage = computed(() => {
-  return router.currentRoute.value.path === "/login" || router.currentRoute.value.path === "/signup"
+  return (
+    router.currentRoute.value.path === "/login" ||
+    router.currentRoute.value.path === "/signup"
+  );
 });
 
-
 const isAuth = computed(() => {
-  return authStore.isLoggedIn
+  return authStore.isLoggedIn;
 });
 
 router.beforeEach(async (to, _, next) => {
   if (!isAuth.value && to.meta.requiresAuth) {
     next({
-      path: "/login"
+      path: "/login",
     });
   } else {
-    next()
+    next();
   }
 });
 
 router.beforeEach(async () => {
   if (!isLoginPage.value && isAuth.value && !userStore.user) {
-      try {
-        await userStore.getUser()
-      } catch (e) {
-        console.error(e)
-      }
+    try {
+      await userStore.getUser();
+    } catch (e) {
+      console.error(e);
+    }
   }
-})
-
+});
 </script>
 
 <template>
@@ -48,8 +49,8 @@ router.beforeEach(async () => {
     <Navbar v-if="isAuth" />
     <Header v-if="!isLoginPage" />
     <v-main>
-    <router-view />
-    <v-btn
+      <router-view />
+      <v-btn
         v-if="!isLoginPage && !isAuth"
         fab
         small
@@ -58,12 +59,11 @@ router.beforeEach(async () => {
         @click="router.push('/login')"
         icon="mdi-login"
         class="position-fixed bottom-20 right-10"
-    />
+      />
       <LogActivity v-else-if="isAuth" />
     </v-main>
     <Footer />
   </v-app>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

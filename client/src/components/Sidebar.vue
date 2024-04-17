@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { useUserStore } from "../stores"
+import { useUserStore } from "../stores";
 import UserLoading from "./UserLoading.vue";
 
-const userStore = useUserStore()
-
+const userStore = useUserStore();
 </script>
 
 <template>
@@ -12,7 +11,8 @@ const userStore = useUserStore()
       <v-list-item
         lines="two"
         subtitle="Logged in"
-        :title="userStore.user?.name ?? 'Unknown'">
+        :title="userStore.user?.name ?? 'Unknown'"
+      >
       </v-list-item>
     </template>
 
@@ -21,13 +21,8 @@ const userStore = useUserStore()
     <v-list v-if="userStore.loading">
       <UserLoading v-for="i in 6" :key="i" />
     </v-list>
-    <v-list v-else>
-
-    </v-list>
-
+    <v-list v-else> </v-list>
   </v-navigation-drawer>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

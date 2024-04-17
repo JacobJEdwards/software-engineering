@@ -1,17 +1,16 @@
-
 export const TaskStatuses = {
-    STARTED: "Started",
-    IN_PROGRESS: "In Progress",
-    COMPLETED: "Completed"
+  STARTED: "Started",
+  IN_PROGRESS: "In Progress",
+  COMPLETED: "Completed",
 } as const;
 
-export type TaskStatus = typeof TaskStatuses[keyof typeof TaskStatuses];
+export type TaskStatus = (typeof TaskStatuses)[keyof typeof TaskStatuses];
 
 type Base = {
-    _id: string;
-    createdAt: Date;
-    updatedAt: Date;
-}
+  _id: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
 export type Activity = {
   userId: string;
@@ -20,7 +19,7 @@ export type Activity = {
   activityType: string;
   notes: string;
   hrsCompleted: number;
-} & Base
+} & Base;
 
 export type Task = {
   title: string;
@@ -29,8 +28,8 @@ export type Task = {
   status: TaskStatus;
   hrsCompleted: number;
   hrsRequired: number;
-    activities: Array<Activity>;
-} & Base
+  activities: Array<Activity>;
+} & Base;
 
 export type Milestone = {
   milestoneTitle: string;
@@ -40,7 +39,7 @@ export type Milestone = {
   tasks: Array<Task>;
   startDate: Date;
   endDate: Date;
-} & Base
+} & Base;
 
 export type Module = {
   moduleName: string;
@@ -48,14 +47,14 @@ export type Module = {
   milestones: Array<Milestone>;
   startDate: Date;
   endDate: Date;
-} & Base
+} & Base;
 
 export type Semester = {
   semesterName: string;
-  modules: Array<Module>
+  modules: Array<Module>;
   startDate: Date;
   endDate: Date;
-} & Base
+} & Base;
 
 export type User = {
   email: string;
@@ -63,19 +62,19 @@ export type User = {
   password?: string;
   auth?: boolean;
   semester: Array<Semester>;
-} & Base
+} & Base;
 
 export type unAuthedUser = {
   email: string;
   key: string;
-} & Base
+} & Base;
 
 export type TaskForm = {
-  title: string
-  milestoneId: string
-  startDate?: Date | string
-  endDate?: Date | string
-  progress: TaskStatus
-  hrsCompleted: number
-  hrsRequired: number
-}
+  title: string;
+  milestoneId: string;
+  startDate?: Date | string;
+  endDate?: Date | string;
+  progress: TaskStatus;
+  hrsCompleted: number;
+  hrsRequired: number;
+};

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ScheduleGenerator from "../components/ScheduleGenerator.vue";
-import ScheduleUpload from "../components/ScheduleUpload.vue"
-import { useUserStore} from "../stores";
+import ScheduleUpload from "../components/ScheduleUpload.vue";
+import { useUserStore } from "../stores";
 
 import { ref } from "vue";
 
@@ -17,9 +17,7 @@ const toggleScheduleGenerator = () => {
 const toggleScheduleUpload = () => {
   showScheduleUpload.value = !showScheduleUpload.value;
 };
-
 </script>
-
 
 <template>
   <v-container>
@@ -29,8 +27,12 @@ const toggleScheduleUpload = () => {
           <v-card-text>
             <v-list>
               <v-list-item title="Name">{{ userStore.user?.name }}</v-list-item>
-              <v-list-item title="Email">{{ userStore.user?.email }}</v-list-item>
-              <v-list-item title="Semesters">{{ userStore.user?.semester.length }}</v-list-item>
+              <v-list-item title="Email">{{
+                userStore.user?.email
+              }}</v-list-item>
+              <v-list-item title="Semesters">{{
+                userStore.user?.semester.length
+              }}</v-list-item>
             </v-list>
           </v-card-text>
         </v-card>
@@ -41,15 +43,24 @@ const toggleScheduleUpload = () => {
           <v-col cols="12">
             <v-card title="Schedule Upload" prepend-icon="mdi-upload">
               <v-card-text>
-                <v-btn @click="toggleScheduleUpload" color="black" class="my-4">{{ showScheduleUpload ? "Hide" : "Show"}} Schedule Upload</v-btn>
-                <ScheduleUpload v-if="showScheduleUpload"  />
+                <v-btn @click="toggleScheduleUpload" color="black" class="my-4"
+                  >{{ showScheduleUpload ? "Hide" : "Show" }} Schedule
+                  Upload</v-btn
+                >
+                <ScheduleUpload v-if="showScheduleUpload" />
               </v-card-text>
             </v-card>
           </v-col>
           <v-col cols="12">
             <v-card title="Schedule Generator" prepend-icon="mdi-calendar">
               <v-card-text>
-                <v-btn @click="toggleScheduleGenerator" color="black" class="my-4">{{ showScheduleGenerator ? "Hide" : "Show" }} Schedule Generator</v-btn>
+                <v-btn
+                  @click="toggleScheduleGenerator"
+                  color="black"
+                  class="my-4"
+                  >{{ showScheduleGenerator ? "Hide" : "Show" }} Schedule
+                  Generator</v-btn
+                >
                 <ScheduleGenerator v-if="showScheduleGenerator" />
               </v-card-text>
             </v-card>

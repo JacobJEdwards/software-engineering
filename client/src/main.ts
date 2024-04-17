@@ -1,47 +1,47 @@
-import { createApp } from 'vue'
-import './style.css'
-import App from './App.vue'
-import { router } from './router'
-import PrimeVue from 'primevue/config'
-import VueCookies from 'vue-cookies'
+import { createApp } from "vue";
+import "./style.css";
+import App from "./App.vue";
+import { router } from "./router";
+import PrimeVue from "primevue/config";
+import VueCookies from "vue-cookies";
 
 // Vuetify
-import 'vuetify/styles'
-import { createVuetify } from 'vuetify'
-import * as components from 'vuetify/components'
-import * as directives from 'vuetify/directives'
+import "vuetify/styles";
+import { createVuetify } from "vuetify";
+import * as components from "vuetify/components";
+import * as directives from "vuetify/directives";
 import { md3 } from "vuetify/blueprints";
-import { createPinia } from 'pinia'
-import piniaPluginPersistedState from 'pinia-plugin-persistedstate'
-import { aliases, mdi } from 'vuetify/iconsets/mdi'
-import '@mdi/font/css/materialdesignicons.css'
+import { createPinia } from "pinia";
+import piniaPluginPersistedState from "pinia-plugin-persistedstate";
+import { aliases, mdi } from "vuetify/iconsets/mdi";
+import "@mdi/font/css/materialdesignicons.css";
 
 const vuetify = createVuetify({
-    components,
-    directives,
-    theme: {
-        defaultTheme: 'light'
+  components,
+  directives,
+  theme: {
+    defaultTheme: "light",
+  },
+  icons: {
+    defaultSet: "mdi",
+    aliases,
+    sets: {
+      mdi,
     },
-    icons: {
-        defaultSet: 'mdi',
-        aliases,
-        sets: {
-            mdi
-        },
-    },
-    blueprint: md3
-})
+  },
+  blueprint: md3,
+});
 
-const pinia = createPinia()
-pinia.use(piniaPluginPersistedState)
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedState);
 
-import 'primevue/resources/themes/aura-light-green/theme.css'
+import "primevue/resources/themes/aura-light-green/theme.css";
 
-const app = createApp(App)
-app.use(VueCookies)
-app.use(PrimeVue)
-app.use(router)
-app.use(vuetify)
-app.use(pinia)
+const app = createApp(App);
+app.use(VueCookies);
+app.use(PrimeVue);
+app.use(router);
+app.use(vuetify);
+app.use(pinia);
 
-app.mount("#app")
+app.mount("#app");

@@ -1,34 +1,41 @@
 <script setup lang="ts">
-import { useUserStore, useAuthStore } from "../stores"
-import { useRouter } from "vue-router"
+import { useUserStore, useAuthStore } from "../stores";
+import { useRouter } from "vue-router";
 import { useDisplay } from "vuetify";
-import { ref } from "vue"
+import { ref } from "vue";
 
-const drawer = ref<boolean>(false)
+const drawer = ref<boolean>(false);
 
-const userStore = useUserStore()
-const authStore = useAuthStore()
-const router = useRouter()
-const { mdAndDown } = useDisplay()
+const userStore = useUserStore();
+const authStore = useAuthStore();
+const router = useRouter();
+const { mdAndDown } = useDisplay();
 
 const links = [
-  { display: "Home", to: { name: "home"}, icon: "mdi-home" },
-  { display: "Tasks", to: { name: "tasks"}, icon: "mdi-format-list-checks" },
-  { display: "Schedule", to: { name: "schedule"}, icon: "mdi-calendar" },
-  { display: "Profile", to: { name: "profile"}, icon: "mdi-account" },
-]
+  { display: "Home", to: { name: "home" }, icon: "mdi-home" },
+  { display: "Tasks", to: { name: "tasks" }, icon: "mdi-format-list-checks" },
+  { display: "Schedule", to: { name: "schedule" }, icon: "mdi-calendar" },
+  { display: "Profile", to: { name: "profile" }, icon: "mdi-account" },
+];
 
 const logout = async () => {
-  authStore.logout()
-  await router.push("/login")
-}
+  authStore.logout();
+  await router.push("/login");
+};
 </script>
 
 <template>
-
-  <v-navigation-drawer expand-on-hover rail class="full-height relative bg-grey-darken-4 pt-8" v-if="!mdAndDown">
+  <v-navigation-drawer
+    expand-on-hover
+    rail
+    class="full-height relative bg-grey-darken-4 pt-8"
+    v-if="!mdAndDown"
+  >
     <v-list>
-      <v-list-item prepend-icon="mdi-account" :title="userStore.user?.name ?? 'Unknown'"></v-list-item>
+      <v-list-item
+        prepend-icon="mdi-account"
+        :title="userStore.user?.name ?? 'Unknown'"
+      ></v-list-item>
     </v-list>
 
     <v-divider></v-divider>
@@ -47,7 +54,13 @@ const logout = async () => {
 
     <template v-slot:append>
       <v-list dense nav>
-        <v-list-item @click="logout"  prepend-icon="mdi-logout" title="Logout" link class="hover:bg-gray-800"></v-list-item>
+        <v-list-item
+          @click="logout"
+          prepend-icon="mdi-logout"
+          title="Logout"
+          link
+          class="hover:bg-gray-800"
+        ></v-list-item>
       </v-list>
     </template>
   </v-navigation-drawer>
@@ -57,9 +70,18 @@ const logout = async () => {
     <v-toolbar-title>Wonderful Tasks</v-toolbar-title>
     <v-spacer></v-spacer>
   </v-app-bar>
-  <v-navigation-drawer v-model="drawer" app class="bg-grey-darken-4" dark v-if="mdAndDown">
+  <v-navigation-drawer
+    v-model="drawer"
+    app
+    class="bg-grey-darken-4"
+    dark
+    v-if="mdAndDown"
+  >
     <v-list>
-      <v-list-item prepend-icon="mdi-account" :title="userStore.user?.name ?? 'Unknown'"></v-list-item>
+      <v-list-item
+        prepend-icon="mdi-account"
+        :title="userStore.user?.name ?? 'Unknown'"
+      ></v-list-item>
     </v-list>
 
     <v-divider></v-divider>
@@ -78,12 +100,14 @@ const logout = async () => {
 
     <template v-slot:append>
       <v-list dense nav>
-        <v-list-item @click="logout"  prepend-icon="mdi-logout" title="Logout" link class="hover:bg-gray-800"></v-list-item>
+        <v-list-item
+          @click="logout"
+          prepend-icon="mdi-logout"
+          title="Logout"
+          link
+          class="hover:bg-gray-800"
+        ></v-list-item>
       </v-list>
     </template>
   </v-navigation-drawer>
-
-
 </template>
-
-

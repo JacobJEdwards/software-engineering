@@ -6,15 +6,15 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { CalendarOptions } from "@fullcalendar/core";
 
 import { ref } from "vue";
-import { useUserStore} from "../stores";
+import { useUserStore } from "../stores";
 
-const userStore = useUserStore()
+const userStore = useUserStore();
 
-const tasks = userStore.tasks
+const tasks = userStore.tasks;
 
 const events = tasks.map((task) => {
-  const startDate = new Date(task.startDate)
-  const endDate = new Date(task.endDate)
+  const startDate = new Date(task.startDate);
+  const endDate = new Date(task.endDate);
 
   return {
     start: startDate,
@@ -24,17 +24,13 @@ const events = tasks.map((task) => {
     color: task.status === "Completed" ? "green" : "red",
     id: task._id,
     extendedProps: {
-      task: task
-    }
-  }
-})
+      task: task,
+    },
+  };
+});
 
 const calendarOptions = ref<CalendarOptions>({
-  plugins: [
-    dayGridPlugin,
-    timeGridPlugin,
-    interactionPlugin,
-  ],
+  plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
   headerToolbar: {
     left: "prev,next today",
     center: "title",
@@ -48,14 +44,12 @@ const calendarOptions = ref<CalendarOptions>({
   dayMaxEvents: true,
   weekends: true,
   eventClick: (event) => {
-    const task = event.event._def.extendedProps.task
+    const task = event.event._def.extendedProps.task;
   },
 });
 
 const calendar = ref<typeof FullCalendar | null>(null);
-console.log(calendar)
-
-
+console.log(calendar);
 </script>
 
 <template>
