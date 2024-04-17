@@ -84,7 +84,7 @@ const calendarOptions = ref<CalendarOptions>({
               </v-card>
             </v-col>
                 <v-col cols="12">
-                    <v-card title="Calender" prepend-icon="mdi-calendar">
+                    <v-card title="Calendar" prepend-icon="mdi-calendar">
                         <v-divider></v-divider>
                         <v-card-text>
                             <FullCalendar :options="calendarOptions" class="fc" />

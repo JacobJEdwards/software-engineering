@@ -1,11 +1,7 @@
 import { API_ROUTE } from "../config";
-import {TaskForm} from "../typings/user.ts";
+import type {TaskForm} from "../typings/user.ts";
+import type { Result } from "./common.ts";
 
-type Result = {
-    success: boolean;
-    data?: any;
-    error?: string;
-}
 
 const deleteTask = async (taskId: string, token: string): Promise<Result> => {
     try {

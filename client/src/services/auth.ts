@@ -1,10 +1,6 @@
 import {API_ROUTE} from "../config.ts";
+import type { Result } from "./common.ts";
 
-type Result = {
-    success: boolean
-    error?: string
-    data?: any
-}
 
 export const login = async (email: string, password: string): Promise<Result> => {
     try {
@@ -87,4 +83,9 @@ export const signup = async (name: string, email: string, password: string): Pro
             success: false
         }
     }
+}
+
+export const AuthService = {
+    login,
+    signup
 }

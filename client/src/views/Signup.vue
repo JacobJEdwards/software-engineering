@@ -51,7 +51,13 @@ const redirectToLogin = async () => {
 </script>
 
 <template>
+  <div class="w-full d-flex align-center justify-center text-center my-6">
+    <h1 class="text-3xl font-bold">Wonderful Tasks</h1>
+  </div>
+  <v-divider></v-divider>
+
       <v-container class="h-full d-flex justify-center align-center"> <!-- center the content -->
+
         <v-row align="center" justify="center">
           <v-col cols="12" md="6" v-if="!mdAndDown" class="hidden md:block d-flex justify-center align-center">
               <img src="../assets/zigs.jpeg" alt="ZigPhoto" class="w-96 h-96" />

@@ -1,13 +1,8 @@
 import {API_ROUTE} from "../config";
 import { User } from "../typings/user";
+import type { Result } from "./common";
 
-type Result = {
-    success: boolean;
-    data?: User;
-    error?: string;
-}
-
-export const getUser = async (token: string): Promise<Result> => {
+export const getUser = async (token: string): Promise<Result<User>> => {
     try {
         const response = await fetch(`${API_ROUTE}/protected/home`, {
             headers: {
@@ -57,4 +52,9 @@ export const uploadFile = async (token: string, file: File): Promise<Result> => 
         return {success: false}
     }
 
+}
+
+export const UserService = {
+    get: getUser,
+    upload: uploadFile
 }
