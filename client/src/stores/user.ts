@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { Task, User } from "../typings/user.ts";
+import type { Task, User, Milestone } from "../typings/user.ts";
 import { useAuthStore } from "./auth.ts";
 import { getUser } from "../services/user.ts";
 
@@ -8,6 +8,7 @@ export type UserState = {
   user: User | null;
   loading: boolean;
   tasks: Task[];
+  milestones: Milestone[];
 };
 
 export const useUserStore = defineStore("user", {
@@ -16,6 +17,7 @@ export const useUserStore = defineStore("user", {
     user: null,
     loading: false,
     tasks: [],
+    milestones: [],
   }),
   getters: {
     userInfo: (state) => state.user,
@@ -54,11 +56,11 @@ export const useUserStore = defineStore("user", {
         return;
       }
 
-      this.tasks = this.user.semester.flatMap((s) =>
-        s.modules.flatMap((m) =>
-          m.milestones.flatMap((m) => m.tasks.flatMap((t) => t)),
-        ),
+      this.milestones = this.user.semester.flatMap((s) =>
+        s.modules.flatMap((m) => m.milestones.flatMap((m) => m)),
       );
+
+      this.tasks = this.milestones.flatMap((m) => m.tasks);
     },
   },
 });
