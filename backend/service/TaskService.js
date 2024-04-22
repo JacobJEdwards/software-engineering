@@ -196,7 +196,7 @@ class TaskService {
             for (let module of semester.modules) {
                 for (let milestone of module.milestones) {
                     for (let task of milestone.tasks) {
-                        if (task.id === taskId) {
+                        if (task._id.valueOf() === taskId) {
                             task.activities.push(activityId);
                             await this.addHrs(userId, taskId, hrs);
                             await user.save();
