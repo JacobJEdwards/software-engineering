@@ -23,8 +23,6 @@ const submitForm = async () => {
   error.value = "";
   success.value = "";
 
-  console.log("form dubmjt");
-
   if (!name.value || !email.value || !password.value) {
     error.value = "Please fill in all fields";
     loading.value = false;
