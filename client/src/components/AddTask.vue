@@ -93,7 +93,9 @@ const createTask = async () => {
 
 <template>
   <v-container>
-    <v-btn @click="modelVisible = !modelVisible">Add Task</v-btn>
+    <v-btn @click="modelVisible = !modelVisible" color="grey-darken-4"
+      >Add Task</v-btn
+    >
     <v-dialog
       v-model="modelVisible"
       max-width="800"

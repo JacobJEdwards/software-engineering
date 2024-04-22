@@ -43,7 +43,12 @@ const toggleScheduleUpload = () => {
           <v-col cols="12">
             <v-card title="Schedule Upload" prepend-icon="mdi-upload">
               <v-card-text>
-                <v-btn @click="toggleScheduleUpload" color="black" class="my-4"
+                <v-btn
+                  @click="toggleScheduleUpload"
+                  color="grey-darken-4"
+                  class="my-4"
+                  rounded="md"
+                  block
                   >{{ showScheduleUpload ? "Hide" : "Show" }} Schedule
                   Upload</v-btn
                 >
@@ -56,8 +61,10 @@ const toggleScheduleUpload = () => {
               <v-card-text>
                 <v-btn
                   @click="toggleScheduleGenerator"
-                  color="black"
+                  color="grey-darken-4"
                   class="my-4"
+                  rounded="md"
+                  block
                   >{{ showScheduleGenerator ? "Hide" : "Show" }} Schedule
                   Generator</v-btn
                 >
