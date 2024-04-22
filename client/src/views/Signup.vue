@@ -23,6 +23,8 @@ const submitForm = async () => {
   error.value = "";
   success.value = "";
 
+  console.log("form dubmjt");
+
   if (!name.value || !email.value || !password.value) {
     error.value = "Please fill in all fields";
     loading.value = false;
@@ -115,6 +117,7 @@ const redirectToLogin = async () => {
                 color="grey-darken-4"
                 rounded="sm"
                 aria-required="true"
+                type="submit"
                 block
                 >Sign up</v-btn
               >
