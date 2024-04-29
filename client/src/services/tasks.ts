@@ -14,7 +14,8 @@ const deleteTask = async (taskId: string, token: string): Promise<Result> => {
     });
 
     if (!response.ok) {
-      return { success: false };
+      const data = await response.json();
+      return { success: false, error: data.message };
     }
 
     return { success: true };
@@ -45,8 +46,10 @@ const createTask = async (task: TaskForm, token: string): Promise<Result> => {
       body: JSON.stringify(body),
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      return { success: false };
+      return { success: false, error: data.message };
     }
 
     return { success: true };
@@ -82,7 +85,8 @@ const updateTask = async (
     });
 
     if (!response.ok) {
-      return { success: false };
+      const data = await response.json();
+      return { success: false, error: data.message };
     }
 
     return { success: true };

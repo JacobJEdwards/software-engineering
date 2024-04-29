@@ -33,7 +33,7 @@ const calendarOptions = ref<CalendarOptions>({
   headerToolbar: {
     left: "prev,next",
     center: "title",
-    right: "dayGridMonth",
+    right: "today",
   },
   editable: false,
   selectable: false,
@@ -98,8 +98,8 @@ const calendarOptions = ref<CalendarOptions>({
                   </div>
                   <router-link
                     to="/profile"
-                    class="text-blue-500 underline text-sm hover:text-blue-700 focus:outline-none"
-                    >Create a semester</router-link
+                    class="text-blue-500 text-sm hover:text-blue-700 focus:outline-none"
+                    >Upload a semester</router-link
                   >
                 </div>
               </v-card-text>

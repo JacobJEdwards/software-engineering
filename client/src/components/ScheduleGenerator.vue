@@ -74,19 +74,35 @@ const exportCSV = () => {
       <v-text-field
         v-model="formData.moduleCode"
         label="Module Code"
+        outlined
+        required
+        variant="solo-filled"
+        aria-required="true"
       ></v-text-field>
       <v-text-field
         v-model="formData.moduleName"
         label="Module Name"
+        outlined
+        required
+        variant="solo-filled"
+        aria-required="true"
       ></v-text-field>
       <v-text-field
         v-model="formData.milestoneTitle"
         label="Milestone Title"
+        outlined
+        required
+        variant="solo-filled"
+        aria-required="true"
       ></v-text-field>
       <v-select
         v-model="formData.milestoneType"
         :items="MilestoneTypes"
         label="Milestone Type"
+        outlined
+        required
+        variant="solo-filled"
+        aria-required="true"
       ></v-select>
       <v-date-picker
         v-model="formData.deadline"

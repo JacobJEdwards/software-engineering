@@ -14,7 +14,7 @@ type Base = {
 
 export type Activity = {
   userId: string;
-  tasks: Array<Task>;
+  tasks: Array<string>; // task ids
   activityTitle: string;
   activityType: string;
   notes: string;

@@ -73,7 +73,7 @@ const redirectToLogin = async () => {
             <v-col cols="12" class="text-center">
               <h1 class="text-3xl font-bold">Sign up</h1>
               <p class="text-sm mt-2 text-gray-400">
-                Sign up now to create an account.
+                Sign up now to create an account
               </p>
             </v-col>
             <v-col cols="12">
@@ -134,7 +134,7 @@ const redirectToLogin = async () => {
                 <router-link
                   to="/login"
                   class="text-blue-500 text-sm hover:text-blue-700 focus:outline-none"
-                  >Log in.</router-link
+                  >Log in</router-link
                 >
               </p>
             </v-col>

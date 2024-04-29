@@ -8,7 +8,6 @@ import { useUserStore } from "../stores";
 
 const userStore = useUserStore();
 
-const tasks = userStore.tasks;
 const milestones = userStore.milestones;
 
 const resources = milestones.map((milestone) => {
@@ -42,15 +41,13 @@ const events = milestones
   })
   .flat();
 
-console.log(events);
-
 const calenderOptions = ref<CalendarOptions>({
   plugins: [resourceTimelinePlugin],
-  initialView: "resourceTimeline",
+  initialView: "resourceTimelineMonth",
   headerToolbar: {
     left: "prev,next",
     center: "title",
-    right: "resourceTimelineMonth,resourceTimelineWeek,resourceTimelineDay",
+    right: "resourceTimelineMonth,resourceTimelineDay",
   },
   resources: resources,
   events: events,

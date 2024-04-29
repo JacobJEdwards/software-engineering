@@ -66,7 +66,7 @@ const submitForm = async () => {
             <v-col cols="12" class="text-center">
               <h1 class="text-3xl font-bold">Log in</h1>
               <p class="text-sm mt-2 text-gray-400">
-                Welcome back! Log in to your account.
+                Welcome back! Log in to your account
               </p>
             </v-col>
             <v-col cols="12">
@@ -127,7 +127,7 @@ const submitForm = async () => {
                 <router-link
                   to="/signup"
                   class="text-blue-500 text-sm hover:text-blue-700 focus:outline-none"
-                  >Sign up.
+                  >Sign up
                 </router-link>
               </p>
             </v-col>

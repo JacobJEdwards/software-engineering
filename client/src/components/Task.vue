@@ -87,7 +87,7 @@ const updateTask = async () => {
     await userStore.getUser();
     modelVisible.value = false;
   } else {
-    error.value = "Failed to update task";
+    error.value = result.error ?? "Failed to update task";
   }
 
   loading.value = false;

@@ -14,19 +14,21 @@ export const login = async (
       body: JSON.stringify({ email, password }),
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
       return {
         success: false,
-        error: "Error on Login",
+        error: data.message,
       };
     }
 
-    const { token } = await response.json();
+    const { token } = data;
 
     if (!token) {
       return {
         success: false,
-        error: "Error on Login",
+        error: data.message,
       };
     }
 
@@ -63,24 +65,27 @@ export const signup = async (
 
     const response = await fetch(`${API_ROUTE}/auth/signup`, options);
 
+    const data = await response.json();
+
     if (!response.ok) {
       return {
         success: false,
+        error: data.message,
       };
     }
 
-    const { data } = await response.json();
-
-    const userId = data?.userId;
+    const userId = data.data?.userId;
 
     if (!userId) {
       return {
         success: false,
+        error: data.message,
       };
     }
 
     return {
       success: true,
+      data: data.data,
     };
   } catch (e: unknown) {
     console.log(e);

@@ -12,17 +12,13 @@ export const getActivities = async (
       },
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      return { success: false };
+      return { success: false, error: data.message };
     }
 
-    const { data } = await response.json();
-
-    if (!data) {
-      return { success: false };
-    }
-
-    return { success: true, data };
+    return { success: true, data: data.data };
   } catch (e: unknown) {
     console.error(e);
     return { success: false };
@@ -61,17 +57,13 @@ export const createActivity = async (
       }),
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      return { success: false };
+      return { success: false, error: data.message };
     }
 
-    const { data } = await response.json();
-
-    if (!data) {
-      return { success: false };
-    }
-
-    return { success: true, data };
+    return { success: true, data: data.data };
   } catch (e: unknown) {
     console.error(e);
     return { success: false };
@@ -92,11 +84,13 @@ export const deleteActivity = async (
       body: JSON.stringify({ activityId }),
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      return { success: false };
+      return { success: false, error: data.message };
     }
 
-    return { success: true };
+    return { success: true, data: data.data };
   } catch (e: unknown) {
     console.error(e);
     return { success: false };

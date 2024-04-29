@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
-import type { Task, User, Milestone } from "../typings/user.ts";
+import type { Task, User, Milestone, Activity } from "../typings/user.ts";
 import { useAuthStore } from "./auth.ts";
 import { getUser } from "../services/user.ts";
+import { getActivities } from "../services/activities";
 
 export type UserState = {
   userId: string | null;
@@ -9,6 +10,7 @@ export type UserState = {
   loading: boolean;
   tasks: Task[];
   milestones: Milestone[];
+  activities: Activity[];
 };
 
 export const useUserStore = defineStore("user", {
@@ -18,6 +20,7 @@ export const useUserStore = defineStore("user", {
     loading: false,
     tasks: [],
     milestones: [],
+    activities: [],
   }),
   getters: {
     userInfo: (state) => state.user,
@@ -47,6 +50,8 @@ export const useUserStore = defineStore("user", {
       }
 
       this.user = result.data;
+
+      await this.loadActivities();
       this.refreshTasks();
 
       this.loading = false;
@@ -61,6 +66,34 @@ export const useUserStore = defineStore("user", {
       );
 
       this.tasks = this.milestones.flatMap((m) => m.tasks);
+    },
+    async loadActivities() {
+      if (!this.user) {
+        return;
+      }
+
+      const authStore = useAuthStore();
+
+      if (!authStore.isLoggedIn) {
+        return;
+      }
+      const token = authStore.authToken;
+
+      if (!token) {
+        return;
+      }
+
+      this.loading = true;
+
+      const result = await getActivities(token);
+
+      if (!result.success || !result.data) {
+        this.loading = false;
+        return;
+      }
+
+      this.activities = result.data;
+      this.loading = false;
     },
   },
 });

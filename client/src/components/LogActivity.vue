@@ -126,6 +126,9 @@ const submitForm = async () => {
                   label="Activity Title"
                   required
                   :loading="loading"
+                  aria-required="true"
+                  outlined
+                  variant="solo-filled"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
@@ -134,6 +137,9 @@ const submitForm = async () => {
                   label="Activity Type"
                   required
                   :loading="loading"
+                  aria-required="true"
+                  outlined
+                  variant="solo-filled"
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
@@ -142,6 +148,9 @@ const submitForm = async () => {
                   label="Activity Description"
                   required
                   :loading="loading"
+                  aria-required="true"
+                  outlined
+                  variant="solo-filled"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
@@ -150,6 +159,9 @@ const submitForm = async () => {
                   label="Hours Completed"
                   required
                   :loading="loading"
+                  aria-required="true"
+                  outlined
+                  variant="solo-filled"
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
@@ -166,6 +178,9 @@ const submitForm = async () => {
                   multiple
                   required
                   :loading="loading"
+                  aria-required="true"
+                  outlined
+                  variant="solo-filled"
                 ></v-select>
               </v-col>
             </v-row>
@@ -173,10 +188,13 @@ const submitForm = async () => {
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" @click="closeForm"> Cancel </v-btn>
-          <v-btn color="blue darken-1" type="submit" :loading="loading">
-            Save
-          </v-btn>
+          <v-btn color="blue darken-1" @click="closeForm" text="Cancel"></v-btn>
+          <v-btn
+            color="blue darken-1"
+            type="submit"
+            :loading="loading"
+            text="Save"
+          ></v-btn>
         </v-card-actions>
       </v-form>
     </v-card>
