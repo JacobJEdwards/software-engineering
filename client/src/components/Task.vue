@@ -117,6 +117,9 @@ const updateTask = async () => {
               :loading="loading"
               v-model="formData.title"
               label="Title"
+              aria-required="true"
+              outlined
+              variant="solo-filled"
             ></v-text-field>
           </v-col>
           <v-col cols="12">
@@ -124,6 +127,9 @@ const updateTask = async () => {
               :loading="loading"
               v-model="formData.startDate"
               label="Start Date"
+              aria-required="true"
+              outlined
+              variant="solo-filled"
             ></v-text-field>
           </v-col>
           <v-col cols="12">
@@ -131,6 +137,9 @@ const updateTask = async () => {
               :loading="loading"
               v-model="formData.endDate"
               label="End Date"
+              aria-required="true"
+              outlined
+              variant="solo-filled"
             ></v-text-field>
           </v-col>
           <v-col cols="12">
@@ -139,6 +148,9 @@ const updateTask = async () => {
               v-model="formData.status"
               label="Status"
               :items="Object.values(TaskStatuses)"
+              aria-required="true"
+              outlined
+              variant="solo-filled"
             ></v-select>
           </v-col>
           <v-col cols="12">
@@ -149,6 +161,9 @@ const updateTask = async () => {
               v-model="task.hrsCompleted"
               label="Hours Completed"
               persistent-hint
+              aria-required="true"
+              outlined
+              variant="solo-filled"
             ></v-text-field>
           </v-col>
           <v-col cols="12">
@@ -156,6 +171,9 @@ const updateTask = async () => {
               :loading="loading"
               v-model="formData.hrsRequired"
               label="Hours Required"
+              aria-required="true"
+              outlined
+              variant="solo-filled"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -211,16 +229,26 @@ const updateTask = async () => {
         <v-btn
           :loading="loading"
           @click="edit ? (edit = false) : (modelVisible = false)"
-          color="blue"
+          color="error"
+          rounded="sm"
         >
           {{ edit ? "Cancel" : "Close" }}
         </v-btn>
 
-        <v-btn @click="updateTask" :loading="loading" color="green">
+        <v-btn
+          @click="updateTask"
+          :loading="loading"
+          color="success"
+          rounded="sm"
+        >
           {{ edit ? "Save" : "Edit" }}
         </v-btn>
         <v-spacer></v-spacer>
-        <v-btn :loading="loading" @click="deleteTask" color="danger"
+        <v-btn
+          :loading="loading"
+          @click="deleteTask"
+          color="danger"
+          rounded="sm"
           >Delete</v-btn
         >
       </v-card-actions>

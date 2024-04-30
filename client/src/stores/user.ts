@@ -91,7 +91,6 @@ export const useUserStore = defineStore("user", {
         this.loading = false;
         return;
       }
-
       this.activities = result.data;
       this.loading = false;
     },

@@ -15,12 +15,27 @@ import { createPinia } from "pinia";
 import piniaPluginPersistedState from "pinia-plugin-persistedstate";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
 import "@mdi/font/css/materialdesignicons.css";
+import colors from "vuetify/util/colors";
 
+// add custom colors
 const vuetify = createVuetify({
   components,
   directives,
   theme: {
     defaultTheme: "light",
+    themes: {
+      light: {
+        colors: {
+          primary: colors.grey.darken4,
+          secondary: colors.blue.darken3,
+          accent: "#ed61ba",
+          error: "#FF5252",
+          info: "#2196F3",
+          success: "#4CAF50",
+          warning: "#FFC107",
+        },
+      },
+    },
   },
   icons: {
     defaultSet: "mdi",

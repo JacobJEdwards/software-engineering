@@ -10,7 +10,7 @@ type FormData = {
   deadline: string | null;
 };
 
-const formData = ref({
+const formData = ref<FormData>({
   moduleCode: "",
   moduleName: "",
   milestoneTitle: "",

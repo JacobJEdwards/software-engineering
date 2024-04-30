@@ -106,7 +106,7 @@ const submitForm = async () => {
             <v-col cols="12">
               <v-btn
                 :loading="loading"
-                color="grey-darken-4"
+                color="secondary"
                 rounded="sm"
                 block
                 type="submit"

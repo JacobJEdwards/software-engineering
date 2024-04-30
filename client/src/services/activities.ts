@@ -18,7 +18,7 @@ export const getActivities = async (
       return { success: false, error: data.message };
     }
 
-    return { success: true, data: data.data };
+    return { success: true, data: data.data.activities };
   } catch (e: unknown) {
     console.error(e);
     return { success: false };

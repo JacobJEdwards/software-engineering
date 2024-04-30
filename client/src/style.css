@@ -10,3 +10,17 @@ body,
   padding: 0;
   height: 100%;
 }
+
+.fc-prev-button,
+.fc-next-button {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.fc-prev-button span,
+.fc-next-button span {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}

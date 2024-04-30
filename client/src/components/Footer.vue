@@ -42,11 +42,12 @@ const links = [
     click: () => router.push("/terms"),
   },
 ];
+// make it bottom, but not sticky
 </script>
 
 <template>
-  <v-footer app class="bg-grey-darken-4" dark>
-    <v-row align="center" class="pl-6" v-if="!mdAndDown">
+  <v-footer class="bg-grey-darken-4" height="40" app>
+    <v-row align="center" class="pl-10" v-if="!mdAndDown">
       <v-col>
         <v-btn
           variant="text"
