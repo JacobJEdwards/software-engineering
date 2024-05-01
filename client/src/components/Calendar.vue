@@ -5,17 +5,20 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { CalendarOptions } from "@fullcalendar/core";
 
-import { ref, computed, ComputedRef } from "vue";
+import { ref, computed, ComputedRef, watch } from "vue";
 import { useUserStore } from "../stores";
 import { EventInput } from "fullcalendar";
 import CreateTask from "./modals/CreateTask.vue";
 import { Task, Activity } from "../typings/user.ts";
 
 const userStore = useUserStore();
+
 const addTask = ref<boolean>(false);
 
 const tasks = ref<Task[]>(userStore.tasks);
 const activities = ref<Activity[]>(userStore.activities);
+const dateClicked = ref<Date | string | undefined>(undefined);
+const showOptions = ref<boolean>(false);
 
 const taskEvents: ComputedRef<EventInput[]> = computed(() =>
   tasks.value.map((task) => {
@@ -56,7 +59,7 @@ const activityEvents: ComputedRef<EventInput[]> = computed(() =>
   }),
 );
 
-const events = computed(() => taskEvents.value.concat(activityEvents.value));
+const events = computed(() => [...taskEvents.value, ...activityEvents.value]);
 
 const calendarOptions = ref<CalendarOptions>({
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
@@ -67,7 +70,7 @@ const calendarOptions = ref<CalendarOptions>({
   },
   initialView: "dayGridMonth",
   events: events.value,
-  editable: true,
+  editable: false,
   selectable: true,
   selectMirror: true,
   dayMaxEvents: true,
@@ -77,32 +80,45 @@ const calendarOptions = ref<CalendarOptions>({
     console.log(task);
   },
   select: (info) => {
+    console.log("seelcted");
     console.log(info);
   },
   dateClick(arg) {
+    console.log("date clicked");
+    console.log(arg);
+    dateClicked.value = new Date(arg.dateStr);
+
     addTask.value = true;
   },
 });
 
 const updateEvents = () => {
-  console.log(events.value);
   tasks.value = userStore.tasks;
   activities.value = userStore.activities;
   calendarOptions.value.events = events.value;
 };
 
 const calendar = ref<typeof FullCalendar | null>(null);
+
+userStore.$subscribe(updateEvents);
 </script>
 
 <template>
   <v-container>
-    <FullCalendar :options="calendarOptions" />
-    <CreateTask
-      :visible="addTask"
-      :close="() => (addTask = false)"
-      @created="updateEvents"
-    />
+    <v-row>
+      <v-col :cols="showOptions ? 9 : 12">
+        <FullCalendar :options="calendarOptions" />
+      </v-col>
+      <v-col cols="3" v-if="showOptions">
+        <v-card> </v-card>
+      </v-col>
+    </v-row>
   </v-container>
+  <CreateTask
+    :visible="addTask"
+    :close="() => (addTask = false)"
+    :start-date="dateClicked"
+  />
 </template>
 
 <style scoped></style>

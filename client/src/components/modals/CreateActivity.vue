@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useAuthStore, useUserStore } from "../../stores";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { ActivitiesService } from "../../services";
 import { useLoading, useSuccessErrorMessage } from "../..//utils/utils.ts";
-import { TaskStatuses } from "../../typings/user.ts";
+import { TaskStatuses, ActivityForm } from "../../typings/user.ts";
 
 const { loading } = useLoading();
 const { success, error } = useSuccessErrorMessage();
@@ -11,37 +11,48 @@ const { success, error } = useSuccessErrorMessage();
 const authStore = useAuthStore();
 const userStore = useUserStore();
 
-const props = defineProps<{
-  visible: boolean;
-  close: () => void;
-}>();
+const props = defineProps<
+  {
+    visible: boolean;
+    close: () => void;
+  } & Partial<ActivityForm>
+>();
 
-type FormData = {
-  activityTitle: string;
-  activityType: string;
-  activityDescription: string;
-  hrsCompleted: number;
-  tasks: string[];
-};
+const emit = defineEmits(["created"]);
 
-const formData = ref<FormData>({
-  activityTitle: "",
-  activityType: "",
-  activityDescription: "",
-  hrsCompleted: 0,
-  tasks: [],
+const formData = ref<ActivityForm>({
+  activityTitle: props.activityTitle ?? "",
+  activityType: props.activityType ?? "",
+  activityDescription: props.activityDescription ?? "",
+  hrsCompleted: props.hrsCompleted ?? 0,
+  tasks: props.tasks ?? [],
 });
 
+watch(
+  () => props,
+  () => {
+    formData.value = {
+      activityTitle: props.activityTitle ?? "",
+      activityType: props.activityType ?? "",
+      activityDescription: props.activityDescription ?? "",
+      hrsCompleted: props.hrsCompleted ?? 0,
+      tasks: props.tasks ?? [],
+    };
+  },
+  { deep: true },
+);
+
 const closeForm = () => {
+  formData.value = {
+    activityTitle: props.activityTitle ?? "",
+    activityType: props.activityType ?? "",
+    activityDescription: props.activityDescription ?? "",
+    hrsCompleted: props.hrsCompleted ?? 0,
+    tasks: props.tasks ?? [],
+  };
   error.value = "";
   success.value = "";
-  formData.value = {
-    activityTitle: "",
-    activityType: "",
-    activityDescription: "",
-    hrsCompleted: 0,
-    tasks: [],
-  };
+  loading.value = false;
   props.close();
 };
 
@@ -63,6 +74,8 @@ const submitForm = async () => {
 
   success.value = "Activity logged successfully";
   loading.value = false;
+  await userStore.getUser();
+  emit("created");
 
   closeForm();
 };

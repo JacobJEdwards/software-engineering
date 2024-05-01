@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { TaskService } from "../../services";
 
 import { Milestone, TaskStatuses, TaskForm } from "../../typings/user";
@@ -15,20 +15,41 @@ const authStore = useAuthStore();
 
 const semester = userStore.user?.semester[0];
 
-const props = defineProps<{
-  visible: boolean;
-  close: () => void;
-}>();
+const props = defineProps<
+  {
+    visible: boolean;
+    close: () => void;
+  } & Partial<TaskForm>
+>();
 
 const emit = defineEmits(["created"]);
 
 const formData = ref<TaskForm>({
-  title: "",
-  milestoneId: "",
-  progress: TaskStatuses.STARTED,
-  hrsCompleted: 0,
-  hrsRequired: 0,
+  title: props.title ?? "",
+  milestoneId: props.milestoneId ?? "",
+  progress: props.progress ?? TaskStatuses.STARTED,
+  hrsCompleted: props.hrsCompleted ?? 0,
+  hrsRequired: props.hrsRequired ?? 0,
+  startDate: props.startDate ?? undefined,
+  endDate: props.endDate ?? undefined,
 });
+
+// if props change, update form data
+watch(
+  () => props,
+  () => {
+    formData.value = {
+      title: props.title ?? "",
+      milestoneId: props.milestoneId ?? "",
+      progress: props.progress ?? TaskStatuses.STARTED,
+      hrsCompleted: props.hrsCompleted ?? 0,
+      hrsRequired: props.hrsRequired ?? 0,
+      startDate: props.startDate ?? undefined,
+      endDate: props.endDate ?? undefined,
+    };
+  },
+  { deep: true },
+);
 
 const selectedModule = ref<string | null>(null);
 const selectedModuleMilestones = ref<Milestone[]>([]);
@@ -46,13 +67,13 @@ const populateMilestones = () => {
 
 const closeForm = () => {
   formData.value = {
-    title: "",
-    milestoneId: "",
-    startDate: undefined,
-    endDate: undefined,
-    progress: TaskStatuses.STARTED,
-    hrsCompleted: 0,
-    hrsRequired: 0,
+    title: props.title ?? "",
+    milestoneId: props.milestoneId ?? "",
+    startDate: props.startDate ?? undefined,
+    endDate: props.endDate ?? undefined,
+    progress: props.progress ?? TaskStatuses.STARTED,
+    hrsCompleted: props.hrsCompleted ?? 0,
+    hrsRequired: props.hrsRequired ?? 0,
   };
   loading.value = false;
   success.value = "";

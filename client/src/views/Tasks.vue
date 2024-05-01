@@ -3,8 +3,26 @@ import UserLoading from "../components/UserLoading.vue";
 import { useUserStore } from "../stores";
 import AddTask from "../components/AddTask.vue";
 import Task from "../components/Task.vue";
+import { ref } from "vue";
+import type { Task as TaskType } from "../typings/user";
 
 const userStore = useUserStore();
+
+const tasks = ref<TaskType[]>(userStore.tasks);
+const search = ref<string>("");
+
+const headers = [
+  { title: "Title", key: "title", sortable: false },
+  { title: "Start Date", key: "startDate" },
+  { title: "End Date", key: "endDate" },
+  { title: "Status", key: "status" },
+  { title: "Hours Completed", key: "hrsCompleted" },
+  { title: "Hours Required", key: "hrsRequired" },
+];
+
+userStore.$subscribe(() => {
+  tasks.value = userStore.tasks;
+});
 </script>
 
 <template>
@@ -18,8 +36,8 @@ const userStore = useUserStore();
           prepend-icon="mdi-checkbox-marked-circle-outline"
         >
           <v-divider></v-divider>
-          <v-card-text v-if="userStore.tasks.length">
-            <v-list v-if="userStore.tasks.length">
+          <v-card-text>
+            <v-list v-if="tasks.length">
               <Task
                 v-for="task in userStore.tasks"
                 :key="task._id"
@@ -28,9 +46,7 @@ const userStore = useUserStore();
                 editable
               />
             </v-list>
-          </v-card-text>
-          <v-card-text v-else>
-            <p class="text-lg mb-4">No tasks found!</p>
+            <p v-else class="text-lg mb-4">No tasks found!</p>
           </v-card-text>
         </v-card>
       </v-col>
@@ -49,12 +65,38 @@ const userStore = useUserStore();
 
       <v-col cols="12">
         <v-card title="All tasks" prepend-icon="mdi-dots-horizontal">
-          <v-divider></v-divider>
+          <template v-slot:text>
+            <v-text-field
+              v-model="search"
+              label="Search"
+              prepend-inner-icon="mdi-magnify"
+              variant="outlined"
+              hide-details
+              single-line
+            ></v-text-field>
+          </template>
           <v-card-text>
             <v-data-table
               :loading="userStore.loading"
-              :items="userStore.tasks"
-            ></v-data-table>
+              :items="tasks"
+              :headers="headers"
+              :search="search"
+            >
+              <template v-slot:item.status="{ item }">
+                <v-chip
+                  :color="
+                    item.status === 'Completed'
+                      ? 'success'
+                      : item.status === 'In Progress'
+                        ? 'warning'
+                        : 'error'
+                  "
+                  :v-model="item.status"
+                  dark
+                  >{{ item.status }}</v-chip
+                >
+              </template>
+            </v-data-table>
           </v-card-text>
         </v-card>
       </v-col>

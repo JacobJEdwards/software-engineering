@@ -84,12 +84,13 @@ const updateTask = async (
       body: JSON.stringify(body),
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      const data = await response.json();
       return { success: false, error: data.message };
     }
 
-    return { success: true };
+    return { success: true, data: data.data };
   } catch (e: unknown) {
     console.error(e);
     return { success: false };

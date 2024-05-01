@@ -78,3 +78,11 @@ export type TaskForm = {
   hrsCompleted: number;
   hrsRequired: number;
 };
+
+export type ActivityForm = {
+  activityTitle: string;
+  activityType: string;
+  activityDescription: string;
+  hrsCompleted: number;
+  tasks: string[];
+};

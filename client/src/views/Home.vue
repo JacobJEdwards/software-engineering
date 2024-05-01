@@ -2,30 +2,55 @@
 import UserLoading from "../components/UserLoading.vue";
 import { useUserStore } from "../stores";
 import Semester from "../components/Semester.vue";
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import type { Task as TaskType } from "../typings/user";
 import Task from "../components/Task.vue";
 
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { CalendarOptions } from "@fullcalendar/core";
+import { CalendarOptions, EventInput } from "@fullcalendar/core";
+import { ComputedRef } from "vue";
 
 const userStore = useUserStore();
 
-const tasks = userStore.tasks;
+const tasks = ref<TaskType[]>(userStore.tasks);
+const activities = ref<Activity[]>(userStore.activities);
 
-const events = tasks.map((task) => {
-  const startDate = new Date(task.startDate);
-  const endDate = new Date(task.endDate);
-
-  return {
-    start: endDate,
-    allDay: true,
-    title: task.title,
-    color: task.status === "Completed" ? "green" : "red",
-  };
+const topTasks: ComputedRef<TaskType[]> = computed(() => {
+  return tasks.value.slice(0, 3);
 });
+
+const taskEvents: ComputedRef<EventInput[]> = computed(() =>
+  tasks.value.map((task) => {
+    const startDate = new Date(task.startDate);
+    const endDate = new Date(task.endDate);
+
+    return {
+      start: endDate,
+      title: task.title,
+      color: task.status === "Completed" ? "green" : "red",
+    };
+  }),
+);
+
+const activityEvents: ComputedRef<EventInput[]> = computed(() =>
+  activities.value.map((activity) => {
+    const endDate = new Date(activity.createdAt);
+    const startDate = new Date(activity.createdAt);
+    startDate.setHours(startDate.getHours() - activity.hrsCompleted);
+
+    return {
+      start: startDate,
+      end: endDate,
+      title: activity.activityTitle,
+      color: "pink",
+    };
+  }),
+);
+
+const events = computed(() => [...taskEvents.value, ...activityEvents.value]);
 
 const calendarOptions = ref<CalendarOptions>({
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
@@ -40,7 +65,12 @@ const calendarOptions = ref<CalendarOptions>({
   selectMirror: false,
   dayMaxEvents: true,
   weekends: true,
-  events: events,
+  events: events.value,
+});
+
+userStore.$subscribe(() => {
+  tasks.value = userStore.tasks;
+  activities.value = userStore.activities;
 });
 </script>
 
@@ -56,9 +86,9 @@ const calendarOptions = ref<CalendarOptions>({
         >
           <v-divider></v-divider>
           <v-card-text v-if="userStore.tasks.length">
-            <v-list v-if="userStore.tasks.length">
+            <v-list>
               <Task
-                v-for="task in userStore.tasks"
+                v-for="task in topTasks"
                 :task="task"
                 :key="task._id"
                 small
