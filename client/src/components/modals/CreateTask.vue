@@ -22,6 +22,8 @@ const props = defineProps<
   } & Partial<TaskForm>
 >();
 
+const show = ref<boolean>(props.visible);
+
 const emit = defineEmits(["created"]);
 
 const formData = ref<TaskForm>({
@@ -47,6 +49,7 @@ watch(
       startDate: props.startDate ?? undefined,
       endDate: props.endDate ?? undefined,
     };
+    show.value = props.visible;
   },
   { deep: true },
 );
@@ -113,7 +116,7 @@ const createTask = async () => {
 
 <template>
   <v-dialog
-    v-model="props.visible"
+    v-model="show"
     max-width="800"
     scrollable
     @click:outside="props.close"

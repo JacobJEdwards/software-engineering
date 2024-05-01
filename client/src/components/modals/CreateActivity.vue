@@ -18,6 +18,8 @@ const props = defineProps<
   } & Partial<ActivityForm>
 >();
 
+const show = ref<boolean>(props.visible);
+
 const emit = defineEmits(["created"]);
 
 const formData = ref<ActivityForm>({
@@ -38,6 +40,7 @@ watch(
       hrsCompleted: props.hrsCompleted ?? 0,
       tasks: props.tasks ?? [],
     };
+    show.value = props.visible;
   },
   { deep: true },
 );
@@ -83,7 +86,7 @@ const submitForm = async () => {
 
 <template>
   <v-dialog
-    v-model="props.visible"
+    v-model="show"
     max-width="500px"
     scrollable
     @click:outside="props.close"

@@ -5,7 +5,6 @@ import TaskInfo from "./modals/TaskInfo.vue";
 
 const props = defineProps<{
   task: Task;
-  small?: boolean;
   editable?: boolean;
 }>();
 
@@ -15,18 +14,20 @@ const modelVisible = ref<boolean>(false);
 </script>
 
 <template>
-  <v-list-item
-    v-if="small"
-    :title="task.title"
-    :subtitle="finalDate"
-    :key="task._id"
-  >
+  <v-list-item :title="task.title" :key="task._id">
+    <template v-slot:subtitle>
+      <div><span class="font-bold">Due: </span>{{ finalDate }}</div>
+    </template>
     <template v-slot:append>
-      <v-btn
-        icon="mdi-information"
-        @click="modelVisible = true"
-        variant="text"
-      />
+      <v-chip
+        class="text-center p-0 mr-3"
+        :color="task.status === 'Completed' ? 'success' : 'error'"
+        variant="tonal"
+        pill
+      >
+        {{ task.status }}
+      </v-chip>
+      <v-btn icon="mdi-pencil" @click="modelVisible = true" variant="text" />
     </template>
   </v-list-item>
   <TaskInfo

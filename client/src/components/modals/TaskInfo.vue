@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { TaskStatuses, Task, TaskStatus } from "../../typings/user.ts";
 import { useLoading, useSuccessErrorMessage } from "../../utils/utils.ts";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { TaskService } from "../../services";
 import { useAuthStore, useUserStore } from "../../stores";
 
@@ -27,6 +27,8 @@ const props = defineProps<{
   close: () => void;
 }>();
 
+const show = ref<boolean>(props.visible);
+
 const formData = ref<TaskForm>({
   title: props.task.title,
   startDate: props.task.startDate,
@@ -50,6 +52,7 @@ const closeForm = () => {
   error.value = "";
   success.value = "";
   loading.value = false;
+  edit.value = false;
   props.close();
 };
 
@@ -64,7 +67,7 @@ const deleteTask = async () => {
   if (result.success) {
     success.value = "Task deleted successfully";
     await userStore.getUser();
-    props.close();
+    closeForm();
   } else {
     error.value = result.error ?? "Failed to delete task";
   }
@@ -99,19 +102,35 @@ const updateTask = async () => {
   if (result.success) {
     success.value = "Task updated successfully";
     await userStore.getUser();
-    props.close();
+    closeForm();
   } else {
     error.value = result.error ?? "Failed to update task";
   }
 
   loading.value = false;
 };
+
+watch(
+  () => props,
+  () => {
+    formData.value = {
+      title: props.task.title,
+      startDate: props.task.startDate,
+      endDate: props.task.endDate,
+      status: props.task.status,
+      hrsCompleted: props.task.hrsCompleted,
+      hrsRequired: props.task.hrsRequired,
+    };
+    show.value = props.visible;
+  },
+  { deep: true },
+);
 </script>
 
 <template>
   <v-dialog
     scrollable
-    v-model="props.visible"
+    v-model="show"
     max-width="500px"
     class="p-4"
     max-height="500px"

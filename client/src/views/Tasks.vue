@@ -5,6 +5,7 @@ import AddTask from "../components/AddTask.vue";
 import Task from "../components/Task.vue";
 import { ref } from "vue";
 import type { Task as TaskType } from "../typings/user";
+import TaskInfo from "../components/modals/TaskInfo.vue";
 
 const userStore = useUserStore();
 
@@ -18,11 +19,15 @@ const headers = [
   { title: "Status", key: "status" },
   { title: "Hours Completed", key: "hrsCompleted" },
   { title: "Hours Required", key: "hrsRequired" },
+  { title: "", key: "action", sortable: false },
 ];
 
 userStore.$subscribe(() => {
   tasks.value = userStore.tasks;
 });
+
+const selectedTask = ref<TaskType | null>(null);
+const showTaskInfo = ref<boolean>(false);
 </script>
 
 <template>
@@ -96,12 +101,30 @@ userStore.$subscribe(() => {
                   >{{ item.status }}</v-chip
                 >
               </template>
+              <template v-slot:item.action="{ item }">
+                <v-btn
+                  color="primary"
+                  variant="text"
+                  icon="mdi-pencil"
+                  @click="
+                    selectedTask = item;
+                    showTaskInfo = true;
+                  "
+                ></v-btn>
+              </template>
             </v-data-table>
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
   </v-container>
+  <TaskInfo
+    v-if="selectedTask"
+    :task="selectedTask"
+    :visible="showTaskInfo"
+    :editable="true"
+    :close="() => (showTaskInfo = false)"
+  />
 </template>
 
 <style scoped></style>

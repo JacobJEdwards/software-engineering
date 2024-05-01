@@ -17,8 +17,10 @@ const addTask = ref<boolean>(false);
 
 const tasks = ref<Task[]>(userStore.tasks);
 const activities = ref<Activity[]>(userStore.activities);
-const dateClicked = ref<Date | string | undefined>(undefined);
 const showOptions = ref<boolean>(false);
+
+const selectedStartDate = ref<Date | undefined>(undefined);
+const selectedEndDate = ref<Date | undefined>(undefined);
 
 const taskEvents: ComputedRef<EventInput[]> = computed(() =>
   tasks.value.map((task) => {
@@ -80,14 +82,16 @@ const calendarOptions = ref<CalendarOptions>({
     console.log(task);
   },
   select: (info) => {
-    console.log("seelcted");
-    console.log(info);
+    selectedStartDate.value = new Date(info.startStr);
+    selectedEndDate.value = new Date(info.end);
+    // minus 1 from the end date to make it inclusive
+    selectedEndDate.value.setDate(selectedEndDate.value.getDate() - 1);
+
+    addTask.value = true;
   },
   dateClick(arg) {
-    console.log("date clicked");
-    console.log(arg);
-    dateClicked.value = new Date(arg.dateStr);
-
+    selectedStartDate.value = new Date(arg.dateStr);
+    selectedEndDate.value = undefined;
     addTask.value = true;
   },
 });
@@ -117,7 +121,8 @@ userStore.$subscribe(updateEvents);
   <CreateTask
     :visible="addTask"
     :close="() => (addTask = false)"
-    :start-date="dateClicked"
+    :start-date="selectedStartDate"
+    :end-date="selectedEndDate"
   />
 </template>
 

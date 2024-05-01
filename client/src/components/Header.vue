@@ -14,7 +14,7 @@ function toggleTheme() {
 <template>
   <v-container
     class="mx-auto d-flex align-center justify-center"
-    v-if="!mdAndDown"
+    v-if="!mdAndDown && router.currentRoute.value.meta.title"
   >
     <v-row class="my-4">
       <v-col cols="12">
