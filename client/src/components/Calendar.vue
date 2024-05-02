@@ -84,7 +84,6 @@ const calendarOptions = ref<CalendarOptions>({
   select: (info) => {
     selectedStartDate.value = new Date(info.startStr);
     selectedEndDate.value = new Date(info.end);
-    // minus 1 from the end date to make it inclusive
     selectedEndDate.value.setDate(selectedEndDate.value.getDate() - 1);
 
     addTask.value = true;
@@ -119,7 +118,7 @@ userStore.$subscribe(updateEvents);
     </v-row>
   </v-container>
   <CreateTask
-    :visible="addTask"
+    v-model:show="addTask"
     :close="() => (addTask = false)"
     :start-date="selectedStartDate"
     :end-date="selectedEndDate"

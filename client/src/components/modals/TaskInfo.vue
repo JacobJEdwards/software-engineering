@@ -4,9 +4,16 @@ import { useLoading, useSuccessErrorMessage } from "../../utils/utils.ts";
 import { ref, watch } from "vue";
 import { TaskService } from "../../services";
 import { useAuthStore, useUserStore } from "../../stores";
+import Alert from "../utils/Alert.vue";
+import NumberInput from "../utils/NumberInput.vue";
 
 const { loading } = useLoading();
 const { success, error } = useSuccessErrorMessage();
+
+const show = defineModel("show", {
+  type: Boolean,
+  default: false,
+});
 
 const authStore = useAuthStore();
 const userStore = useUserStore();
@@ -23,11 +30,8 @@ type TaskForm = {
 const props = defineProps<{
   task: Task;
   editable: boolean;
-  visible: boolean;
   close: () => void;
 }>();
-
-const show = ref<boolean>(props.visible);
 
 const formData = ref<TaskForm>({
   title: props.task.title,
@@ -49,35 +53,44 @@ const closeForm = () => {
     hrsCompleted: props.task.hrsCompleted,
     hrsRequired: props.task.hrsRequired,
   };
-  error.value = "";
-  success.value = "";
+  error.value.message = "";
+  error.value.show = false;
+  success.value.message = "";
+  success.value.show = false;
+
   loading.value = false;
   edit.value = false;
   props.close();
 };
 
 const deleteTask = async () => {
-  success.value = "";
-  error.value = "";
+  success.value.message = "";
+  success.value.show = false;
+  error.value.message = "";
+  error.value.show = false;
   loading.value = true;
 
   const taskId = props.task._id;
   const result = await TaskService.delete(taskId, authStore.authToken);
 
   if (result.success) {
-    success.value = "Task deleted successfully";
+    success.value.message = "Task deleted successfully";
+    success.value.show = true;
     await userStore.getUser();
     closeForm();
   } else {
-    error.value = result.error ?? "Failed to delete task";
+    error.value.message = result.error ?? "Failed to delete task";
+    error.value.show = true;
   }
 
   loading.value = false;
 };
 
 const updateTask = async () => {
-  success.value = "";
-  error.value = "";
+  success.value.message = "";
+  success.value.show = false;
+  error.value.message = "";
+  error.value.show = false;
 
   if (!edit.value) {
     edit.value = true;
@@ -100,11 +113,13 @@ const updateTask = async () => {
   const result = await TaskService.update(body, authStore.authToken);
 
   if (result.success) {
-    success.value = "Task updated successfully";
     await userStore.getUser();
+    success.value.message = "Task updated successfully";
+    success.value.show = true;
     closeForm();
   } else {
-    error.value = result.error ?? "Failed to update task";
+    error.value.message = result.error ?? "Failed to update task";
+    error.value.show = true;
   }
 
   loading.value = false;
@@ -121,7 +136,6 @@ watch(
       hrsCompleted: props.task.hrsCompleted,
       hrsRequired: props.task.hrsRequired,
     };
-    show.value = props.visible;
   },
   { deep: true },
 );
@@ -143,10 +157,6 @@ watch(
 
       <v-card-text v-if="props.editable && edit">
         <v-row>
-          <v-col cols="12" v-if="error || success">
-            <v-alert v-if="error" type="error">{{ error }}</v-alert>
-            <v-alert v-if="success" type="success">{{ success }}</v-alert>
-          </v-col>
           <v-col cols="12">
             <v-text-field
               :loading="loading"
@@ -184,32 +194,26 @@ watch(
               label="Status"
               :items="Object.values(TaskStatuses)"
               aria-required="true"
-              outlined
               variant="solo-filled"
             ></v-select>
           </v-col>
           <v-col cols="12">
-            <v-text-field
-              :loading="loading"
-              hint="Please log an activity to update hours."
-              disabled
-              v-model="task.hrsCompleted"
-              label="Hours Completed"
+            <NumberInput
               persistent-hint
-              aria-required="true"
-              outlined
-              variant="solo-filled"
-            ></v-text-field>
+              hint="Please log an activity to update hours."
+              :loading="loading"
+              v-model="formData.hrsCompleted"
+              label="Hours Completed"
+              disabled
+            />
           </v-col>
           <v-col cols="12">
-            <v-text-field
-              :loading="loading"
-              v-model="formData.hrsRequired"
+            <NumberInput
               label="Hours Required"
-              aria-required="true"
-              outlined
-              variant="solo-filled"
-            ></v-text-field>
+              v-model="formData.hrsRequired"
+              :min="0"
+              required
+            />
           </v-col>
         </v-row>
       </v-card-text>
@@ -246,16 +250,9 @@ watch(
           </v-col>
           <v-col cols="12">
             <v-list-item
-              title="Hours Completed"
+              title="Hours"
               :key="task._id"
-              :subtitle="task.hrsCompleted"
-            ></v-list-item>
-          </v-col>
-          <v-col cols="12">
-            <v-list-item
-              title="Hours Required"
-              :key="task._id"
-              :subtitle="task.hrsRequired"
+              :subtitle="`${task.hrsCompleted}/${task.hrsRequired}`"
             ></v-list-item>
           </v-col>
         </v-row>
@@ -288,6 +285,18 @@ watch(
           >Delete</v-btn
         >
       </v-card-actions>
+      <Alert
+        type="error"
+        v-model:show="error.show"
+        :message="error.message"
+        :close="() => (error.show = false)"
+      />
+      <Alert
+        type="success"
+        v-model:show="success.show"
+        :message="success.message"
+        :close="() => (success.show = false)"
+      />
     </v-card>
   </v-dialog>
 </template>

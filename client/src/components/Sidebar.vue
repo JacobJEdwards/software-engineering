@@ -7,7 +7,7 @@ const userStore = useUserStore();
 
 <template>
   <v-navigation-drawer app color="secondary">
-    <template v-slot:prepend>
+    <template #prepend>
       <v-list-item
         lines="two"
         subtitle="Logged in"

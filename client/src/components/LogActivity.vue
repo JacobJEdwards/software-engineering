@@ -21,7 +21,7 @@ const expanded = ref<boolean>(false);
     text="Log Activity"
   ></v-btn>
 
-  <CreateActivity :visible="dialog" :close="() => (dialog = false)" />
+  <CreateActivity v-model:show="dialog" :close="() => (dialog = false)" />
   <!--
     <v-expand-x-transition>
       <span v-if="expanded" class="transition-element">

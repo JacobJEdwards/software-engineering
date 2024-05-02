@@ -10,6 +10,7 @@ import "vuetify/styles";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
+import { VNumberInput } from "vuetify/labs/components";
 import { md3 } from "vuetify/blueprints";
 import { createPinia } from "pinia";
 import piniaPluginPersistedState from "pinia-plugin-persistedstate";
@@ -19,7 +20,10 @@ import colors from "vuetify/util/colors";
 
 // add custom colors
 const vuetify = createVuetify({
-  components,
+  components: {
+    VNumberInput,
+    ...components,
+  },
   directives,
   theme: {
     defaultTheme: "light",

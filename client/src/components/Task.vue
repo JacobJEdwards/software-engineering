@@ -15,10 +15,10 @@ const modelVisible = ref<boolean>(false);
 
 <template>
   <v-list-item :title="task.title" :key="task._id">
-    <template v-slot:subtitle>
+    <template #subtitle>
       <div><span class="font-bold">Due: </span>{{ finalDate }}</div>
     </template>
-    <template v-slot:append>
+    <template #append>
       <v-chip
         class="text-center p-0 mr-3"
         :color="task.status === 'Completed' ? 'success' : 'error'"
@@ -31,8 +31,8 @@ const modelVisible = ref<boolean>(false);
     </template>
   </v-list-item>
   <TaskInfo
+    v-model:show="modelVisible"
     :task="props.task"
-    :visible="modelVisible"
     :editable="props.editable"
     :close="() => (modelVisible = false)"
   />

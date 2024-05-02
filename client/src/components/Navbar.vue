@@ -52,7 +52,7 @@ const logout = async () => {
       ></v-list-item>
     </v-list>
 
-    <template v-slot:append>
+    <template #append>
       <v-list dense nav>
         <v-list-item
           @click="logout"
@@ -98,7 +98,7 @@ const logout = async () => {
       ></v-list-item>
     </v-list>
 
-    <template v-slot:append>
+    <template #append>
       <v-list dense nav>
         <v-list-item
           @click="logout"

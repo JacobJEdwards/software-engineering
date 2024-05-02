@@ -21,26 +21,24 @@ const { mdAndDown } = useDisplay();
 
 const submitForm = async () => {
   loading.value = true;
-  error.value = "";
-  success.value = "";
-
-  if (!email.value || !password.value) {
-    error.value = "Please fill in all fields";
-    loading.value = false;
-    return;
-  }
+  error.value.message = "";
+  error.value.show = false;
+  success.value.message = "";
+  success.value.show = false;
 
   const result = await login(email.value, password.value);
 
   if (!result.success || !result.data) {
-    error.value = result.error ?? "Error on login";
+    error.value.message = result.error ?? "Error on login";
+    error.value.show = true;
     loading.value = false;
     return;
   }
 
   authStore.login(result.data);
 
-  success.value = "Login successful";
+  success.value.message = "Login successful";
+  success.value.show = true;
 
   await userStore.getUser();
   await router.push("/");
@@ -111,14 +109,15 @@ const submitForm = async () => {
                 block
                 type="submit"
                 text="Login"
+                :disabled="!email || !password"
               />
             </v-col>
             <v-col cols="12">
-              <v-alert v-if="error" type="error" dismissible>{{
-                error
+              <v-alert v-if="error.show" type="error" dismissible>{{
+                error.message
               }}</v-alert>
-              <v-alert v-if="success" type="success" dismissible>{{
-                success
+              <v-alert v-if="success.show" type="success" dismissible>{{
+                success.message
               }}</v-alert>
             </v-col>
             <v-col cols="12" class="text-center">

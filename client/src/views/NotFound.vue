@@ -6,7 +6,7 @@
     title="Page not found"
     icon="mdi-alert-circle"
   >
-    <template v-slot:text>
+    <template #text>
       <p class="text-sm text-gray-400">
         The page you are looking for does not exist. Please check the URL or
         navigate back to the

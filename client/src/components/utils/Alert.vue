@@ -1,17 +1,19 @@
 <script setup lang="ts">
-// when called, make the alert appear
+const show = defineModel("show", {
+  type: Boolean,
+  default: false,
+});
 
 const props = defineProps<{
   type: string;
   message: string;
-  visible: boolean;
   close: () => void;
 }>();
 </script>
 
 <template>
   <v-snackbar
-    v-model="props.visible"
+    v-model="show"
     :color="props.type"
     :timeout="3000"
     :top="true"
@@ -24,9 +26,7 @@ const props = defineProps<{
     @click="props.close"
   >
     {{ props.message }}
-    <v-btn icon="mdi-close" @click="props.close">
-      <v-icon>mdi-close</v-icon>
-    </v-btn>
+    <v-btn icon="mdi-close" @click="props.close" variant="text"></v-btn>
   </v-snackbar>
 </template>
 

@@ -17,8 +17,7 @@ const headers = [
   { title: "Start Date", key: "startDate" },
   { title: "End Date", key: "endDate" },
   { title: "Status", key: "status" },
-  { title: "Hours Completed", key: "hrsCompleted" },
-  { title: "Hours Required", key: "hrsRequired" },
+  { title: "Hours", key: "hours" },
   { title: "", key: "action", sortable: false },
 ];
 
@@ -47,7 +46,6 @@ const showTaskInfo = ref<boolean>(false);
                 v-for="task in userStore.tasks"
                 :key="task._id"
                 :task="task"
-                small
                 editable
               />
             </v-list>
@@ -70,7 +68,7 @@ const showTaskInfo = ref<boolean>(false);
 
       <v-col cols="12">
         <v-card title="All tasks" prepend-icon="mdi-dots-horizontal">
-          <template v-slot:text>
+          <template #text>
             <v-text-field
               v-model="search"
               label="Search"
@@ -87,7 +85,7 @@ const showTaskInfo = ref<boolean>(false);
               :headers="headers"
               :search="search"
             >
-              <template v-slot:item.status="{ item }">
+              <template #item.status="{ item }">
                 <v-chip
                   :color="
                     item.status === 'Completed'
@@ -101,7 +99,16 @@ const showTaskInfo = ref<boolean>(false);
                   >{{ item.status }}</v-chip
                 >
               </template>
-              <template v-slot:item.action="{ item }">
+              <template #item.hours="{ item }">
+                <v-chip
+                  :color="
+                    item.hrsCompleted >= item.hrsRequired ? 'success' : 'error'
+                  "
+                  dark
+                  >{{ item.hrsCompleted }} / {{ item.hrsRequired }}</v-chip
+                >
+              </template>
+              <template #item.action="{ item }">
                 <v-btn
                   color="primary"
                   variant="text"

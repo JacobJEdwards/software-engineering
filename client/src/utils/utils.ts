@@ -12,12 +12,17 @@ export const useCookies = (): VueCookies | undefined => {
   return inject<VueCookies | undefined>("$cookies");
 };
 
+type Message = {
+  message: string;
+  show: boolean;
+};
+
 export function useSuccessErrorMessage(): {
-  success: Ref<string>;
-  error: Ref<string>;
+  success: Ref<Message>;
+  error: Ref<Message>;
 } {
-  const success = ref<string>("");
-  const error = ref<string>("");
+  const success = ref<Message>({ message: "", show: false });
+  const error = ref<Message>({ message: "", show: false });
 
   return { success, error };
 }

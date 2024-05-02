@@ -13,6 +13,9 @@ const modelVisible = ref<boolean>(false);
       block
       >Add Task</v-btn
     >
-    <CreateTask :visible="modelVisible" :close="() => (modelVisible = false)" />
+    <CreateTask
+      v-model:show="modelVisible"
+      :close="() => (modelVisible = false)"
+    />
   </v-container>
 </template>

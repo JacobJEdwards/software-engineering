@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { useAuthStore, useUserStore } from "../stores";
 import { useSuccessErrorMessage, useLoading } from "../utils/utils.ts";
 import { uploadFile } from "../services/user.ts";
+import Alert from "./utils/Alert.vue";
 
 const { success, error } = useSuccessErrorMessage();
 const { loading } = useLoading();
@@ -18,16 +19,23 @@ const saveFile = (event: Event) => {
 
   file.value = target.files[0];
 
-  success.value = "";
-  error.value = "";
+  success.value.message = "";
+  success.value.show = false;
+  error.value.message = "";
+  error.value.show = false;
 };
 
 const submitFile = async () => {
   loading.value = true;
-  error.value = "";
+  error.value.message = "";
+  error.value.show = false;
+
+  success.value.message = "";
+  success.value.show = false;
 
   if (!file.value) {
-    error.value = "Please upload a file";
+    error.value.message = "No file selected";
+    error.value.show = true;
     loading.value = false;
     return;
   }
@@ -35,10 +43,12 @@ const submitFile = async () => {
   const result = await uploadFile(authStore.authToken, file.value);
 
   if (result.success) {
-    success.value = "Schedule uploaded";
+    success.value.message = "Schedule uploaded";
+    success.value.show = true;
     await userStore.getUser();
   } else {
-    error.value = result.error ?? "Error uploading file";
+    error.value.message = result.error ?? "Error uploading file";
+    error.value.show = true;
   }
 
   loading.value = false;
@@ -65,12 +75,18 @@ const submitFile = async () => {
         >
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="12">
-        <v-alert v-if="error" type="error">{{ error }}</v-alert>
-        <v-alert v-if="error" type="success">{{ success }}</v-alert>
-      </v-col>
-    </v-row>
   </v-container>
+  <Alert
+    type="success"
+    :message="success.message"
+    :close="() => (success.show = false)"
+    v-model:show="success.show"
+  />
+  <Alert
+    type="error"
+    :message="error.message"
+    :close="() => (error.show = false)"
+    v-model:show="error.show"
+  />
 </template>
 <style scoped></style>

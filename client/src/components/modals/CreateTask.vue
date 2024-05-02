@@ -5,6 +5,8 @@ import { TaskService } from "../../services";
 import { Milestone, TaskStatuses, TaskForm } from "../../typings/user";
 import { useLoading, useSuccessErrorMessage } from "../../utils/utils.ts";
 import { useAuthStore, useUserStore } from "../../stores";
+import Alert from "../utils/Alert.vue";
+import NumberInput from "../utils/NumberInput.vue";
 
 const { loading } = useLoading();
 const { error, success } = useSuccessErrorMessage();
@@ -13,16 +15,18 @@ const TaskStatusSelect = Object.values(TaskStatuses);
 const userStore = useUserStore();
 const authStore = useAuthStore();
 
+const show = defineModel("show", {
+  type: Boolean,
+  default: false,
+});
+
 const semester = userStore.user?.semester[0];
 
 const props = defineProps<
   {
-    visible: boolean;
     close: () => void;
   } & Partial<TaskForm>
 >();
-
-const show = ref<boolean>(props.visible);
 
 const emit = defineEmits(["created"]);
 
@@ -32,7 +36,7 @@ const formData = ref<TaskForm>({
   progress: props.progress ?? TaskStatuses.STARTED,
   hrsCompleted: props.hrsCompleted ?? 0,
   hrsRequired: props.hrsRequired ?? 0,
-  startDate: props.startDate ?? undefined,
+  startDate: props.startDate ?? new Date(Date.now()),
   endDate: props.endDate ?? undefined,
 });
 
@@ -46,10 +50,9 @@ watch(
       progress: props.progress ?? TaskStatuses.STARTED,
       hrsCompleted: props.hrsCompleted ?? 0,
       hrsRequired: props.hrsRequired ?? 0,
-      startDate: props.startDate ?? undefined,
+      startDate: props.startDate ?? new Date(Date.now()),
       endDate: props.endDate ?? undefined,
     };
-    show.value = props.visible;
   },
   { deep: true },
 );
@@ -79,15 +82,19 @@ const closeForm = () => {
     hrsRequired: props.hrsRequired ?? 0,
   };
   loading.value = false;
-  success.value = "";
-  error.value = "";
+  success.value.message = "";
+  success.value.show = false;
+  error.value.message = "";
+  error.value.show = false;
   props.close();
 };
 
 const createTask = async () => {
   loading.value = true;
-  success.value = "";
-  error.value = "";
+  success.value.message = "";
+  success.value.show = false;
+  error.value.message = "";
+  error.value.show = false;
 
   const newTask = {
     title: formData.value.title,
@@ -102,12 +109,14 @@ const createTask = async () => {
   const result = await TaskService.create(newTask, authStore.authToken);
 
   if (result.success) {
-    success.value = "Task created successfully";
     await userStore.getUser();
+    success.value.message = "Task created successfully";
+    success.value.show = true;
     emit("created");
     closeForm();
   } else {
-    error.value = result.error ?? "Error creating task";
+    error.value.message = result.error ?? "Error creating task";
+    error.value.show = true;
   }
 
   loading.value = false;
@@ -125,10 +134,6 @@ const createTask = async () => {
       <v-card-title class="headline">Create Task</v-card-title>
       <v-card-text>
         <v-container>
-          <v-alert v-if="error" type="error" class="mb-4">{{ error }}</v-alert>
-          <v-alert v-if="success" type="success" class="mb-4">{{
-            success
-          }}</v-alert>
           <v-row>
             <v-col cols="12" sm="6">
               <v-text-field
@@ -187,7 +192,7 @@ const createTask = async () => {
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="12" sm="6">
+            <v-col cols="12">
               <v-select
                 v-model="formData.progress"
                 :items="TaskStatusSelect"
@@ -199,52 +204,69 @@ const createTask = async () => {
           </v-row>
           <v-row>
             <v-col cols="12" sm="6">
-              <v-text-field
-                v-model="formData.hrsCompleted"
+              <NumberInput
+                v-model:value="formData.hrsCompleted"
                 label="Hours Completed"
-                outlined
+                :min="0"
                 required
-                variant="solo-filled"
-              ></v-text-field>
+              ></NumberInput>
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field
-                v-model="formData.hrsRequired"
+              <NumberInput
+                v-model:value="formData.hrsRequired"
                 label="Hours Required"
-                outlined
+                :min="0"
                 required
-                variant="solo-filled"
-              ></v-text-field>
+              ></NumberInput>
             </v-col>
           </v-row>
         </v-container>
       </v-card-text>
       <v-card-actions>
-        <v-btn
-          text="Cancel"
-          color="error"
-          @click="closeForm"
-          rounded="sm"
-        ></v-btn>
-        <v-spacer></v-spacer>
-        <v-btn
-          color="success"
-          text="Create"
-          rounded="sm"
-          class="mx-4"
-          :loading="loading"
-          @click="createTask"
-          :disabled="
-            !formData.title ||
-            !formData.milestoneId ||
-            !formData.startDate ||
-            !formData.endDate ||
-            !formData.progress ||
-            !formData.hrsCompleted ||
-            !formData.hrsRequired
-          "
-        ></v-btn>
+        <slot
+          name="actions"
+          :close="closeForm"
+          :create="createTask"
+          :formData="formData"
+        >
+          <v-btn
+            text="Cancel"
+            color="error"
+            @click="closeForm"
+            rounded="sm"
+          ></v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="success"
+            text="Create"
+            rounded="sm"
+            class="mx-4"
+            :loading="loading"
+            @click="createTask"
+            :disabled="
+              !formData.title ||
+              !formData.milestoneId ||
+              !formData.startDate ||
+              !formData.endDate ||
+              !formData.progress ||
+              !formData.hrsCompleted ||
+              !formData.hrsRequired
+            "
+          ></v-btn>
+        </slot>
       </v-card-actions>
+      <Alert
+        type="error"
+        v-model:show="error.show"
+        :message="error.message"
+        :close="() => (error.show = false)"
+      />
+      <Alert
+        type="success"
+        v-model:show="success.show"
+        :message="success.message"
+        :close="() => (success.show = false)"
+      />
     </v-card>
   </v-dialog>
 </template>

@@ -20,25 +20,24 @@ const { mdAndDown } = useDisplay();
 
 const submitForm = async () => {
   loading.value = true;
-  error.value = "";
-  success.value = "";
-
-  if (!name.value || !email.value || !password.value) {
-    error.value = "Please fill in all fields";
-    loading.value = false;
-    return;
-  }
+  error.value.message = "";
+  error.value.show = false;
+  success.value.message = "";
+  success.value.show = false;
 
   const result = await signup(name.value, email.value, password.value);
 
   if (!result.success) {
-    error.value = result.error ?? "Error on signup";
+    error.value.message = result.error ?? "Error on signup";
+    error.value.show = true;
     loading.value = false;
     password.value = "";
     return;
   }
 
-  success.value = "Signup successful";
+  success.value.message = "Signup successful";
+  success.value.show = true;
+
   await redirectToLogin();
 
   loading.value = false;
@@ -50,14 +49,7 @@ const redirectToLogin = async () => {
 </script>
 
 <template>
-  <div class="w-full d-flex align-center justify-center text-center my-6">
-    <h1 class="text-3xl font-bold">Wonderful Tasks</h1>
-  </div>
-  <v-divider></v-divider>
-
   <v-container class="h-full d-flex justify-center align-center">
-    <!-- center the content -->
-
     <v-row align="center" justify="center">
       <v-col
         cols="12"
@@ -117,15 +109,16 @@ const redirectToLogin = async () => {
                 aria-required="true"
                 type="submit"
                 block
+                :disabled="!name || !email || !password"
                 >Sign up</v-btn
               >
             </v-col>
             <v-col cols="12">
-              <v-alert v-if="error" type="error" dismissible>{{
-                error
+              <v-alert v-if="error.show" type="error" dismissible>{{
+                error.message
               }}</v-alert>
-              <v-alert v-if="success" type="success" dismissible>{{
-                success
+              <v-alert v-if="success.show" type="success" dismissible>{{
+                success.message
               }}</v-alert>
             </v-col>
             <v-col cols="12" class="text-center">
