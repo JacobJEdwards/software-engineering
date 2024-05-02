@@ -11,6 +11,7 @@ const expanded = ref<boolean>(false);
     v-if="!dialog"
     @mouseenter="expanded = true"
     @mouseleave="expanded = false"
+    :prepend-icon="!expanded ? '' : 'mdi-plus'"
     fab
     small
     color="accent"

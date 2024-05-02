@@ -35,8 +35,8 @@ const props = defineProps<{
 
 const formData = ref<TaskForm>({
   title: props.task.title,
-  startDate: props.task.startDate,
-  endDate: props.task.endDate,
+  startDate: new Date(props.task.startDate),
+  endDate: new Date(props.task.endDate),
   status: props.task.status,
   hrsCompleted: props.task.hrsCompleted,
   hrsRequired: props.task.hrsRequired,
@@ -130,8 +130,8 @@ watch(
   () => {
     formData.value = {
       title: props.task.title,
-      startDate: props.task.startDate,
-      endDate: props.task.endDate,
+      startDate: new Date(props.task.startDate),
+      endDate: new Date(props.task.endDate),
       status: props.task.status,
       hrsCompleted: props.task.hrsCompleted,
       hrsRequired: props.task.hrsRequired,
@@ -145,9 +145,9 @@ watch(
   <v-dialog
     scrollable
     v-model="show"
-    max-width="500px"
+    max-width="800px"
     class="p-4"
-    max-height="500px"
+    max-height="600px"
     @click:outside="props.close"
   >
     <v-card>
@@ -167,25 +167,25 @@ watch(
               variant="solo-filled"
             ></v-text-field>
           </v-col>
-          <v-col cols="12">
-            <v-text-field
+          <v-col cols="6">
+            <v-date-picker
               :loading="loading"
               v-model="formData.startDate"
               label="Start Date"
               aria-required="true"
               outlined
               variant="solo-filled"
-            ></v-text-field>
+            ></v-date-picker>
           </v-col>
-          <v-col cols="12">
-            <v-text-field
+          <v-col cols="6">
+            <v-date-picker
               :loading="loading"
               v-model="formData.endDate"
               label="End Date"
               aria-required="true"
               outlined
               variant="solo-filled"
-            ></v-text-field>
+            ></v-date-picker>
           </v-col>
           <v-col cols="12">
             <v-select

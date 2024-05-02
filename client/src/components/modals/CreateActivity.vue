@@ -134,7 +134,7 @@ const submitForm = async () => {
             <v-col cols="12">
               <v-text-field
                 v-model="formData.activityDescription"
-                label="Activity Description"
+                label="Notes"
                 required
                 :loading="loading"
                 aria-required="true"
