@@ -3,7 +3,7 @@ import UserLoading from "../components/UserLoading.vue";
 import { useUserStore } from "../stores";
 import AddTask from "../components/AddTask.vue";
 import Task from "../components/Task.vue";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import type { Task as TaskType } from "../typings/user";
 import TaskInfo from "../components/modals/TaskInfo.vue";
 
@@ -11,6 +11,10 @@ const userStore = useUserStore();
 
 const tasks = ref<TaskType[]>(userStore.tasks);
 const search = ref<string>("");
+
+const topTasks = computed(() =>
+  tasks.value.filter((task) => task.status !== "Completed").slice(0, 5),
+);
 
 const headers = [
   { title: "Title", key: "title", sortable: false },
@@ -46,15 +50,15 @@ const editTask = (task: TaskType) => {
         >
           <v-divider></v-divider>
           <v-card-text>
-            <v-list v-if="tasks.length">
+            <v-list v-if="topTasks.length">
               <Task
-                v-for="task in userStore.tasks"
+                v-for="task in topTasks"
                 :key="task._id"
                 :task="task"
                 editable
               />
             </v-list>
-            <p v-else class="text-lg mb-4">No tasks found!</p>
+            <p v-else class="text-lg mb-4">No tasks due soon!</p>
           </v-card-text>
         </v-card>
       </v-col>

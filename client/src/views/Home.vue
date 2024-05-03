@@ -3,7 +3,7 @@ import UserLoading from "../components/UserLoading.vue";
 import { useUserStore } from "../stores";
 import Semester from "../components/Semester.vue";
 import { computed, ref } from "vue";
-import type { Task as TaskType } from "../typings/user";
+import type { Task as TaskType, Activity } from "../typings/user";
 import Task from "../components/Task.vue";
 
 import FullCalendar from "@fullcalendar/vue3";
@@ -18,21 +18,16 @@ const userStore = useUserStore();
 const tasks = ref<TaskType[]>(userStore.tasks);
 const activities = ref<Activity[]>(userStore.activities);
 
-const topTasks: ComputedRef<TaskType[]> = computed(() => {
-  return tasks.value.slice(0, 3);
-});
+const topTasks: ComputedRef<TaskType[]> = computed(() =>
+  tasks.value.filter((task) => task.status !== "Completed").slice(0, 5),
+);
 
 const taskEvents: ComputedRef<EventInput[]> = computed(() =>
-  tasks.value.map((task) => {
-    const startDate = new Date(task.startDate);
-    const endDate = new Date(task.endDate);
-
-    return {
-      start: endDate,
-      title: task.title,
-      color: task.status === "Completed" ? "green" : "red",
-    };
-  }),
+  tasks.value.map((task) => ({
+    start: new Date(task.startDate),
+    title: task.title,
+    color: task.status === "Completed" ? "green" : "red",
+  })),
 );
 
 const activityEvents: ComputedRef<EventInput[]> = computed(() =>
@@ -85,7 +80,7 @@ userStore.$subscribe(() => {
           prepend-icon="mdi-checkbox-marked-circle-outline"
         >
           <v-divider></v-divider>
-          <v-card-text v-if="userStore.tasks.length">
+          <v-card-text v-if="topTasks.length">
             <v-list>
               <Task
                 v-for="task in topTasks"
@@ -96,7 +91,7 @@ userStore.$subscribe(() => {
             </v-list>
           </v-card-text>
           <v-card-text v-else>
-            <p class="text-lg mb-4">No tasks found!</p>
+            <p class="text-lg mb-4">No tasks due soon!</p>
             <p class="text-sm text-gray-400">
               Create a task in the
               <router-link
