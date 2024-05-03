@@ -79,7 +79,6 @@ const calendarOptions = ref<CalendarOptions>({
   weekends: true,
   eventClick: (event) => {
     const task = event.event._def.extendedProps.task;
-    console.log(task);
   },
   select: (info) => {
     selectedStartDate.value = new Date(info.startStr);

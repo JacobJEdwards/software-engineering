@@ -151,8 +151,9 @@ watch(
     @click:outside="props.close"
   >
     <v-card>
-      <v-card-title>
-        {{ task.title }}
+      <v-card-title class="d-flex justify-space-between">
+        <span class="headline">Task Info</span>
+        <v-btn icon="mdi-close" variant="text" @click="props.close"></v-btn>
       </v-card-title>
 
       <v-card-text v-if="props.editable && edit">
@@ -259,31 +260,11 @@ watch(
       </v-card-text>
 
       <v-card-actions v-if="props.editable">
-        <v-btn
-          :loading="loading"
-          @click="edit ? (edit = false) : closeForm()"
-          color="error"
-          rounded="sm"
-        >
-          {{ edit ? "Cancel" : "Close" }}
-        </v-btn>
-
-        <v-btn
-          @click="updateTask"
-          :loading="loading"
-          color="success"
-          rounded="sm"
-        >
-          {{ edit ? "Save" : "Edit" }}
+        <v-btn @click="edit = !edit" color="primary">
+          {{ edit ? "Cancel" : "Edit" }}
         </v-btn>
         <v-spacer></v-spacer>
-        <v-btn
-          :loading="loading"
-          @click="deleteTask"
-          color="danger"
-          rounded="sm"
-          >Delete</v-btn
-        >
+        <v-btn @click="deleteTask" color="error"> Delete </v-btn>
       </v-card-actions>
       <Alert
         type="error"

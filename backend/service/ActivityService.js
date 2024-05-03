@@ -203,7 +203,6 @@ class ActivityService {
   }
 
   static async deleteActivity(userid, activityId) {
-    console.log("activityId", activityId);
     let response = await Validator.validateUser(
       userid,
       null,
@@ -216,22 +215,42 @@ class ActivityService {
     if (response.code !== 200) {
       return response;
     }
-    const activity = await this.findOne({ _id: activityId });
 
-    const errors = await Promise.all(
-      activity.tasks.map(
-        async (task) =>
-          await Task.deleteActivityFromTask(
-            userid,
-            task,
-            activityId,
-            activity.hrs,
-          ),
-      ),
+    // delete activity
+    let activity = null;
+
+    try {
+      activity = await this.findOne({ _id: activityId });
+    } catch (error) {
+      return new Response("Error finding activity", 400, { error });
+    }
+
+    if (!activity) {
+      return new Response("Activity not found", 404, {});
+    }
+
+    const tasks = activity.tasks;
+
+    const promises = tasks.map(
+      async (task) =>
+        await Task.deleteActivityFromTask(
+          userid,
+          task.valueOf(),
+          activityId,
+          activity.hrsCompleted,
+        ),
     );
+
+    const errors = await Promise.all(promises);
 
     if (errors.some((error) => error.code !== 200)) {
       return errors.find((error) => error.code !== 200);
+    }
+
+    try {
+      await this.deleteOne({ _id: activityId });
+    } catch (error) {
+      return new Response("Error deleting activity", 400, { error });
     }
 
     /*
@@ -242,7 +261,7 @@ class ActivityService {
             }
         });
          */
-    await this.findByIdAndDelete(activityId);
+
     return new Response("Activity deleted successfully", 200, {});
   }
 }

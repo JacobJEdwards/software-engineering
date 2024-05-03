@@ -82,12 +82,7 @@ userStore.$subscribe(() => {
           <v-divider></v-divider>
           <v-card-text v-if="topTasks.length">
             <v-list>
-              <Task
-                v-for="task in topTasks"
-                :task="task"
-                :key="task._id"
-                small
-              />
+              <Task v-for="task in topTasks" :task="task" :key="task._id" />
             </v-list>
           </v-card-text>
           <v-card-text v-else>

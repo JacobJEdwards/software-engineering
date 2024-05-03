@@ -5,6 +5,7 @@ import User from "./UserService.js";
 import Module from "./ModuleService.js";
 import Milestone from "./MilestoneService.js";
 import Validator from "../middleware/Validator.js";
+import activity from "../models/Activity.js";
 
 class TaskService {
   static async createTask(
@@ -282,38 +283,46 @@ class TaskService {
 
   static async deleteActivityFromTask(userId, taskId, activityId, hrs) {
     const response = await Validator.validateUser(userId, null, null, null);
+
     if (response.code !== 200) {
       return response;
     }
 
     const user = await User.getUserInternal(userId);
+
     if (!user) {
       return new Response("User does not exist", 404, { userId });
     }
 
-    user.semester.forEach((semester) => {
-      semester.modules.forEach((module) => {
-        module.milestones.forEach((milestone) => {
-          milestone.tasks.forEach(async (task) => {
-            if (task.id === taskId) {
-              const index = task.activities.findIndex(
-                (activity) => activity === activityId,
-              );
-              if (index !== -1) {
-                task.activities.splice(index, 1);
-                await this.addHrs(userId, taskId, -hrs);
-                await user.save();
-                return new Response("Activity deleted from task", 200, {
-                  activityId,
-                });
-              }
-            }
-          });
-        });
-      });
-    });
+    const task = user.semester
+      .flatMap((sem) =>
+        sem.modules.flatMap((mod) =>
+          mod.milestones.flatMap((mil) =>
+            mil.tasks.find((task) => task._id.valueOf() === taskId),
+          ),
+        ),
+      )
+      .filter(Boolean)[0];
 
-    return new Response("Activity does not exist", 400, {});
+    if (!task) {
+      return new Response("Task does not exist", 404, { taskId });
+    }
+
+    const index = task.activities.findIndex(
+      (activity) => activity._id.valueOf() === activityId,
+    );
+
+    if (index === -1) {
+      return new Response("Activity does not exist", 404, { activityId });
+    }
+
+    task.activities.splice(index, 1);
+
+    await this.addHrs(userId, taskId, -hrs);
+    await user.save();
+    return new Response("Activity deleted from task", 200, {
+      activityId,
+    });
   }
 
   static async addHrs(userId, taskId, hrs) {
@@ -323,6 +332,7 @@ class TaskService {
     }
 
     const user = await User.getUserInternal(userId);
+
     if (!user) {
       return new Response("User does not exist", 404, { userId });
     }
@@ -331,7 +341,7 @@ class TaskService {
       .flatMap((sem) =>
         sem.modules.flatMap((mod) =>
           mod.milestones.flatMap((mil) =>
-            mil.tasks.find((task) => task.id.valueOf() === taskId),
+            mil.tasks.find((task) => task._id.valueOf() === taskId),
           ),
         ),
       )
@@ -342,6 +352,10 @@ class TaskService {
     }
 
     task.hrsCompleted += hrs;
+    if (task.hrsCompleted < 0) {
+      task.hrsCompleted = 0;
+    }
+
     if (task.hrsCompleted >= task.hrsRequired) {
       task.status = "Completed";
     } else {

@@ -249,7 +249,6 @@ const createTask = async () => {
               !formData.startDate ||
               !formData.endDate ||
               !formData.progress ||
-              !formData.hrsCompleted ||
               !formData.hrsRequired
             "
           ></v-btn>

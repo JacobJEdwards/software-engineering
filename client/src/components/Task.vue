@@ -27,7 +27,11 @@ const modelVisible = ref<boolean>(false);
       >
         {{ task.status }}
       </v-chip>
-      <v-btn icon="mdi-pencil" @click="modelVisible = true" variant="text" />
+      <v-btn
+        @click="modelVisible = true"
+        variant="text"
+        :icon="modelVisible ? 'mdi-close' : 'mdi-pencil'"
+      />
     </template>
   </v-list-item>
   <TaskInfo

@@ -37,6 +37,7 @@ const formData = ref<ActivityForm>({
 watch(
   () => props,
   () => {
+    console.log(props);
     formData.value = {
       activityTitle: props.activityTitle ?? "",
       activityType: props.activityType ?? "",

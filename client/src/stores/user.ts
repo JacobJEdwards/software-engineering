@@ -1,5 +1,11 @@
 import { defineStore } from "pinia";
-import type { Task, User, Milestone, Activity } from "../typings/user.ts";
+import type {
+  Task,
+  User,
+  Milestone,
+  Activity,
+  Module,
+} from "../typings/user.ts";
 import { useAuthStore } from "./auth.ts";
 import { getUser } from "../services/user.ts";
 import { getActivities } from "../services/activities";
@@ -11,6 +17,7 @@ export type UserState = {
   tasks: Task[];
   milestones: Milestone[];
   activities: Activity[];
+  modules: Module[];
 };
 
 export const useUserStore = defineStore("user", {
@@ -20,6 +27,7 @@ export const useUserStore = defineStore("user", {
     loading: false,
     tasks: [],
     milestones: [],
+    modules: [],
     activities: [],
   }),
   getters: {

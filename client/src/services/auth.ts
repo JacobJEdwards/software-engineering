@@ -88,7 +88,7 @@ export const signup = async (
       data: data.data,
     };
   } catch (e: unknown) {
-    console.log(e);
+    console.error(e);
     return {
       success: false,
     };

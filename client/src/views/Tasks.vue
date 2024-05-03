@@ -6,11 +6,14 @@ import Task from "../components/Task.vue";
 import { computed, ref } from "vue";
 import type { Task as TaskType } from "../typings/user";
 import TaskInfo from "../components/modals/TaskInfo.vue";
+import TaskActivities from "../components/TaskActivities.vue";
+import CreateActivity from "../components/modals/CreateActivity.vue";
 
 const userStore = useUserStore();
 
 const tasks = ref<TaskType[]>(userStore.tasks);
 const search = ref<string>("");
+const expanded = ref<string[]>([]);
 
 const topTasks = computed(() =>
   tasks.value.filter((task) => task.status !== "Completed").slice(0, 5),
@@ -32,9 +35,16 @@ userStore.$subscribe(() => {
 const selectedTask = ref<TaskType | null>(null);
 const showTaskInfo = ref<boolean>(false);
 
+const showCreateActivity = ref<boolean>(false);
+
 const editTask = (task: TaskType) => {
   selectedTask.value = task;
   showTaskInfo.value = true;
+};
+
+const showLogActivity = (task: TaskType) => {
+  selectedTask.value = task;
+  showCreateActivity.value = true;
 };
 </script>
 
@@ -93,7 +103,16 @@ const editTask = (task: TaskType) => {
               :items="tasks"
               :headers="headers"
               :search="search"
+              item-value="_id"
+              show-expand
+              v-model:expanded="expanded"
             >
+              <template #item.startDate="{ item }">
+                {{ new Date(item.startDate).toLocaleDateString() }}
+              </template>
+              <template #item.endDate="{ item }">
+                {{ new Date(item.endDate).toLocaleDateString() }}
+              </template>
               <template #item.status="{ item }">
                 <v-chip
                   :color="
@@ -121,9 +140,24 @@ const editTask = (task: TaskType) => {
                 <v-btn
                   color="primary"
                   variant="text"
-                  icon="mdi-pencil"
+                  :icon="
+                    showTaskInfo && selectedTask === item
+                      ? 'mdi-close'
+                      : 'mdi-pencil'
+                  "
                   @click="editTask(item)"
                 ></v-btn>
+              </template>
+              <template #expanded-row="{ item, columns }">
+                <tr>
+                  <td :colspan="columns.length">
+                    <h3 class="text-lg font-bold my-2">Activities</h3>
+                    <TaskActivities
+                      :taskId="item._id"
+                      @logActivity="() => showLogActivity(item)"
+                    />
+                  </td>
+                </tr>
               </template>
             </v-data-table>
           </v-card-text>
@@ -137,6 +171,11 @@ const editTask = (task: TaskType) => {
     :task="selectedTask"
     :editable="true"
     :close="() => (showTaskInfo = false)"
+  />
+  <CreateActivity
+    :close="() => (showCreateActivity = false)"
+    v-model:show="showCreateActivity"
+    :tasks="selectedTask ? [selectedTask._id] : undefined"
   />
 </template>
 
