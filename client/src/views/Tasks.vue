@@ -27,6 +27,11 @@ userStore.$subscribe(() => {
 
 const selectedTask = ref<TaskType | null>(null);
 const showTaskInfo = ref<boolean>(false);
+
+const editTask = (task: TaskType) => {
+  selectedTask.value = task;
+  showTaskInfo.value = true;
+};
 </script>
 
 <template>
@@ -113,10 +118,7 @@ const showTaskInfo = ref<boolean>(false);
                   color="primary"
                   variant="text"
                   icon="mdi-pencil"
-                  @click="
-                    selectedTask = item;
-                    showTaskInfo = true;
-                  "
+                  @click="editTask(item)"
                 ></v-btn>
               </template>
             </v-data-table>
@@ -127,8 +129,8 @@ const showTaskInfo = ref<boolean>(false);
   </v-container>
   <TaskInfo
     v-if="selectedTask"
+    v-model:show="showTaskInfo"
     :task="selectedTask"
-    :visible="showTaskInfo"
     :editable="true"
     :close="() => (showTaskInfo = false)"
   />
