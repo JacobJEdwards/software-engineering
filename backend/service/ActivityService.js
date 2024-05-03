@@ -219,14 +219,15 @@ class ActivityService {
     const activity = await this.findOne({ _id: activityId });
 
     const errors = await Promise.all(
-      activity.tasks.map(async (task) => {
-        return await Task.deleteActivityFromTask(
-          userid,
-          task,
-          activityId,
-          activity.hrs,
-        );
-      }),
+      activity.tasks.map(
+        async (task) =>
+          await Task.deleteActivityFromTask(
+            userid,
+            task,
+            activityId,
+            activity.hrs,
+          ),
+      ),
     );
 
     if (errors.some((error) => error.code !== 200)) {

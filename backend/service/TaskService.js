@@ -370,7 +370,9 @@ class TaskService {
     for (let semester of user.semester) {
       for (let module of semester.modules) {
         for (let milestone of module.milestones) {
-          const index = milestone.tasks.findIndex((task) => task.id === taskId);
+          const index = milestone.tasks.findIndex(
+            (task) => task._id.valueOf() === taskId,
+          );
           if (index !== -1) {
             milestone.tasks.splice(index, 1);
             deleted = true;
