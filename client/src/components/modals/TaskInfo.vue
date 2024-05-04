@@ -263,8 +263,16 @@ watch(
         <v-btn @click="edit = !edit" color="primary">
           {{ edit ? "Cancel" : "Edit" }}
         </v-btn>
+        <v-btn
+          v-if="edit"
+          color="success"
+          @click="updateTask"
+          :loading="loading"
+        >
+          Save
+        </v-btn>
         <v-spacer></v-spacer>
-        <v-btn @click="deleteTask" color="error"> Delete </v-btn>
+        <v-btn v-if="edit" @click="deleteTask" color="error"> Delete </v-btn>
       </v-card-actions>
       <Alert
         type="error"

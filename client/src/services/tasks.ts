@@ -67,9 +67,9 @@ const updateTask = async (
     const body = {
       taskId: task.taskId,
       milestoneId: task.milestoneId,
-      tasktitle: task.title,
-      startDate: task.startDate ?? new Date(),
-      endDate: task.endDate ?? new Date(),
+      title: task.title,
+      startDate: task.startDate,
+      endDate: task.endDate,
       progress: task.progress,
       hrsCompleted: task.hrsCompleted,
       hrsRequired: task.hrsRequired,

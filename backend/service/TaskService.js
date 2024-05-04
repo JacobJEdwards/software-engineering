@@ -5,7 +5,6 @@ import User from "./UserService.js";
 import Module from "./ModuleService.js";
 import Milestone from "./MilestoneService.js";
 import Validator from "../middleware/Validator.js";
-import activity from "../models/Activity.js";
 
 class TaskService {
   static async createTask(
@@ -102,31 +101,50 @@ class TaskService {
     hrsRequired,
     hrsCompleted,
   ) {
-    const response = await Validator.validateTask(taskId, null, null, null);
+    /*
+    const response = await Validator.validateTask(
+      taskId,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+    );
     if (response.code !== 200) {
       return response;
     }
-    const task = user.semester.flatMap((modules) =>
-      modules.flatMap((mod) =>
-        mod.milestones.flatMap((mil) =>
-          mil.tasks.find((task) => task._id === taskId),
+     */
+    const task = user.semester
+      .flatMap((sem) =>
+        sem.modules.flatMap((mod) =>
+          mod.milestones.flatMap((mil) =>
+            mil.tasks.find((task) => task._id.valueOf() === taskId),
+          ),
         ),
-      ),
-    );
+      )
+      .filter(Boolean)[0];
 
-    if (task) {
-      task.taskName = newTaskName == null ? task.taskName : newTaskName;
-      task.startDate = newStartDate == null ? task.startDate : newStartDate;
-      task.endDate = newEndDate == null ? task.endDate : newEndDate;
-      task.status = newStatus == null ? task.status : newStatus;
-      task.hrsRequired = hrsRequired == null ? task.hrsRequired : hrsRequired;
-      task.hrsCompleted = hrsCompleted = null
-        ? task.hrsCompleted
-        : hrsCompleted;
-      return await Validator.validateTask(task);
-    } else {
+    if (!task) {
       return new Response("Task does not exist", 404, { taskId });
     }
+
+    task.title = newTaskName ?? task.title;
+    task.startDate = newStartDate ?? task.startDate;
+    task.endDate = newEndDate ?? task.endDate;
+    task.status = newStatus ?? task.status;
+    task.hrsRequired = hrsRequired ?? task.hrsRequired;
+    task.hrsCompleted = hrsCompleted ?? task.hrsCompleted;
+
+    const response = await Validator.validateTaskObject(task);
+
+    if (response.code !== 200) {
+      return response;
+    }
+
+    await user.save();
+
+    return new Response("Task updated", 200, task);
   }
 
   static async updateTaskByUserId(
@@ -140,24 +158,20 @@ class TaskService {
     newHrsCompleted,
   ) {
     const user = await User.getUserInternal(userId);
-    if (user) {
-      let response = this.updateTask(
-        user,
-        taskId,
-        newTaskName,
-        newStartDate,
-        newEndDate,
-        newStatus,
-        newHrsRequired,
-        newHrsCompleted,
-      );
-      if (response.status === 200) {
-        user.save();
-      }
-      return response;
-    } else {
+    if (!user) {
       return new Response("User does not exist", 404, { taskId });
     }
+
+    return await this.updateTask(
+      user,
+      taskId,
+      newTaskName,
+      newStartDate,
+      newEndDate,
+      newStatus,
+      newHrsRequired,
+      newHrsCompleted,
+    );
   }
 
   static async readTask(module, taskId) {
@@ -168,10 +182,10 @@ class TaskService {
 
     const task = module.tasks.find((task) => task.id === taskId);
     if (task) {
-      return Response("Task found", 200, task);
-    } else {
-      return Response("Task does not exist", 404, { taskId });
+      return new Response("Task found", 200, task);
     }
+
+    return new Response("Task does not exist", 404, { taskId });
   }
 
   static async readTaskByUserId(userId, taskId) {
@@ -181,11 +195,10 @@ class TaskService {
     }
     const user = await User.getUserInteral(userId);
     if (user) {
-      let response = this.readTask(user, taskId);
-      return response;
-    } else {
-      return new Response("User does not exist", 404, { taskId });
+      return this.readTask(user, taskId);
     }
+
+    return new Response("User does not exist", 404, { taskId });
   }
 
   static async TasksFromDate(userId, date) {
@@ -217,7 +230,7 @@ class TaskService {
       sem.modules.flatMap((mod) =>
         mod.milestones.flatMap((mil) =>
           mil.tasks.filter(
-            (task) => task.taskDate >= fromDate && task.taskDate <= toDate,
+            (task) => task.endDate >= fromDate && task.endDate <= toDate,
           ),
         ),
       ),
@@ -226,26 +239,29 @@ class TaskService {
   }
 
   static async readTasksByModuleId(userId, moduleId) {
-    let user = await User.getUserInternal(userId);
+    const user = await User.getUserInternal(userId);
     if (!user) {
       return new Response("User does not exist", 404, { userId });
     }
-    let response = Module.readModule(user, moduleId);
+    const response = Module.readModule(user, moduleId);
+
     if (response.status !== 200) {
       return response;
     }
-    let tasks = user.modules
+
+    const tasks = user.modules
       .flatMap((mod) => mod.moduleCode === moduleId)
-      .milestones.flatMap((mil) => mil.tasks);
+      .flatMap((mil) => mil.tasks);
+
     return new Response("Tasks found", 200, tasks);
   }
 
   static async readTasksByMilestoneId(userId, milestoneId) {
-    let user = await User.getUserInternal(userId);
+    const user = await User.getUserInternal(userId);
     if (!user) {
       return new Response("User does not exist", 404, { userId });
     }
-    let response = Milestone.readMilestoneByUser(user, milestoneId);
+    const response = Milestone.readMilestoneByUser(user, milestoneId);
     if (response.status !== 200) {
       return response;
     }

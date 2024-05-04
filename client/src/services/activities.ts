@@ -97,8 +97,29 @@ export const deleteActivity = async (
   }
 };
 
+const updateActivity = async (
+  token: string,
+  {
+    activityTitle,
+    activityType,
+    notes,
+    hrsCompleted,
+  }: {
+    activityTitle: string;
+    activityType: string;
+    notes: string;
+    hrsCompleted: number;
+  },
+): Promise<Result> => {
+  return {
+    success: false,
+    error: "Not yet implemented",
+  };
+};
+
 export const ActivitiesService = {
   get: getActivities,
   create: createActivity,
   delete: deleteActivity,
+  update: updateActivity,
 };

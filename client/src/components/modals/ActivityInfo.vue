@@ -6,6 +6,7 @@ import { useSuccessErrorMessage } from "../../utils/utils.ts";
 import { ActivitiesService } from "../../services";
 import { useAuthStore, useUserStore } from "../../stores";
 import Alert from "../utils/Alert.vue";
+import NumberInput from "../utils/NumberInput.vue";
 
 const { loading } = useLoading();
 const { success, error } = useSuccessErrorMessage();
@@ -64,6 +65,31 @@ const deleteActivity = async () => {
   loading.value = false;
 };
 
+const updateActivity = async () => {
+  loading.value = true;
+  error.value.message = "";
+  error.value.show = false;
+  success.value.message = "";
+  success.value.show = false;
+
+  const result = await ActivitiesService.update(
+    authStore.authToken,
+    formData.value,
+  );
+
+  if (result.success) {
+    success.value.message = "Activity updated successfully";
+    success.value.show = true;
+    edit.value = false;
+    await userStore.getUser();
+  } else {
+    error.value.message = result.error ?? "Failed to delete activity";
+    error.value.show = true;
+  }
+
+  loading.value = false;
+};
+
 watch(
   () => props,
   () => {
@@ -92,7 +118,56 @@ watch(
         <span class="headline">Activity Info</span>
         <v-btn icon="mdi-close" variant="text" @click="props.close"></v-btn>
       </v-card-title>
-      <v-card-text>
+      <v-card-text v-if="props.editable && edit">
+        <v-row>
+          <v-col cols="12">
+            <v-text-field
+              :loading="loading"
+              v-model="formData.activityTitle"
+              label="Activity Title"
+              aria-required="true"
+              outlined
+              variant="solo-filled"
+              required
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12">
+            <v-text-field
+              :loading="loading"
+              v-model="formData.activityType"
+              label="Activity Type"
+              aria-required="true"
+              outlined
+              variant="solo-filled"
+              required
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12">
+            <v-text-field
+              :loading="loading"
+              v-model="formData.notes"
+              label="Notes"
+              aria-required="true"
+              outlined
+              variant="solo-filled"
+              required
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12">
+            <NumberInput
+              label="Hours Completed"
+              v-model="formData.hrsCompleted"
+              :loading="loading"
+              :min="0"
+              aria-required="true"
+              outlined
+              variant="solo-filled"
+              required
+            />
+          </v-col>
+        </v-row>
+      </v-card-text>
+      <v-card-text v-else>
         <v-row>
           <v-col cols="12">
             <v-list-item
@@ -129,8 +204,18 @@ watch(
         <v-btn @click="edit = !edit" color="primary">
           {{ edit ? "Cancel" : "Edit" }}
         </v-btn>
+        <v-btn
+          v-if="edit"
+          @click="updateActivity"
+          :loading="loading"
+          color="success"
+        >
+          Save
+        </v-btn>
         <v-spacer></v-spacer>
-        <v-btn @click="deleteActivity" color="error"> Delete </v-btn>
+        <v-btn v-if="edit" @click="deleteActivity" color="error">
+          Delete
+        </v-btn>
       </v-card-actions>
       <Alert
         type="error"

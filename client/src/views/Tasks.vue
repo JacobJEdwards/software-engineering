@@ -16,7 +16,12 @@ const search = ref<string>("");
 const expanded = ref<string[]>([]);
 
 const topTasks = computed(() =>
-  tasks.value.filter((task) => task.status !== "Completed").slice(0, 5),
+  tasks.value
+    .filter((task) => task.status !== "Completed")
+    .sort(
+      (a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime(),
+    )
+    .slice(0, 5),
 );
 
 const headers = [
