@@ -5,7 +5,10 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { CalendarOptions } from "@fullcalendar/core";
 
-import { ref, computed, ComputedRef, watch } from "vue";
+import TaskInfo from "./modals/TaskInfo.vue";
+import ActivityInfo from "./modals/ActivityInfo.vue";
+
+import { ref, computed, ComputedRef } from "vue";
 import { useUserStore } from "../stores";
 import { EventInput } from "fullcalendar";
 import CreateTask from "./modals/CreateTask.vue";
@@ -22,6 +25,25 @@ const showOptions = ref<boolean>(false);
 const selectedStartDate = ref<Date | undefined>(undefined);
 const selectedEndDate = ref<Date | undefined>(undefined);
 
+const taskInfo = ref<{
+  show: boolean;
+  task?: Task;
+}>({
+  show: false,
+});
+
+const activityInfo = ref<{
+  show: boolean;
+  activity?: Activity;
+}>({
+  show: false,
+});
+
+const EventTypes = {
+  ACTIVITY: "ACTIVITY",
+  TASK: "TASK",
+} as const;
+
 const taskEvents: ComputedRef<EventInput[]> = computed(() =>
   tasks.value.map((task) => {
     const startDate = new Date(task.startDate);
@@ -36,6 +58,7 @@ const taskEvents: ComputedRef<EventInput[]> = computed(() =>
       id: task._id,
       extendedProps: {
         task: task,
+        type: EventTypes.TASK,
       },
     };
   }),
@@ -56,6 +79,7 @@ const activityEvents: ComputedRef<EventInput[]> = computed(() =>
       id: activity._id,
       extendedProps: {
         activity: activity,
+        type: EventTypes.ACTIVITY,
       },
     };
   }),
@@ -78,7 +102,16 @@ const calendarOptions = ref<CalendarOptions>({
   dayMaxEvents: true,
   weekends: true,
   eventClick: (event) => {
-    const task = event.event._def.extendedProps.task;
+    switch (event.event._def.extendedProps.type) {
+      case EventTypes.TASK:
+        taskInfo.value.task = event.event._def.extendedProps.task;
+        taskInfo.value.show = true;
+        break;
+      case EventTypes.ACTIVITY:
+        activityInfo.value.activity = event.event._def.extendedProps.activity;
+        activityInfo.value.show = true;
+        break;
+    }
   },
   select: (info) => {
     selectedStartDate.value = new Date(info.startStr);
@@ -122,6 +155,28 @@ userStore.$subscribe(updateEvents);
     :start-date="selectedStartDate"
     :end-date="selectedEndDate"
   />
+  <TaskInfo
+    v-if="taskInfo.task"
+    v-model:show="taskInfo.show"
+    :task="taskInfo.task"
+    :close="() => (taskInfo.show = false)"
+    editable
+  />
+  <ActivityInfo
+    v-if="activityInfo.activity"
+    v-model:show="activityInfo.show"
+    :activity="activityInfo.activity"
+    :close="() => (activityInfo.show = false)"
+    editable
+  />
 </template>
 
-<style scoped></style>
+<style>
+.fc-daygrid-event {
+  cursor: pointer;
+}
+
+.fc-daygrid-event:hover {
+  filter: brightness(90%);
+}
+</style>

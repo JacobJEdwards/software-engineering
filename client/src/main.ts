@@ -10,7 +10,7 @@ import "vuetify/styles";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
-import { VNumberInput } from "vuetify/labs/components";
+import { VNumberInput, VDateInput } from "vuetify/labs/components";
 import { md3 } from "vuetify/blueprints";
 import { createPinia } from "pinia";
 import piniaPluginPersistedState from "pinia-plugin-persistedstate";
@@ -22,6 +22,7 @@ import colors from "vuetify/util/colors";
 const vuetify = createVuetify({
   components: {
     VNumberInput,
+    VDateInput,
     ...components,
   },
   directives,

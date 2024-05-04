@@ -217,7 +217,12 @@ watch(
           Save
         </v-btn>
         <v-spacer></v-spacer>
-        <v-btn v-if="edit" @click="deleteActivity" color="error">
+        <v-btn
+          @click="deleteActivity"
+          color="error"
+          :loading="loading"
+          v-if="props.editable"
+        >
           Delete
         </v-btn>
       </v-card-actions>

@@ -45,7 +45,7 @@ const toggleScheduleUpload = () => {
               <v-card-text>
                 <v-btn
                   @click="toggleScheduleUpload"
-                  color="grey-darken-4"
+                  color="secondary"
                   class="my-4"
                   rounded="md"
                   block
@@ -61,7 +61,7 @@ const toggleScheduleUpload = () => {
               <v-card-text>
                 <v-btn
                   @click="toggleScheduleGenerator"
-                  color="grey-darken-4"
+                  color="secondary"
                   class="my-4"
                   rounded="md"
                   block

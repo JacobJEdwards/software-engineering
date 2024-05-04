@@ -179,6 +179,7 @@ const createTask = async () => {
                 title="Start Date"
                 required
                 hide-header
+                aria-required="true"
               ></v-date-picker>
             </v-col>
             <v-col cols="6" class="">
@@ -188,6 +189,7 @@ const createTask = async () => {
                 title="End Date"
                 required
                 hide-header
+                aria-required="true"
               ></v-date-picker>
             </v-col>
           </v-row>

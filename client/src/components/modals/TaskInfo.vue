@@ -169,23 +169,23 @@ watch(
             ></v-text-field>
           </v-col>
           <v-col cols="6">
+            <p class="text-center">Start Date</p>
             <v-date-picker
               :loading="loading"
               v-model="formData.startDate"
               label="Start Date"
               aria-required="true"
-              outlined
-              variant="solo-filled"
+              hide-header
             ></v-date-picker>
           </v-col>
           <v-col cols="6">
+            <p class="text-center">End Date</p>
             <v-date-picker
               :loading="loading"
               v-model="formData.endDate"
               label="End Date"
               aria-required="true"
-              outlined
-              variant="solo-filled"
+              hide-header
             ></v-date-picker>
           </v-col>
           <v-col cols="12">
@@ -272,7 +272,14 @@ watch(
           Save
         </v-btn>
         <v-spacer></v-spacer>
-        <v-btn v-if="edit" @click="deleteTask" color="error"> Delete </v-btn>
+        <v-btn
+          v-if="props.editable"
+          @click="deleteTask"
+          color="error"
+          :loading="loading"
+        >
+          Delete
+        </v-btn>
       </v-card-actions>
       <Alert
         type="error"

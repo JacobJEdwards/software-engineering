@@ -65,12 +65,20 @@ const submitFile = async () => {
           accept=".csv"
           aria-required="true"
           prepend-icon="mdi-file-upload"
+          variant="solo-filled"
+          outlined
         ></v-file-input>
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="12">
-        <v-btn @click="submitFile" :loading="loading" color="primary"
+        <v-btn
+          @click="submitFile"
+          :loading="loading"
+          color="success"
+          :disabled="!file"
+          rounded="md"
+          block
           >Submit</v-btn
         >
       </v-col>
