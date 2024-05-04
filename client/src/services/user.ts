@@ -43,11 +43,13 @@ export const uploadFile = async (
       body: formData,
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      return { success: false };
+      return { success: false, error: data.message };
     }
 
-    return { success: true };
+    return { success: true, data: data.data };
   } catch (e: unknown) {
     console.error(e);
     return { success: false };

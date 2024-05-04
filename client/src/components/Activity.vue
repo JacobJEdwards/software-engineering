@@ -15,19 +15,22 @@ const showEdit = ref<boolean>(false);
     <v-list-item-title>
       {{ props.activity.activityTitle }}
     </v-list-item-title>
-    <v-list-item-subtitle>
-      {{ props.activity.notes }} {{ props.activity.activityType }}
-      {{ new Date(props.activity.createdAt).toLocaleDateString() }}
+    <v-divider></v-divider>
+    <v-list-item-subtitle
+      class="text-truncate d-flex align-center justify-space-between"
+    >
+      <span>{{ props.activity.notes }}</span>
+      <span>{{ props.activity.activityType }}</span>
+      <span class="mr-8">
+        {{ new Date(props.activity.createdAt).toLocaleDateString() }}
+      </span>
+      <v-btn
+        @click="showEdit = !showEdit"
+        :icon="showEdit ? 'mdi-close' : 'mdi-information-outline'"
+        variant="text"
+      ></v-btn>
     </v-list-item-subtitle>
-    <template #append>
-      <v-list-item-action>
-        <v-btn
-          @click="showEdit = !showEdit"
-          :icon="showEdit ? 'mdi-close' : 'mdi-information-outline'"
-          variant="text"
-        ></v-btn>
-      </v-list-item-action>
-    </template>
+    <template #append> </template>
   </v-list-item>
   <ActivityInfo
     :activity="props.activity"

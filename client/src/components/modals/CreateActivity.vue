@@ -3,7 +3,12 @@ import { useAuthStore, useUserStore } from "../../stores";
 import { ref, watch } from "vue";
 import { ActivitiesService } from "../../services";
 import { useLoading, useSuccessErrorMessage } from "../..//utils/utils.ts";
-import { TaskStatuses, ActivityForm } from "../../typings/user.ts";
+import {
+  TaskStatuses,
+  ActivityForm,
+  ActivityTypes,
+  ActivityType,
+} from "../../typings/user.ts";
 import Alert from "../utils/Alert.vue";
 import NumberInput from "../utils/NumberInput.vue";
 
@@ -122,15 +127,16 @@ const submitForm = async () => {
               ></v-text-field>
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field
+              <v-select
                 v-model="formData.activityType"
+                :items="Object.values(ActivityTypes)"
                 label="Activity Type"
                 required
                 :loading="loading"
                 aria-required="true"
                 outlined
                 variant="solo-filled"
-              ></v-text-field>
+              ></v-select>
             </v-col>
             <v-col cols="12">
               <v-text-field

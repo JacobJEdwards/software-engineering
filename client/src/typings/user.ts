@@ -6,6 +6,29 @@ export const TaskStatuses = {
 
 export type TaskStatus = (typeof TaskStatuses)[keyof typeof TaskStatuses];
 
+export const MilestoneTypes = {
+  ASSIGNMENT: "Assignment",
+  EXAM: "Exam",
+  PROJECT: "Project",
+  QUIZ: "Quiz",
+  TEST: "Test",
+} as const;
+
+export type MilestoneType =
+  (typeof MilestoneTypes)[keyof typeof MilestoneTypes];
+
+export const ActivityTypes = {
+  LECTURE: "Lecture",
+  PRACTICAL: "Practical",
+  TUTORIAL: "Tutorial",
+  WORKSHOP: "Workshop",
+  SEMINAR: "Seminar",
+  READING: "Reading",
+  STUDY: "Study",
+} as const;
+
+export type ActivityType = (typeof ActivityTypes)[keyof typeof ActivityTypes];
+
 type Base = {
   _id: string;
   createdAt: Date;
@@ -16,7 +39,7 @@ export type Activity = {
   userId: string;
   tasks: Array<string>; // task ids
   activityTitle: string;
-  activityType: string;
+  activityType: ActivityType;
   notes: string;
   hrsCompleted: number;
 } & Base;
@@ -81,7 +104,7 @@ export type TaskForm = {
 
 export type ActivityForm = {
   activityTitle: string;
-  activityType: string;
+  activityType: ActivityType;
   activityDescription: string;
   hrsCompleted: number;
   tasks: string[];
