@@ -1,5 +1,6 @@
 import Joi from "joi";
 import Response from "../utils/Response.js";
+import activity from "../models/Activity.js";
 
 const fullSchema = Joi.object({
   // user Validation
@@ -392,16 +393,23 @@ class Validator {
     const hrsCompleted = fullSchema.extract("hrsCompleted");
 
     const schema = Joi.object({
-      userId: activityUserId,
-      tasks: tasksList,
+      // userId: activityUserId,
+      // tasks: tasksList,
       activityTitle: activityTitle,
       activityType: activityType,
       notes: notes,
       hrsCompleted: hrsCompleted,
-      completed: Joi.boolean(),
+      // completed: Joi.boolean(),
     });
 
-    const { error } = schema.validate(activityObject);
+    const activity = {
+      activityTitle: activityObject.activityTitle,
+      activityType: activityObject.activityType,
+      notes: activityObject.notes,
+      hrsCompleted: activityObject.hrsCompleted,
+    };
+
+    const { error } = schema.validate(activity);
     if (error) {
       return new Response(error.message, 400, {});
     } else {

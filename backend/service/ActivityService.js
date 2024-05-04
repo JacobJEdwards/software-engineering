@@ -60,52 +60,57 @@ class ActivityService {
     }
   }
 
-  static getActivityById(activityId) {
-    const { activity, error } = this.findById(activityId);
-    if (error) {
+  static async getActivityById(activityId) {
+    try {
+      const activity = await this.findById(activityId);
+      return new Response("Activity found", 200, activity);
+    } catch (e) {
       return new Response("Error finding activity", 400, { error });
     }
-    return new Response("Activity found", 200, activity);
   }
 
   static async updateActivity(
+    userId,
     activityId,
     newActivityName,
-    newStartDate,
-    newEndDate,
-    newStatus,
+    newActivityType,
+    newNotes,
     newHours,
   ) {
-    let response = getActivityById(activityId);
-    if (response.code === 200) {
-      const activity = response.data;
-      activity.activityTitle =
-        newActivityName == null ? activity.activityTitle : newActivityName;
-      activity.startDate =
-        newStartDate == null ? activity.startDate : newStartDate;
-      activity.endDate = newEndDate == null ? activity.endDate : newEndDate;
-      activity.status = newStatus == null ? activity.status : newStatus;
-      activity.hrsCompleted = newHours == null ? activity.hours : newHours;
+    let response = await Activity.getActivityById(activityId);
 
-      let response = Validator.validateActivity(activity);
+    if (response.code !== 200) {
+      return response;
+    }
+
+    const activity = response.data;
+
+    const hourDifference = newHours ? newHours - activity.hrsCompleted : 0;
+
+    activity.activityTitle = newActivityName ?? activity.activityTitle;
+    activity.activityType = newActivityType ?? activity.activityType;
+    activity.notes = newNotes ?? activity.notes;
+    activity.hrsCompleted = newHours ?? activity.hrsCompleted;
+
+    response = await Validator.validateActivityObject(activity);
+
+    if (response.code !== 200) {
+      return response;
+    }
+
+    for (const task of activity.tasks) {
+      const response = await Task.addHrs(
+        userId,
+        task.valueOf(),
+        hourDifference,
+      );
       if (response.code !== 200) {
         return response;
       }
-
-      if (newHours != null) {
-        for (let task of activity.tasks) {
-          let response = await Task.addHrs(task, newHours);
-          if (response.code !== 200) {
-            return response;
-          }
-        }
-      }
-
-      await activity.save();
-      return new Response("Activity updated successfully", 200, {});
-    } else {
-      return response;
     }
+
+    await activity.save();
+    return new Response("Activity updated successfully", 200, {});
   }
 
   static readActivity(activityId) {

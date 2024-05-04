@@ -343,6 +343,7 @@ class TaskService {
 
   static async addHrs(userId, taskId, hrs) {
     const response = await Validator.validateUser(userId, null, null, null);
+
     if (response.code !== 200) {
       return response;
     }

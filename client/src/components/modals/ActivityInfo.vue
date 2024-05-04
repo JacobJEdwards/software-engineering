@@ -26,6 +26,7 @@ const props = defineProps<{
 }>();
 
 type ActivityForm = {
+  activityId: string;
   activityTitle: string;
   activityType: string;
   notes: string;
@@ -33,6 +34,7 @@ type ActivityForm = {
 };
 
 const formData = ref<ActivityForm>({
+  activityId: props.activity._id,
   activityTitle: props.activity.activityTitle,
   activityType: props.activity.activityType,
   notes: props.activity.notes,
@@ -72,6 +74,7 @@ const updateActivity = async () => {
   success.value.message = "";
   success.value.show = false;
 
+  console.log(formData.value);
   const result = await ActivitiesService.update(
     authStore.authToken,
     formData.value,
@@ -94,6 +97,7 @@ watch(
   () => props,
   () => {
     formData.value = {
+      activityId: props.activity._id,
       activityTitle: props.activity.activityTitle,
       activityType: props.activity.activityType,
       notes: props.activity.notes,

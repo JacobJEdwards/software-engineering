@@ -100,21 +100,54 @@ export const deleteActivity = async (
 const updateActivity = async (
   token: string,
   {
+    activityId,
     activityTitle,
     activityType,
     notes,
     hrsCompleted,
   }: {
+    activityId: string;
     activityTitle: string;
     activityType: string;
     notes: string;
     hrsCompleted: number;
   },
 ): Promise<Result> => {
-  return {
-    success: false,
-    error: "Not yet implemented",
-  };
+  try {
+    const response = await fetch(`${API_ROUTE}/protected/activity/`, {
+      method: "PUT",
+      headers: {
+        Authorization: token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        activityId,
+        activityTitle,
+        activityType,
+        notes,
+        hrsCompleted,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: data.message,
+      };
+    }
+
+    return {
+      success: true,
+      data: data.data,
+    };
+  } catch (e: unknown) {
+    console.error(e);
+    return {
+      success: false,
+    };
+  }
 };
 
 export const ActivitiesService = {
