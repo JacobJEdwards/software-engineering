@@ -40,7 +40,6 @@ export const login = async (
     console.error(e);
     return {
       success: false,
-      error: "Error on Login",
     };
   }
 };

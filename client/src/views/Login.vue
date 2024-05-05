@@ -13,7 +13,7 @@ const userStore = useUserStore();
 const authStore = useAuthStore();
 const { error, success } = useSuccessErrorMessage();
 
-const email = ref<string>("");
+const email = ref<string>(authStore.email ?? "");
 const password = ref<string>("");
 const showPassword = ref<boolean>(false);
 
