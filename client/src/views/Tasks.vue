@@ -11,6 +11,8 @@ import CreateActivity from "../components/modals/CreateActivity.vue";
 
 const userStore = useUserStore();
 
+const hasSemester = computed(() => userStore.user?.semester.length > 0);
+
 const tasks = ref<TaskType[]>(userStore.tasks);
 const search = ref<string>("");
 const expanded = ref<string[]>([]);
@@ -83,7 +85,7 @@ const showLogActivity = (task: TaskType) => {
             <v-card title="Add a task" prepend-icon="mdi-clipboard-outline">
               <v-divider></v-divider>
               <v-card-text>
-                <AddTask />
+                <AddTask :enabled="hasSemester" />
               </v-card-text>
             </v-card>
           </v-col>

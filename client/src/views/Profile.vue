@@ -6,6 +6,7 @@ import type { Semester, Task, Activity } from "../typings/user.ts";
 
 import { computed, ref } from "vue";
 import ChangeEmail from "../components/modals/ChangeEmail.vue";
+import ChangeName from "../components/modals/ChangeName.vue";
 
 const userStore = useUserStore();
 
@@ -28,6 +29,8 @@ const toggleScheduleUpload = () => {
 };
 
 const showChangeEmail = ref<boolean>(false);
+const showChangeName = ref<boolean>(false);
+const showChangePassword = ref<boolean>(false);
 
 userStore.$subscribe(() => {
   semesters.value = userStore.user?.semester ?? [];
@@ -47,10 +50,26 @@ userStore.$subscribe(() => {
         >
           <v-card-text>
             <v-list>
-              <v-list-item title="Name">{{ userStore.user?.name }}</v-list-item>
-              <v-list-item title="Email">{{
-                userStore.user?.email
-              }}</v-list-item>
+              <v-list-item title="Name"
+                >{{ userStore.user?.name }}
+                <template #append>
+                  <v-btn
+                    @click="showChangeName = true"
+                    :icon="showChangeName ? 'mdi-close' : 'mdi-pencil'"
+                    variant="text"
+                  ></v-btn>
+                </template>
+              </v-list-item>
+              <v-list-item title="Email"
+                >{{ userStore.user?.email }}
+                <template #append>
+                  <v-btn
+                    @click="showChangeEmail = true"
+                    :icon="showChangeEmail ? 'mdi-close' : 'mdi-pencil'"
+                    variant="text"
+                  ></v-btn>
+                </template>
+              </v-list-item>
               <v-list-item title="Semesters">{{
                 semesters?.length
               }}</v-list-item>
@@ -81,7 +100,6 @@ userStore.$subscribe(() => {
                   >{{ showScheduleUpload ? "Hide" : "Show" }} Schedule
                   Upload</v-btn
                 >
-                <ScheduleUpload v-model:show="showScheduleUpload" />
               </v-card-text>
             </v-card>
           </v-col>
@@ -103,25 +121,15 @@ userStore.$subscribe(() => {
           </v-col>
         </v-row>
       </v-col>
-
-      <v-col cols="6">
-        <v-card title="Change Email" prepend-icon="mdi-email">
-          <v-card-text>
-            <v-btn
-              @click="showChangeEmail = !showChangeEmail"
-              color="secondary"
-              class="my-4"
-              rounded="md"
-              block
-              >{{ showChangeEmail ? "Hide" : "Show" }} Change Email
-            </v-btn>
-            <ChangeEmail
-              :close="() => (showChangeEmail = false)"
-              v-model:show="showChangeEmail"
-            />
-          </v-card-text>
-        </v-card>
-      </v-col>
     </v-row>
   </v-container>
+  <ChangeEmail
+    :close="() => (showChangeEmail = false)"
+    v-model:show="showChangeEmail"
+  />
+  <ChangeName
+    :close="() => (showChangeName = false)"
+    v-model:show="showChangeName"
+  />
+  <ScheduleUpload v-model:show="showScheduleUpload" />
 </template>

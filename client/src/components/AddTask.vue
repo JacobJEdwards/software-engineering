@@ -2,17 +2,31 @@
 import { ref } from "vue";
 import CreateTask from "./modals/CreateTask.vue";
 const modelVisible = ref<boolean>(false);
+
+const props = defineProps({
+  enabled: {
+    type: Boolean,
+    default: true,
+  },
+});
+
+const showModel = () => {
+  if (!props.enabled) {
+    return;
+  }
+
+  modelVisible.value = true;
+};
 </script>
 
 <template>
   <v-container>
-    <v-btn
-      @click="modelVisible = !modelVisible"
-      color="secondary"
-      rounded="md"
-      block
-      >Add Task</v-btn
-    >
+    <v-btn @click="showModel" color="secondary" rounded="md" block>
+      <v-tooltip v-if="!props.enabled" activator="parent" location="top">
+        Please upload a schedule first
+      </v-tooltip>
+      <span>Add Task</span>
+    </v-btn>
     <CreateTask
       v-model:show="modelVisible"
       :close="() => (modelVisible = false)"
