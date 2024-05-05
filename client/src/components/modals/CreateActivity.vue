@@ -7,7 +7,6 @@ import {
   TaskStatuses,
   ActivityForm,
   ActivityTypes,
-  ActivityType,
 } from "../../typings/user.ts";
 import Alert from "../utils/Alert.vue";
 import NumberInput from "../utils/NumberInput.vue";

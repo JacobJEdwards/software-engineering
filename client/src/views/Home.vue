@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import UserLoading from "../components/UserLoading.vue";
 import { useUserStore } from "../stores";
-import Semester from "../components/Semester.vue";
 import { computed, ref } from "vue";
 import type { Task as TaskType, Activity } from "../typings/user";
 import Task from "../components/Task.vue";
@@ -12,6 +11,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { CalendarOptions, EventInput } from "@fullcalendar/core";
 import { ComputedRef } from "vue";
+import SemesterOverview from "../components/SemesterOverview.vue";
 
 const userStore = useUserStore();
 
@@ -87,7 +87,12 @@ userStore.$subscribe(() => {
           <v-divider></v-divider>
           <v-card-text v-if="topTasks.length">
             <v-list>
-              <Task v-for="task in topTasks" :task="task" :key="task._id" />
+              <Task
+                v-for="task in topTasks"
+                :task="task"
+                :key="task._id"
+                editable
+              />
             </v-list>
           </v-card-text>
           <v-card-text v-else>
@@ -106,15 +111,15 @@ userStore.$subscribe(() => {
       <v-col cols="12" md="6">
         <v-row>
           <v-col cols="12">
-            <v-card
-              title="Current Semester"
-              prepend-icon="mdi-clipboard-outline"
-            >
+            <v-card>
+              <v-card-title
+                ><v-icon>mdi-clipboard-outline</v-icon> Current Semester
+              </v-card-title>
               <v-divider></v-divider>
               <v-card-text>
-                <Semester
+                <SemesterOverview
                   v-if="userStore.user?.semester?.length"
-                  :semester="userStore.user?.semester[0]"
+                  :selected-semester="userStore.user?.semester[0]"
                 />
                 <div class="p-4" v-else>
                   <p class="text-lg">No semester found!</p>

@@ -1,28 +1,23 @@
 <script setup lang="ts">
 import ScheduleGenerator from "../components/ScheduleGenerator.vue";
 import ScheduleUpload from "../components/ScheduleUpload.vue";
-import { useAuthStore, useUserStore } from "../stores";
-import { useLoading } from "../utils/utils.ts";
+import { useUserStore } from "../stores";
+import type { Semester, Task, Activity } from "../typings/user.ts";
 
 import { computed, ref } from "vue";
 import ChangeEmail from "../components/modals/ChangeEmail.vue";
 
 const userStore = useUserStore();
-const authStore = useAuthStore();
-
-const { loading } = useLoading();
 
 const showScheduleGenerator = ref<boolean>(false);
 const showScheduleUpload = ref<boolean>(false);
 
-const semesters = ref(userStore.user?.semester);
-const modules = computed(() => semesters.value?.map((s) => s.modules).flat());
-const milestones = computed(() =>
-  modules.value?.map((m) => m.milestones).flat(),
-);
+const semesters = ref<Semester[]>(userStore.user?.semester ?? []);
+const modules = computed(() => semesters.value.flatMap((s) => s.modules));
+const milestones = computed(() => modules.value.flatMap((m) => m.milestones));
 
-const tasks = ref(userStore.tasks);
-const activities = ref(userStore.activities);
+const tasks = ref<Task[]>(userStore.tasks);
+const activities = ref<Activity[]>(userStore.activities);
 
 const toggleScheduleGenerator = () => {
   showScheduleGenerator.value = !showScheduleGenerator.value;
@@ -34,9 +29,11 @@ const toggleScheduleUpload = () => {
 
 const showChangeEmail = ref<boolean>(false);
 
-const refresh = async () => {
-  await userStore.getUser();
-};
+userStore.$subscribe(() => {
+  semesters.value = userStore.user?.semester ?? [];
+  tasks.value = userStore.tasks;
+  activities.value = userStore.activities;
+});
 </script>
 
 <template>
@@ -67,17 +64,6 @@ const refresh = async () => {
               }}</v-list-item>
             </v-list>
           </v-card-text>
-          <v-card-actions>
-            <v-btn
-              color="secondary"
-              block
-              rounded="md"
-              :loading="userStore.loading"
-              @click="userStore.getUser"
-            >
-              Refresh
-            </v-btn>
-          </v-card-actions>
         </v-card>
       </v-col>
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { MilestoneTypes } from "../config.ts";
+import { MilestoneTypes } from "../typings/user.ts";
 
 type FormData = {
   moduleCode: string;
@@ -21,16 +21,6 @@ const formData = ref<FormData>({
 const entries = ref<Array<FormData>>([]);
 
 const saveEntry = () => {
-  if (
-    !formData.value.moduleCode ||
-    !formData.value.moduleName ||
-    !formData.value.milestoneTitle ||
-    !formData.value.milestoneType ||
-    !formData.value.deadline
-  ) {
-    return;
-  }
-
   const newEntry = { ...formData.value };
   entries.value.push(newEntry);
 
@@ -97,7 +87,7 @@ const exportCSV = () => {
       ></v-text-field>
       <v-select
         v-model="formData.milestoneType"
-        :items="MilestoneTypes"
+        :items="Object.values(MilestoneTypes) as string[]"
         label="Milestone Type"
         outlined
         required

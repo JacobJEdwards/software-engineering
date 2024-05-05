@@ -36,6 +36,7 @@ const submitForm = async () => {
   }
 
   authStore.login(result.data);
+  authStore.email = email.value;
 
   success.value.message = "Login successful";
   success.value.show = true;

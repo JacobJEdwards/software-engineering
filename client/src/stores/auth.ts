@@ -20,6 +20,7 @@ export const useAuthStore = defineStore("auth", {
     },
     logout() {
       this.token = "";
+      this.email = "";
     },
   },
   persist: true,

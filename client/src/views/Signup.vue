@@ -169,8 +169,4 @@ const redirectToLogin = async () => {
   </v-container>
 </template>
 
-<style scoped>
-.elevation-12 {
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-}
-</style>
+<style scoped></style>
