@@ -20,6 +20,7 @@ const expanded = ref<boolean>(false);
     max-width="10rem"
     @click="dialog = true"
     text="Log Activity"
+    rounded="md"
   ></v-btn>
 
   <CreateActivity v-model:show="dialog" :close="() => (dialog = false)" />
