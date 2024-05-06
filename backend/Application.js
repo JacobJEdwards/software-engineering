@@ -12,7 +12,7 @@ import TaskRoutes from "./routes/TaskRoutes.js";
 import ActivityRoutes from "./routes/ActivityRoutes.js";
 
 class Application {
-  constructor(port) {
+  constructor(port, uri) {
     this.app = express();
     this.app.use(express.json());
     this.app.use(cors());
@@ -26,7 +26,7 @@ class Application {
     this.activityRoutes = new ActivityRoutes();
     this.PORT = port;
     console.log(process.env);
-    this.mongoDBUri = `${process.env.MONGODB_URI}`;
+    this.mongoDBUri = uri;
   }
   start() {
     this.cronJob.startAllJobs();
