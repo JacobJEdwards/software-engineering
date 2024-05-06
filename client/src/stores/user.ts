@@ -60,6 +60,8 @@ export const useUserStore = defineStore("user", {
       this.user = result.data;
 
       await this.loadActivities();
+      this.refreshModules();
+      this.refreshMilestones();
       this.refreshTasks();
 
       this.loading = false;
@@ -69,11 +71,21 @@ export const useUserStore = defineStore("user", {
         return;
       }
 
-      this.milestones = this.user.semester.flatMap((s) =>
-        s.modules.flatMap((m) => m.milestones.flatMap((m) => m)),
-      );
-
       this.tasks = this.milestones.flatMap((m) => m.tasks);
+    },
+    refreshModules() {
+      if (!this.user) {
+        return;
+      }
+
+      this.modules = this.user.semester.flatMap((s) => s.modules);
+    },
+    refreshMilestones() {
+      if (!this.user) {
+        return;
+      }
+
+      this.milestones = this.modules.flatMap((m) => m.milestones);
     },
     async loadActivities() {
       if (!this.user) {

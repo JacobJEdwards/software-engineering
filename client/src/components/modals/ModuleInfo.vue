@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import CreateMilestone from "./CreateMilestone.vue";
 import { ref, watch } from "vue";
-import { Milestone, MilestoneTypes } from "../../typings/user";
+import { Module } from "../../typings/user";
 import { useLoading, useSuccessErrorMessage } from "../../utils/utils.ts";
 import Alert from "../utils/Alert.vue";
-import NumberInput from "../utils/NumberInput.vue";
 
 const { loading } = useLoading();
 const { success, error } = useSuccessErrorMessage();
@@ -16,27 +14,23 @@ const show = defineModel("show", {
 
 const props = defineProps<{
   close: () => void;
-  milestone: Milestone;
+  module: Module;
   editable: boolean;
 }>();
 
 type FormData = {
-  milestoneTitle: string;
-  milestoneType: string;
-  milestoneProgress: number;
+  moduleName: string;
+  moduleCode: string;
   startDate: Date;
   endDate: Date;
 };
 
 const formData = ref<FormData>({
-  milestoneTitle: props.milestone.milestoneTitle,
-  milestoneType: props.milestone.milestoneType,
-  milestoneProgress: props.milestone.milestoneProgress,
-  startDate: new Date(props.milestone.startDate),
-  endDate: new Date(props.milestone.endDate),
+  moduleName: props.module.moduleName,
+  moduleCode: props.module.moduleCode,
+  startDate: new Date(props.module.startDate),
+  endDate: new Date(props.module.endDate),
 });
-
-const milestoneSelectTypes = Object.values(MilestoneTypes);
 
 const edit = ref<boolean>(false);
 
@@ -44,11 +38,10 @@ watch(
   () => props,
   () => {
     formData.value = {
-      milestoneTitle: props.milestone.milestoneTitle,
-      milestoneType: props.milestone.milestoneType,
-      milestoneProgress: props.milestone.milestoneProgress,
-      startDate: new Date(props.milestone.startDate),
-      endDate: new Date(props.milestone.endDate),
+      moduleName: props.module.moduleName,
+      moduleCode: props.module.moduleCode,
+      startDate: new Date(props.module.startDate),
+      endDate: new Date(props.module.endDate),
     };
   },
   { deep: true },
@@ -66,7 +59,7 @@ watch(
   >
     <v-card>
       <v-card-title class="d-flex justify-space-between">
-        <span class="headline">Milestone Info</span>
+        <span class="headline">Module Info</span>
         <v-btn icon="mdi-close" variant="text" @click="props.close"></v-btn>
       </v-card-title>
       <v-card-text v-if="props.editable && edit">
@@ -74,8 +67,8 @@ watch(
           <v-col cols="12">
             <v-text-field
               :loading="loading"
-              v-model="formData.milestoneTitle"
-              label="Title"
+              v-model="formData.moduleName"
+              label="Name"
               aria-required="true"
               outlined
               variant="solo-filled"
@@ -102,24 +95,14 @@ watch(
             ></v-date-picker>
           </v-col>
           <v-col cols="12">
-            <v-select
+            <v-text-field
               :loading="loading"
-              v-model="formData.milestoneType"
-              label="Status"
-              :items="milestoneSelectTypes as string[]"
+              v-model="formData.moduleCode"
+              label="Code"
               aria-required="true"
+              outlined
               variant="solo-filled"
-            ></v-select>
-          </v-col>
-          <v-col cols="12">
-            <NumberInput
-              persistent-hint
-              hint="Please log an activity to update hours."
-              :loading="loading"
-              v-model="formData.milestoneProgress"
-              label="Hours Completed"
-              disabled
-            />
+            ></v-text-field>
           </v-col>
         </v-row>
       </v-card-text>
@@ -127,20 +110,14 @@ watch(
         <v-row>
           <v-col cols="12">
             <v-list-item
-              title="Milestone Title"
-              :subtitle="formData.milestoneTitle"
+              title="Module Name"
+              :subtitle="formData.moduleName"
             ></v-list-item>
           </v-col>
           <v-col cols="12">
             <v-list-item
-              title="Milestone Type"
-              :subtitle="formData.milestoneType"
-            ></v-list-item>
-          </v-col>
-          <v-col cols="12">
-            <v-list-item
-              title="Milestone Progress"
-              :subtitle="formData.milestoneProgress"
+              title="Module Code"
+              :subtitle="formData.moduleCode"
             ></v-list-item>
           </v-col>
           <v-col cols="12">

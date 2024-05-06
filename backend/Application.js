@@ -25,7 +25,8 @@ class Application {
     this.taskRoutes = new TaskRoutes();
     this.activityRoutes = new ActivityRoutes();
     this.PORT = port;
-    this.mongoDBUri = "mongodb://localhost:27017/wonderfultasksdb";
+    console.log(process.env);
+    this.mongoDBUri = `${process.env.MONGODB_URI}`;
   }
   start() {
     this.cronJob.startAllJobs();

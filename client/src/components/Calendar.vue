@@ -7,12 +7,14 @@ import { CalendarOptions } from "@fullcalendar/core";
 
 import TaskInfo from "./modals/TaskInfo.vue";
 import ActivityInfo from "./modals/ActivityInfo.vue";
+import ModuleInfo from "./modals/ModuleInfo.vue";
+import MilestoneInfo from "./modals/MilestoneInfo.vue";
 
 import { ref, computed, ComputedRef } from "vue";
 import { useUserStore } from "../stores";
 import { EventInput } from "fullcalendar";
 import CreateTask from "./modals/CreateTask.vue";
-import { Task, Activity } from "../typings/user.ts";
+import { Task, Activity, Milestone, Module } from "../typings/user.ts";
 
 const userStore = useUserStore();
 
@@ -20,6 +22,9 @@ const addTask = ref<boolean>(false);
 
 const tasks = ref<Task[]>(userStore.tasks);
 const activities = ref<Activity[]>(userStore.activities);
+const milestones = ref<Milestone[]>(userStore.milestones);
+const modules = ref<Module[]>(userStore.modules);
+
 const showOptions = ref<boolean>(false);
 
 const selectedStartDate = ref<Date | undefined>(undefined);
@@ -39,9 +44,25 @@ const activityInfo = ref<{
   show: false,
 });
 
+const milestoneInfo = ref<{
+  show: boolean;
+  milestone?: Milestone;
+}>({
+  show: false,
+});
+
+const moduleInfo = ref<{
+  show: boolean;
+  module?: Module;
+}>({
+  show: false,
+});
+
 const EventTypes = {
   ACTIVITY: "ACTIVITY",
   TASK: "TASK",
+  MILESTONE: "MILESTONE",
+  MODULE: "MODULE",
 } as const;
 
 const taskEvents: ComputedRef<EventInput[]> = computed(() =>
@@ -85,7 +106,54 @@ const activityEvents: ComputedRef<EventInput[]> = computed(() =>
   }),
 );
 
-const events = computed(() => [...taskEvents.value, ...activityEvents.value]);
+const milestonesEvents: ComputedRef<EventInput[]> = computed(() =>
+  milestones.value.map((milestone) => {
+    const startDate = new Date(milestone.startDate);
+    const endDate = new Date(milestone.endDate);
+
+    return {
+      start: startDate,
+      end: endDate,
+      allDay: true,
+      title: milestone.milestoneTitle,
+      color: "blue",
+      id: milestone._id,
+      extendedProps: {
+        milestone: milestone,
+        type: EventTypes.MILESTONE,
+      },
+    };
+  }),
+);
+
+const moduleEvents: ComputedRef<EventInput[]> = computed(() =>
+  modules.value.map((module) => {
+    const startDate = new Date(module.startDate);
+    const endDate = new Date(module.endDate);
+
+    return {
+      start: startDate,
+      end: endDate,
+      allDay: true,
+      title: module.moduleName,
+      color: "purple",
+      id: module._id,
+      extendedProps: {
+        module: module,
+        type: EventTypes.MODULE,
+      },
+    };
+  }),
+);
+
+console.log(moduleEvents.value);
+
+const events = computed(() => [
+  ...taskEvents.value,
+  ...activityEvents.value,
+  ...milestonesEvents.value,
+  ...moduleEvents.value,
+]);
 
 const calendarOptions = ref<CalendarOptions>({
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
@@ -111,6 +179,15 @@ const calendarOptions = ref<CalendarOptions>({
         activityInfo.value.activity = event.event._def.extendedProps.activity;
         activityInfo.value.show = true;
         break;
+      case EventTypes.MILESTONE:
+        milestoneInfo.value.milestone =
+          event.event._def.extendedProps.milestone;
+        milestoneInfo.value.show = true;
+        break;
+      case EventTypes.MODULE:
+        moduleInfo.value.module = event.event._def.extendedProps.module;
+        moduleInfo.value.show = true;
+        break;
     }
   },
   select: (info) => {
@@ -130,6 +207,8 @@ const calendarOptions = ref<CalendarOptions>({
 const updateEvents = () => {
   tasks.value = userStore.tasks;
   activities.value = userStore.activities;
+  milestones.value = userStore.milestones;
+  modules.value = userStore.modules;
   calendarOptions.value.events = events.value;
 };
 
@@ -167,6 +246,20 @@ userStore.$subscribe(updateEvents);
     v-model:show="activityInfo.show"
     :activity="activityInfo.activity"
     :close="() => (activityInfo.show = false)"
+    editable
+  />
+  <MilestoneInfo
+    v-if="milestoneInfo.milestone"
+    v-model:show="milestoneInfo.show"
+    :milestone="milestoneInfo.milestone"
+    :close="() => (milestoneInfo.show = false)"
+    editable
+  />
+  <ModuleInfo
+    v-if="moduleInfo.module"
+    v-model:show="moduleInfo.show"
+    :module="moduleInfo.module"
+    :close="() => (moduleInfo.show = false)"
     editable
   />
 </template>

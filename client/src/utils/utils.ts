@@ -15,14 +15,27 @@ export const useCookies = (): VueCookies | undefined => {
 type Message = {
   message: string;
   show: boolean;
+  close?: () => void;
 };
 
 export function useSuccessErrorMessage(): {
   success: Ref<Message>;
   error: Ref<Message>;
 } {
-  const success = ref<Message>({ message: "", show: false });
-  const error = ref<Message>({ message: "", show: false });
+  const success = ref<Message>({
+    message: "",
+    show: false,
+    close() {
+      success.value.show = false;
+    },
+  });
+  const error = ref<Message>({
+    message: "",
+    show: false,
+    close() {
+      error.value.show = false;
+    },
+  });
 
   return { success, error };
 }
