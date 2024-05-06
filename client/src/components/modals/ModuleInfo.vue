@@ -149,13 +149,13 @@ watch(
     </v-card>
     <Alert
       :message="error.message"
-      :type="'error'"
+      type="error"
       v-model="error.show"
       :close="() => (error.show = false)"
     />
     <Alert
       :message="success.message"
-      :type="'success'"
+      type="success"
       v-model="success.show"
       :close="() => (success.show = false)"
     />

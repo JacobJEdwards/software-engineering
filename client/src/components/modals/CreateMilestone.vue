@@ -32,14 +32,32 @@ const emit = defineEmits(["created"]);
 
 const milestoneSelectTypes = Object.values(MilestoneTypes);
 
-type FormData = {};
+type FormData = {
+  title: string;
+  type: string;
+  progress: number;
+  startDate: Date;
+  endDate: Date;
+};
 
-const formData = ref<FormData>({});
+const formData = ref<FormData>({
+  title: props.milestoneTitle ?? "",
+  type: props.milestoneType ?? "",
+  progress: props.milestoneProgress ?? 0,
+  startDate: props.startDate ?? new Date(Date.now()),
+  endDate: props.endDate ?? new Date(Date.now()),
+});
 
 watch(
   () => props,
   () => {
-    formData.value = {};
+    formData.value = {
+      title: props.milestoneTitle ?? "",
+      type: props.milestoneType ?? "",
+      progress: props.milestoneProgress ?? 0,
+      startDate: props.startDate ?? new Date(Date.now()),
+      endDate: props.endDate ?? new Date(Date.now()),
+    };
   },
   { deep: true },
 );
