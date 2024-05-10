@@ -71,6 +71,7 @@ const calendarOptions = ref<CalendarOptions>({
 userStore.$subscribe(() => {
   tasks.value = userStore.tasks;
   activities.value = userStore.activities;
+  calendarOptions.value.events = events.value;
 });
 </script>
 

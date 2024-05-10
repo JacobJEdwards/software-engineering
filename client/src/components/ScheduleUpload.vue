@@ -51,6 +51,7 @@ const submitFile = async () => {
     success.value.message = "Schedule uploaded";
     success.value.show = true;
     await userStore.getUser();
+    show.value = false;
   } else {
     error.value.message = result.error ?? "Error uploading file";
     error.value.show = true;

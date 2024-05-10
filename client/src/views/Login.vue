@@ -6,6 +6,7 @@ import { emailRules } from "../utils/form.ts";
 import { useUserStore, useAuthStore } from "../stores";
 import { useDisplay } from "vuetify";
 import { login } from "../services/auth.ts";
+import Alert from "../components/utils/Alert.vue";
 
 const { loading } = useLoading();
 const router = useRouter();
@@ -113,14 +114,6 @@ const submitForm = async () => {
                 :disabled="!email || !password"
               />
             </v-col>
-            <v-col cols="12">
-              <v-alert v-if="error.show" type="error" dismissible>{{
-                error.message
-              }}</v-alert>
-              <v-alert v-if="success.show" type="success" dismissible>{{
-                success.message
-              }}</v-alert>
-            </v-col>
             <v-col cols="12" class="text-center">
               <p class="text-sm text-gray-400">
                 New user?
@@ -135,5 +128,17 @@ const submitForm = async () => {
         </v-row>
       </v-col>
     </v-row>
+    <Alert
+      type="success"
+      :show="success.show"
+      :message="success.message"
+      :close="() => (success.show = false)"
+    />
+    <Alert
+      type="error"
+      :show="error.show"
+      :message="error.message"
+      :close="() => (error.show = false)"
+    />
   </v-container>
 </template>

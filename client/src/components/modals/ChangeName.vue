@@ -81,7 +81,7 @@ const changeName = async () => {
           color="success"
           :loading="loading"
           :disabled="!name"
-          >Change Email</v-btn
+          >Change Name</v-btn
         >
       </v-card-actions>
       <Alert

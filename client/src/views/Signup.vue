@@ -89,7 +89,7 @@ const redirectToLogin = async () => {
             <v-col cols="12">
               <v-text-field
                 v-model="email"
-                placeholder="email@email.com"
+                placeholder="john.doe@email.com"
                 :rules="emailRules"
                 label="Email"
                 type="email"

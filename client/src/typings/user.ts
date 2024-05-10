@@ -12,6 +12,9 @@ export const MilestoneTypes = {
   PROJECT: "Project",
   QUIZ: "Quiz",
   TEST: "Test",
+  COURSEWORK: "Coursework",
+  PRESENTATION: "Presentation",
+  OTHER: "Other",
 } as const;
 
 export type MilestoneType =

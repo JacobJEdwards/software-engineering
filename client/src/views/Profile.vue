@@ -14,6 +14,10 @@ const showScheduleGenerator = ref<boolean>(false);
 const showScheduleUpload = ref<boolean>(false);
 
 const semesters = ref<Semester[]>(userStore.user?.semester ?? []);
+const semesterNames = computed(() =>
+  semesters.value.map((s) => s.semesterName),
+);
+
 const modules = computed(() => semesters.value.flatMap((s) => s.modules));
 const milestones = computed(() => modules.value.flatMap((m) => m.milestones));
 
@@ -115,7 +119,11 @@ userStore.$subscribe(() => {
                   >{{ showScheduleGenerator ? "Hide" : "Show" }} Schedule
                   Generator</v-btn
                 >
-                <ScheduleGenerator v-if="showScheduleGenerator" />
+                <ScheduleGenerator
+                  v-model:show="showScheduleGenerator"
+                  :close="toggleScheduleGenerator"
+                  :semester-names="semesterNames"
+                />
               </v-card-text>
             </v-card>
           </v-col>
