@@ -1,27 +1,46 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import CreateActivity from "./modals/CreateActivity.vue";
+import { useUserStore } from "../stores";
+import type { Task } from "../typings/user.ts";
+
+const userStore = useUserStore();
+
+const tasks = ref<Task[]>(userStore.tasks ?? []);
 
 const dialog = ref<boolean>(false);
 const expanded = ref<boolean>(false);
+
+userStore.$subscribe(() => {
+  tasks.value = userStore.tasks ?? [];
+});
+
+const showModel = () => {
+  if (!tasks.value.length) {
+    return;
+  }
+
+  dialog.value = true;
+};
 </script>
 
 <template>
   <v-btn
     v-if="!dialog"
-    @mouseenter="expanded = true"
-    @mouseleave="expanded = false"
-    :prepend-icon="!expanded ? '' : 'mdi-plus'"
     fab
     small
     color="accent"
     dark
     class="position-fixed bottom-14 right-8"
     max-width="10rem"
-    @click="dialog = true"
-    text="Log Activity"
+    @click="showModel"
     rounded="md"
-  ></v-btn>
+  >
+    <v-tooltip v-if="!tasks.length" activator="parent" location="left">
+      Please add a task first
+    </v-tooltip>
+    <span> Log Activity </span>
+  </v-btn>
 
   <CreateActivity v-model:show="dialog" :close="() => (dialog = false)" />
   <!--

@@ -3,7 +3,7 @@ import { ref } from "vue";
 import Module from "./Module.vue";
 import type { Semester } from "../typings/user";
 
-defineProps<{ semester: Semester }>();
+const props = defineProps<{ semester: Semester }>();
 
 const showModule = ref<boolean>(false);
 </script>
@@ -11,11 +11,14 @@ const showModule = ref<boolean>(false);
 <template>
   <v-card class="mb-4" flat>
     <v-card-title>
-      {{ semester.semesterName }}
+      {{ props.semester.semesterName }}
     </v-card-title>
     <v-card-text v-if="showModule">
       <v-row>
-        <v-col v-for="module in semester?.modules" :key="module.moduleName">
+        <v-col
+          v-for="module in props.semester?.modules"
+          :key="module.moduleName"
+        >
           <Module :module="module" />
         </v-col>
       </v-row>

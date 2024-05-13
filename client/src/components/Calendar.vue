@@ -66,26 +66,20 @@ const EventTypes = {
 } as const;
 
 const taskEvents: ComputedRef<EventInput[]> = computed(() =>
-  tasks.value.map((task) => {
-    const startDate = new Date(task.startDate);
-    const endDate = new Date(task.endDate);
-
-    return {
-      start: startDate,
-      end: endDate,
-      allDay: true,
-      title: task.title,
-      color: task.status === "Completed" ? "green" : "red",
-      id: task._id,
-      extendedProps: {
-        task: task,
-        type: EventTypes.TASK,
-      },
-    };
-  }),
+  tasks.value.map((task) => ({
+    start: new Date(task.startDate),
+    end: new Date(task.endDate),
+    allDay: true,
+    title: task.title,
+    color: task.status === "Completed" ? "green" : "red",
+    id: task._id,
+    extendedProps: {
+      task: task,
+      type: EventTypes.TASK,
+    },
+  })),
 );
 
-// activites marked with a green tick on the calendar
 const activityEvents: ComputedRef<EventInput[]> = computed(() =>
   activities.value.map((activity) => {
     const endDate = new Date(activity.createdAt);

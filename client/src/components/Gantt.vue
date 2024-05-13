@@ -1,51 +1,53 @@
 <script setup lang="ts">
-import { ref } from "vue";
-// full calender gantt
+import { computed, ComputedRef, ref } from "vue";
 import FullCalendar from "@fullcalendar/vue3";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import { CalendarOptions } from "@fullcalendar/core";
 import { useUserStore } from "../stores";
 import TaskInfo from "./modals/TaskInfo.vue";
+import { Milestone, Task } from "../typings/user.ts";
+import { EventInput } from "@fullcalendar/core";
 
 const userStore = useUserStore();
 
-const taskInfo = ref({
+type Resource = {
+  id: string;
+  title: string;
+};
+
+const taskInfo = ref<{
+  show: boolean;
+  task: Task | null;
+}>({
   show: false,
   task: null,
 });
 
-const milestones = userStore.milestones;
+const milestones = ref<Milestone[]>(userStore.milestones);
 
-const resources = milestones.map((milestone) => {
-  return {
+const resources: ComputedRef<Resource[]> = computed(() =>
+  milestones.value.map((milestone) => ({
     id: milestone._id,
     title: milestone.milestoneTitle,
-  };
-});
+  })),
+);
 
-const events = milestones
-  .map((milestone) => {
-    const milestoneId = milestone._id;
-
-    return milestone.tasks.map((task) => {
-      const startDate = new Date(task.startDate);
-      const endDate = new Date(task.endDate);
-
-      return {
-        start: startDate,
-        end: endDate,
-        allDay: true,
-        title: task.title,
-        color: task.status === "Completed" ? "green" : "red",
-        id: task._id,
-        resourceId: milestoneId,
-        extendedProps: {
-          task: task,
-        },
-      };
-    });
-  })
-  .flat();
+const events: ComputedRef<EventInput[]> = computed(() =>
+  milestones.value.flatMap((milestone) =>
+    milestone.tasks.flatMap((task) => ({
+      start: new Date(task.startDate),
+      end: new Date(task.endDate),
+      allDay: true,
+      title: task.title,
+      color: task.status === "Completed" ? "green" : "red",
+      id: task._id,
+      resourceId: milestone._id,
+      extendedProps: {
+        task: task,
+      },
+    })),
+  ),
+);
 
 const calenderOptions = ref<CalendarOptions>({
   plugins: [resourceTimelinePlugin],
@@ -55,8 +57,8 @@ const calenderOptions = ref<CalendarOptions>({
     center: "title",
     right: "resourceTimelineMonth,resourceTimelineDay",
   },
-  resources: resources,
-  events: events,
+  resources: resources.value,
+  events: events.value,
   schedulerLicenseKey: "CC-Attribution-NonCommercial-NoDerivatives",
   eventClick(arg) {
     const task = arg.event.extendedProps.task;
@@ -65,6 +67,10 @@ const calenderOptions = ref<CalendarOptions>({
       task: task,
     };
   },
+});
+
+userStore.$subscribe(() => {
+  milestones.value = userStore.milestones;
 });
 </script>
 

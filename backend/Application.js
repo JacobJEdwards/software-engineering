@@ -25,7 +25,6 @@ class Application {
     this.taskRoutes = new TaskRoutes();
     this.activityRoutes = new ActivityRoutes();
     this.PORT = port;
-    console.log(process.env);
     this.mongoDBUri = uri;
   }
   start() {
