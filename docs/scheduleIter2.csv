@@ -1,0 +1,9 @@
+SemesterName,SemesterStartDate,SemesterEndDate,ModuleCode,ModuleName,ModuleStartDate,ModuleEndDate,MilestoneTitle,MilestoneType,MilestoneStartDate,MilestoneEndDate
+Sem1,2024-01-15,2024-05-15,CMP101,Introduction to Computing,2024-01-15,2024-05-15,Essay Plan Submission,Coursework,2024-02-15,2024-02-28
+Sem2,2024-06-01,2024-09-30,CMP102,Introduction to Computing,2024-06-01,2024-09-30,Essay Final Draft,Coursework,2024-08-01,2024-08-15
+Sem3,2024-10-01,2024-12-31,CMP103,Introduction to Computing,2024-10-01,2024-12-31,Project Prototype Presentation,Coursework,2024-11-15,2024-11-30
+Sem4,2025-01-15,2025-05-15,CMP104,Introduction to Computing,2025-01-15,2025-05-15,Final Exam,Exam,2025-05-01,2025-05-15
+Sem5,2025-06-01,2025-09-30,CMP111,Data Structures,2025-06-01,2025-09-30,Project Proposal,Coursework,2025-07-15,2025-07-31
+Sem6,2025-10-01,2025-12-31,CMP112,Data Structures,2025-10-01,2025-12-31,Project Implementation,Coursework,2025-12-01,2025-12-15
+Sem7,2026-01-15,2026-05-15,CMP113,Data Structures,2026-01-15,2026-05-15,Midterm Exam,Exam,2026-03-15,2026-03-30
+Sem8,2026-06-01,2026-09-30,CMP114,Data Structures,2026-06-01,2026-09-30,Final Exam,Exam,2026-09-15,2026-09-30
