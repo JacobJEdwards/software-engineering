@@ -3,6 +3,7 @@ import ScheduleGenerator from "../components/ScheduleGenerator.vue";
 import ScheduleUpload from "../components/ScheduleUpload.vue";
 import { useUserStore } from "../stores";
 import type { Semester, Task, Activity } from "../typings/user.ts";
+import ChangeSemester from "../components/modals/ChangeSemester.vue";
 
 import { computed, ref } from "vue";
 import ChangeEmail from "../components/modals/ChangeEmail.vue";
@@ -35,6 +36,7 @@ const toggleScheduleUpload = () => {
 const showChangeEmail = ref<boolean>(false);
 const showChangeName = ref<boolean>(false);
 const showChangePassword = ref<boolean>(false);
+const showChangeSemester = ref<boolean>(false);
 
 userStore.$subscribe(() => {
   semesters.value = userStore.user?.semester ?? [];
@@ -74,9 +76,21 @@ userStore.$subscribe(() => {
                   ></v-btn>
                 </template>
               </v-list-item>
-              <v-list-item title="Semesters">{{
-                semesters?.length
-              }}</v-list-item>
+              <v-list-item title="Semesters"
+                >{{ semesters?.length }}
+              </v-list-item>
+              <v-list-item
+                v-if="userStore.currentSemester"
+                title="Current Semester"
+                >{{ userStore.currentSemester.semesterName }}
+                <template #append>
+                  <v-btn
+                    @click="showChangeSemester = true"
+                    :icon="showChangeSemester ? 'mdi-close' : 'mdi-pencil'"
+                    variant="text"
+                  ></v-btn>
+                </template>
+              </v-list-item>
               <v-list-item title="Modules">{{ modules?.length }}</v-list-item>
               <v-list-item title="Milestones">{{
                 milestones?.length
@@ -101,8 +115,8 @@ userStore.$subscribe(() => {
                   class="my-4"
                   rounded="md"
                   block
-                  >{{ showScheduleUpload ? "Hide" : "Show" }} Schedule
-                  Upload</v-btn
+                  :disabled="showScheduleUpload"
+                  >Upload a Schedule</v-btn
                 >
               </v-card-text>
             </v-card>
@@ -116,8 +130,8 @@ userStore.$subscribe(() => {
                   class="my-4"
                   rounded="md"
                   block
-                  >{{ showScheduleGenerator ? "Hide" : "Show" }} Schedule
-                  Generator</v-btn
+                  :disabled="showScheduleGenerator"
+                  >Generate a Schedule</v-btn
                 >
                 <ScheduleGenerator
                   v-model:show="showScheduleGenerator"
@@ -140,4 +154,8 @@ userStore.$subscribe(() => {
     v-model:show="showChangeName"
   />
   <ScheduleUpload v-model:show="showScheduleUpload" />
+  <ChangeSemester
+    :close="() => (showChangeSemester = false)"
+    v-model:show="showChangeSemester"
+  />
 </template>

@@ -266,4 +266,12 @@ userStore.$subscribe(updateEvents);
 .fc-daygrid-event:hover {
   filter: brightness(90%);
 }
+
+.fc-event {
+  cursor: pointer;
+}
+
+.fc-event:hover {
+  filter: brightness(90%);
+}
 </style>

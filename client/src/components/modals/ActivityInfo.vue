@@ -209,21 +209,21 @@ watch(
           {{ edit ? "Cancel" : "Edit" }}
         </v-btn>
         <v-btn
-          v-if="edit"
-          @click="updateActivity"
-          :loading="loading"
-          color="success"
-        >
-          Save
-        </v-btn>
-        <v-spacer></v-spacer>
-        <v-btn
           @click="deleteActivity"
           color="error"
           :loading="loading"
           v-if="props.editable"
         >
           Delete
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn
+          v-if="edit"
+          @click="updateActivity"
+          :loading="loading"
+          color="success"
+        >
+          Save
         </v-btn>
       </v-card-actions>
       <Alert

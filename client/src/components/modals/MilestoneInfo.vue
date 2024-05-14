@@ -158,15 +158,15 @@ watch(
         </v-row>
       </v-card-text>
       <v-card-actions>
-        <v-card-actions v-if="props.editable">
+        <v-card-actions v-if="props.editable && !props.milestone.ltsDefined">
           <v-btn @click="edit = !edit" color="primary">
             {{ edit ? "Cancel" : "Edit" }}
           </v-btn>
-          <v-btn v-if="edit" color="success" :loading="loading"> Save </v-btn>
-          <v-spacer></v-spacer>
           <v-btn v-if="props.editable" color="error" :loading="loading">
             Delete
           </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn v-if="edit" color="success" :loading="loading"> Save </v-btn>
         </v-card-actions>
       </v-card-actions>
     </v-card>

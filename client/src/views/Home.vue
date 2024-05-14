@@ -119,8 +119,8 @@ userStore.$subscribe(() => {
               <v-divider></v-divider>
               <v-card-text>
                 <SemesterOverview
-                  v-if="userStore.user?.semester?.length"
-                  :selected-semester="userStore.user?.semester[0]"
+                  v-if="userStore.currentSemester"
+                  :selected-semester="userStore.currentSemester"
                 />
                 <div class="p-4" v-else>
                   <p class="text-lg">No semester found!</p>
