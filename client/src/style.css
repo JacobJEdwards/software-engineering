@@ -24,3 +24,8 @@ body,
     justify-content: center !important;
     align-items: center !important;
 }
+
+.card-title {
+    background-color: #1D4E86;
+    color: white;
+}

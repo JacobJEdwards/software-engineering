@@ -37,6 +37,8 @@ const createTask = async (task: TaskForm, token: string): Promise<Result> => {
       hrsRequired: task.hrsRequired,
     };
 
+    console.log(body);
+
     const response = await fetch(`${API_ROUTE}/protected/task`, {
       method: "POST",
       headers: {

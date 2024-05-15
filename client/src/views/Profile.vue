@@ -53,6 +53,8 @@ userStore.$subscribe(() => {
           title="User Data"
           prepend-icon="mdi-account-circle-outline"
           :loading="userStore.loading"
+          elevation="3"
+          rounded="md"
         >
           <v-card-text>
             <v-list>
@@ -107,7 +109,12 @@ userStore.$subscribe(() => {
       <v-col cols="6">
         <v-row>
           <v-col cols="12">
-            <v-card title="Schedule Upload" prepend-icon="mdi-upload">
+            <v-card
+              title="Schedule Upload"
+              prepend-icon="mdi-upload"
+              elevation="3"
+              rounded="md"
+            >
               <v-card-text>
                 <v-btn
                   @click="toggleScheduleUpload"
@@ -122,7 +129,12 @@ userStore.$subscribe(() => {
             </v-card>
           </v-col>
           <v-col cols="12">
-            <v-card title="Schedule Generator" prepend-icon="mdi-calendar">
+            <v-card
+              title="Schedule Generator"
+              prepend-icon="mdi-calendar"
+              elevation="3"
+              rounded="md"
+            >
               <v-card-text>
                 <v-btn
                   @click="toggleScheduleGenerator"

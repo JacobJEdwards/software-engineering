@@ -54,7 +54,7 @@ export type Task = {
   status: TaskStatus;
   hrsCompleted: number;
   hrsRequired: number;
-  activities: Array<Activity>;
+  activities: Array<string>;
 } & Base;
 
 export type Milestone = {

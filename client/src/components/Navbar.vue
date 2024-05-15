@@ -15,7 +15,10 @@ const links = [
   { display: "Home", to: { name: "home" }, icon: "mdi-home" },
   { display: "Tasks", to: { name: "tasks" }, icon: "mdi-format-list-checks" },
   { display: "Schedule", to: { name: "schedule" }, icon: "mdi-calendar" },
+  { display: "Modules", to: { name: "modules" }, icon: "mdi-book" },
+  { display: "Milestones", to: { name: "milestones" }, icon: "mdi-flag" },
   { display: "Profile", to: { name: "profile" }, icon: "mdi-account" },
+  { display: "Stats", to: { name: "stats" }, icon: "mdi-chart-bar" },
 ];
 
 const logout = async () => {

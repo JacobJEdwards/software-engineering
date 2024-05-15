@@ -64,6 +64,8 @@ const showLogActivity = (task: TaskType) => {
         <v-card
           title="Upcoming Tasks"
           prepend-icon="mdi-checkbox-marked-circle-outline"
+          elevation="3"
+          rounded="md"
         >
           <v-divider></v-divider>
           <v-card-text>
@@ -82,7 +84,12 @@ const showLogActivity = (task: TaskType) => {
       <v-col cols="12" md="6">
         <v-row>
           <v-col cols="12">
-            <v-card title="Add a task" prepend-icon="mdi-clipboard-outline">
+            <v-card
+              title="Add a task"
+              prepend-icon="mdi-clipboard-outline"
+              elevation="3"
+              rounded="md"
+            >
               <v-divider></v-divider>
               <v-card-text>
                 <AddTask :enabled="hasSemester" />
@@ -93,7 +100,13 @@ const showLogActivity = (task: TaskType) => {
       </v-col>
 
       <v-col cols="12">
-        <v-card title="All tasks" prepend-icon="mdi-dots-horizontal">
+        <v-card
+          title="All tasks"
+          prepend-icon="mdi-dots-horizontal"
+          flat
+          color="white"
+          border
+        >
           <template #text>
             <v-text-field
               v-model="search"
@@ -113,6 +126,7 @@ const showLogActivity = (task: TaskType) => {
               item-value="_id"
               show-expand
               v-model:expanded="expanded"
+              class="bg-white"
             >
               <template #item.startDate="{ item }">
                 {{ new Date(item.startDate).toLocaleDateString() }}

@@ -68,7 +68,7 @@ const submitFile = async (isUpdate: boolean = false) => {
 
 <template>
   <v-dialog v-model="show" max-width="500" scrollable>
-    <v-card>
+    <v-card elevation="3" rounded="md">
       <v-card-title>Upload Schedule</v-card-title>
       <v-card-text>
         <v-container>

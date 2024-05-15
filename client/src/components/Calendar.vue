@@ -228,7 +228,7 @@ userStore.$subscribe(updateEvents);
         <FullCalendar :options="calendarOptions" />
       </v-col>
       <v-col cols="3" v-if="showOptions">
-        <v-card> </v-card>
+        <v-card elevation="3" rounded="md"> </v-card>
       </v-col>
     </v-row>
   </v-container>
