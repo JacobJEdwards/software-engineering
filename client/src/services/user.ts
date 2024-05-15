@@ -30,12 +30,17 @@ export const getUser = async (token: string): Promise<Result<User>> => {
 export const uploadFile = async (
   token: string,
   file: File,
+  isUpdate: boolean,
 ): Promise<Result> => {
   try {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch(`${API_ROUTE}/protected/upload`, {
+    const route = isUpdate
+      ? `${API_ROUTE}/protected/upload?update=true`
+      : `${API_ROUTE}/protected/upload`;
+
+    const response = await fetch(route, {
       method: "POST",
       headers: {
         Authorization: token,

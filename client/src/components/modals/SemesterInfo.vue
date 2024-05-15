@@ -78,6 +78,7 @@ watch(
               </v-list-item-subtitle>
             </v-list-item>
           </v-col>
+          <v-divider></v-divider>
           <v-col cols="12">
             <v-list-item>
               <v-list-item-title class="headline"> Modules </v-list-item-title>
@@ -86,6 +87,7 @@ watch(
               </v-list-item-subtitle>
             </v-list-item>
           </v-col>
+          <v-divider></v-divider>
           <v-col cols="12">
             <v-list-item>
               <v-list-item-title class="headline">
@@ -96,6 +98,7 @@ watch(
               </v-list-item-subtitle>
             </v-list-item>
           </v-col>
+          <v-divider></v-divider>
           <v-col cols="12">
             <v-list-item>
               <v-list-item-title class="headline"> Tasks </v-list-item-title>
@@ -103,12 +106,12 @@ watch(
                 {{ tasks.length }}
               </v-list-item-subtitle>
               <template #append>
-                <v-btn
-                  variant="text"
-                  icon="mdi-filter"
-                  @click="showFilter = !showFilter"
+                <router-link
+                  to="/tasks"
+                  class="text-blue-500 text-sm hover:text-blue-700 focus:outline-none"
                 >
-                </v-btn>
+                  View All
+                </router-link>
               </template>
             </v-list-item>
           </v-col>

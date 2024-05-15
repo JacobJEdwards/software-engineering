@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ScheduleGenerator from "../components/ScheduleGenerator.vue";
-import ScheduleUpload from "../components/ScheduleUpload.vue";
+import ScheduleGenerator from "../components/modals/ScheduleGenerator.vue";
+import ScheduleUpload from "../components/modals/ScheduleUpload.vue";
 import { useUserStore } from "../stores";
 import type { Semester, Task, Activity } from "../typings/user.ts";
 import ChangeSemester from "../components/modals/ChangeSemester.vue";

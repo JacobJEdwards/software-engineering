@@ -5,6 +5,7 @@ import { Milestone, MilestoneTypes } from "../../typings/user";
 import { useLoading, useSuccessErrorMessage } from "../../utils/utils.ts";
 import Alert from "../utils/Alert.vue";
 import NumberInput from "../utils/NumberInput.vue";
+import ConfirmModal from "./ConfirmModal.vue";
 
 const { loading } = useLoading();
 const { success, error } = useSuccessErrorMessage();
@@ -39,6 +40,27 @@ const formData = ref<FormData>({
 const milestoneSelectTypes = Object.values(MilestoneTypes);
 
 const edit = ref<boolean>(false);
+const deletePressed = ref<boolean>(false);
+
+const deleteMilestone = async () => {
+  loading.value = true;
+  error.value.message = "";
+  error.value.show = false;
+  success.value.message = "";
+  success.value.show = false;
+
+  // const result = await MilestonesService.delete(
+  //   authStore.authToken,
+  //   props.milestone._id,
+  // );
+  // if (result.success) {
+  //   success.value.message = "Milestone deleted successfully";
+  //   props.close();
+  // } else {
+  //   error.value.message = result.message;
+  //   error.value.show = true;
+  // }
+};
 
 watch(
   () => props,
@@ -183,6 +205,12 @@ watch(
       :close="() => (success.show = false)"
     />
   </v-dialog>
+  <ConfirmModal
+    v-model:show="deletePressed"
+    text="Are you sure you want to delete this milestone?"
+    @confirm="deleteMilestone"
+    @cancel="deletePressed = false"
+  />
 </template>
 
 <style scoped></style>

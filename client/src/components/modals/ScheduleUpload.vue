@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { useAuthStore, useUserStore } from "../stores";
-import { useSuccessErrorMessage, useLoading } from "../utils/utils.ts";
-import { uploadFile } from "../services/user.ts";
-import Alert from "./utils/Alert.vue";
+import { computed, ref } from "vue";
+import { useAuthStore, useUserStore } from "../../stores";
+import { useSuccessErrorMessage, useLoading } from "../../utils/utils.ts";
+import { uploadFile } from "../../services/user.ts";
+import Alert from "../utils/Alert.vue";
+import ConfirmModal from "./ConfirmModal.vue";
 
 const { success, error } = useSuccessErrorMessage();
 const { loading } = useLoading();
@@ -30,7 +31,11 @@ const saveFile = (event: Event) => {
   error.value.show = false;
 };
 
-const submitFile = async () => {
+const updateAble = computed(() => !!userStore.user?.semester?.length);
+
+const updatePressed = ref<boolean>(false);
+
+const submitFile = async (isUpdate: boolean = false) => {
   loading.value = true;
   error.value.message = "";
   error.value.show = false;
@@ -45,7 +50,7 @@ const submitFile = async () => {
     return;
   }
 
-  const result = await uploadFile(authStore.authToken, file.value);
+  const result = await uploadFile(authStore.authToken, file.value, isUpdate);
 
   if (result.success) {
     success.value.message = "Schedule uploaded";
@@ -89,11 +94,19 @@ const submitFile = async () => {
         <v-spacer></v-spacer>
         <v-btn
           color="success"
-          @click="submitFile"
+          @click="updatePressed = true"
+          :loading="loading"
+          :disabled="!file || !updateAble"
+          text="Update"
+        >
+        </v-btn>
+        <v-btn
+          color="success"
+          @click="() => submitFile(false)"
           :loading="loading"
           :disabled="!file"
+          text="Upload"
         >
-          Upload
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -110,5 +123,18 @@ const submitFile = async () => {
       v-model:show="error.show"
     />
   </v-dialog>
+  <ConfirmModal
+    v-model:show="updatePressed"
+    title="Update Schedule"
+    @confirm="submitFile(true)"
+    @cancel="updatePressed = false"
+  >
+    <template #text>
+      <p class="text-lg mb-4">Are you sure you want to update your schedule?</p>
+      <p class="text-sm text-gray-400">
+        This may overwrite your current schedule
+      </p>
+    </template>
+  </ConfirmModal>
 </template>
 <style scoped></style>

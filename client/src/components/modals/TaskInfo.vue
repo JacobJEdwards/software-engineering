@@ -6,6 +6,7 @@ import { TaskService } from "../../services";
 import { useAuthStore, useUserStore } from "../../stores";
 import Alert from "../utils/Alert.vue";
 import NumberInput from "../utils/NumberInput.vue";
+import ConfirmModal from "./ConfirmModal.vue";
 
 const { loading } = useLoading();
 const { success, error } = useSuccessErrorMessage();
@@ -43,6 +44,7 @@ const formData = ref<TaskForm>({
 });
 
 const edit = ref<boolean>(false);
+const deletePressed = ref<boolean>(false);
 
 const closeForm = () => {
   formData.value = {
@@ -265,7 +267,7 @@ watch(
         </v-btn>
         <v-btn
           v-if="props.editable"
-          @click="deleteTask"
+          @click="deletePressed = true"
           color="error"
           :loading="loading"
         >
@@ -295,6 +297,12 @@ watch(
       />
     </v-card>
   </v-dialog>
+  <ConfirmModal
+    v-model:show="deletePressed"
+    text="Are you sure you want to delete this task?"
+    @confirm="deleteTask"
+    @cancel="deletePressed = false"
+  />
 </template>
 
 <style scoped></style>
