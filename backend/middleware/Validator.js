@@ -293,7 +293,6 @@ class Validator {
         const progress = fullSchema.extract("Progress");
         const hrsCompleted = fullSchema.extract("hrsCompleted");
         const hrsRequired = fullSchema.extract("hrsRequired");
-        const activities = fullSchema.extract("activities");
 
         const task = {
             title: taskObject.title,
@@ -302,7 +301,6 @@ class Validator {
             status: taskObject.status,
             hrsCompleted: taskObject.hrsCompleted,
             hrsRequired: taskObject.hrsRequired,
-            activities: taskObject.activities,
         };
 
         const taskSchema = Joi.object({
@@ -312,7 +310,6 @@ class Validator {
             status: progress,
             hrsCompleted: hrsCompleted,
             hrsRequired: hrsRequired,
-            activities: activities,
         });
 
         const {error} = taskSchema.validate(task);
@@ -331,7 +328,6 @@ class Validator {
         taskProgress,
         hrsCompleted,
         hrsRequired,
-        activities,
     ) {
         let errors = [];
 
@@ -380,13 +376,6 @@ class Validator {
             }
         }
 
-        if (activities !== null) {
-            const activities = fullSchema.extract("activities");
-            const {error} = activities.validate(activities);
-            if (error) {
-                errors.push({activites: error.message});
-            }
-        }
 
         if (errors.length > 0) {
             return new Response("Errors", 400, errors);

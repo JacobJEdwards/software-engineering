@@ -10,6 +10,7 @@ import CronJob from "./utils/CronJobSetup.js";
 import UserRoutes from "./routes/userRoutes.js";
 import TaskRoutes from "./routes/TaskRoutes.js";
 import ActivityRoutes from "./routes/ActivityRoutes.js";
+import Mailer from "./middleware/Mailer.js";
 
 class Application {
   constructor(port, uri) {

@@ -4,12 +4,12 @@ import Mailgun from 'mailgun.js';
 export class Mailer {
 
 
-    mail() {
+   static mail() {
         let mailgun = new Mailgun(FormData);
         let mg = mailgun.client({username: 'api', key: process.env.MAILGUN_API_KEY})
-        mg.messages.create('sandboxee68d2e4ff994022aede1eafabe50a5e.mailgun.org', {
-            from: "Wonderful Tasks <wonderfultasks@sandboxee68d2e4ff994022aede1eafabe50a5e.mailgun.org>",
-            to: ["jacobjedwards@gmail.com"],
+        mg.messages.create('wonderfultasks.me', {
+            from: "Wonderful Tasks <mail@wondefultasks.me>",
+            to: ["jjwales38@gmail.com"],
             subject: "Hello",
             text: "<Jamie is cooler than you>",
             html: "<h1> honestly though </h1>"
