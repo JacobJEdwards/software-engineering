@@ -41,6 +41,7 @@ class TaskController {
       req.body.startDate,
       req.body.endDate,
       req.body.progress,
+      req.body.dependantTasks,
       req.body.hrsCompleted,
       req.body.hrsRequired,
     );
@@ -55,6 +56,7 @@ class TaskController {
       req.body.startDate,
       req.body.endDate,
       req.body.progress,
+      req.body.dependantTasks,
       req.body.hrsRequired,
       req.body.hrsCompleted,
     );

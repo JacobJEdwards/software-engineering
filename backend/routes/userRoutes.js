@@ -9,9 +9,10 @@ export class UserRoutes {
 
     registerRoutes() {
         this.router.get('/home', UserController.getUser);
+        this.router.post('/current-semester', UserController.updateCurrentSemester)
     }
 }
 
 
 
-export default UserRoutes
+export default UserRoutes;
