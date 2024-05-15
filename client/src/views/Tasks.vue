@@ -101,9 +101,8 @@ const showLogActivity = (task: TaskType) => {
         <v-card
           title="All tasks"
           prepend-icon="mdi-dots-horizontal"
-          flat
-          color="white"
-          border
+          elevation="3"
+          rounded="md"
         >
           <template #text>
             <v-text-field
@@ -124,7 +123,6 @@ const showLogActivity = (task: TaskType) => {
               item-value="_id"
               show-expand
               v-model:expanded="expanded"
-              class="bg-white"
             >
               <template #item.startDate="{ item }">
                 {{ new Date(item.startDate).toLocaleDateString() }}

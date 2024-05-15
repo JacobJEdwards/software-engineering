@@ -98,10 +98,8 @@ userStore.$subscribe(() => {
         <v-card
           title="All milestones"
           prepend-icon="mdi-dots-horizontal"
-          flat
-          color="white"
           rounded="md"
-          border
+          elevation="3"
         >
           <template #text>
             <v-text-field

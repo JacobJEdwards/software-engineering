@@ -14,7 +14,6 @@ import SemesterOverview from "../components/SemesterOverview.vue";
 import Calendar from "../components/Calendar.vue";
 
 const userStore = useUserStore();
-const authStore = useAuthStore();
 
 const tasks = ref<TaskType[]>(userStore.tasks);
 const activities = ref<Activity[]>(userStore.activities);
@@ -75,7 +74,6 @@ userStore.$subscribe(() => {
   calendarOptions.value.events = events.value;
 });
 </script>
-
 <template>
   <v-container>
     <UserLoading v-if="userStore.loading" />
@@ -84,11 +82,36 @@ userStore.$subscribe(() => {
       <v-col cols="12" md="6">
         <v-card rounded="md" elevation="3">
           <v-card-title class="card-title">
-            <v-icon>mdi-checkbox-marked-circle-outline</v-icon
-            ><span> Upcoming Tasks</span>
+            <v-icon class="">mdi-clock-time-four-outline</v-icon>
+            Semester Overview
           </v-card-title>
           <v-divider></v-divider>
-          <v-card-text v-if="topTasks.length" class="bg-grey">
+          <v-card-text>
+            <SemesterOverview
+              v-if="userStore.currentSemester"
+              :selected-semester="userStore.currentSemester"
+            />
+            <div class="" v-else>
+              <p class="text-lg">No semester found!</p>
+              <div class="my-4">
+                <v-divider class="my-4"></v-divider>
+              </div>
+              <router-link
+                to="/profile"
+                class="text-blue-500 text-sm hover:text-blue-700 focus:outline-none"
+                >Upload a schedule</router-link
+              >
+            </div>
+          </v-card-text>
+        </v-card>
+
+        <v-card rounded="md" elevation="3" class="mt-4">
+          <v-card-title class="card-title">
+            <v-icon>mdi-checkbox-marked-circle-outline</v-icon>
+            Upcoming Tasks
+          </v-card-title>
+          <v-divider></v-divider>
+          <v-card-text v-if="topTasks.length" class="">
             <v-list>
               <Task
                 v-for="task in topTasks"
@@ -111,48 +134,18 @@ userStore.$subscribe(() => {
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="12" md="6">
-        <v-row>
-          <v-col cols="12">
-            <v-card rounded="md" elevation="3">
-              <v-card-title class="card-title">
-                <v-icon class="">mdi-clock-time-four-outline</v-icon
-                ><span> Semester Overview</span>
-              </v-card-title>
-              <v-divider></v-divider>
-              <v-card-text>
-                <SemesterOverview
-                  v-if="userStore.currentSemester"
-                  :selected-semester="userStore.currentSemester"
-                />
-                <div class="p-4" v-else>
-                  <p class="text-lg">No semester found!</p>
-                  <div class="my-4">
-                    <v-divider class="my-4"></v-divider>
-                  </div>
-                  <router-link
-                    to="/profile"
-                    class="text-blue-500 text-sm hover:text-blue-700 focus:outline-none"
-                    >Upload a semester</router-link
-                  >
-                </div>
-              </v-card-text>
-            </v-card>
-          </v-col>
-          <v-col cols="12">
-            <v-card rounded="md" elevation="3">
-              <v-card-title class="card-title">
-                <v-icon>mdi-calendar</v-icon><span> Calendar</span>
-              </v-card-title>
 
-              <v-divider></v-divider>
-              <Calendar dueDatesOnly />
-            </v-card>
-          </v-col>
-        </v-row>
+      <v-col cols="12" md="6">
+        <v-card rounded="md" elevation="3">
+          <v-card-title class="card-title">
+            <v-icon>mdi-calendar</v-icon>
+            Calendar
+          </v-card-title>
+          <v-divider></v-divider>
+          <Calendar dueDatesOnly />
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
 </template>
-
 <style scoped></style>

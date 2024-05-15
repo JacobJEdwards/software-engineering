@@ -82,7 +82,7 @@ const updateMilestone = async (
   }
 };
 
-export const TaskService = {
+export const MilestoneService = {
   delete: deleteMilestone,
   create: createMilestone,
   update: updateMilestone,

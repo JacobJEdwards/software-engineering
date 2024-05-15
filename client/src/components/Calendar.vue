@@ -11,10 +11,13 @@ import ModuleInfo from "./modals/ModuleInfo.vue";
 import MilestoneInfo from "./modals/MilestoneInfo.vue";
 
 import { ref, computed, ComputedRef } from "vue";
-import { useUserStore } from "../stores";
+import { useAuthStore, useUserStore } from "../stores";
 import { EventInput } from "fullcalendar";
 import CreateTask from "./modals/CreateTask.vue";
 import { Task, Activity, Milestone, Module } from "../typings/user.ts";
+import Alert from "./utils/Alert.vue";
+import { useSuccessErrorMessage } from "../utils/utils.ts";
+import { TaskService } from "../services/tasks";
 
 const props = defineProps({
   dueDatesOnly: {
@@ -23,7 +26,10 @@ const props = defineProps({
   },
 });
 
+const { success, error } = useSuccessErrorMessage();
+
 const userStore = useUserStore();
+const authStore = useAuthStore();
 
 const addTask = ref<boolean>(false);
 
@@ -64,6 +70,16 @@ const moduleInfo = ref<{
 }>({
   show: false,
 });
+
+const updateTask = async (task: Task) => {
+  try {
+    success.value.message = "Task updated successfully";
+    success.value.show = true;
+  } catch (e: any) {
+    error.value.message = e?.message ?? "Error updating task";
+    error.value.show = true;
+  }
+};
 
 const EventTypes = {
   ACTIVITY: "ACTIVITY",
@@ -168,7 +184,7 @@ const calendarOptions = ref<CalendarOptions>({
   },
   initialView: "dayGridMonth",
   events: events.value,
-  editable: false,
+  editable: !props.dueDatesOnly,
   selectable: true,
   selectMirror: true,
   dayMaxEvents: true,
@@ -192,6 +208,65 @@ const calendarOptions = ref<CalendarOptions>({
         moduleInfo.value.module = event.event._def.extendedProps.module;
         moduleInfo.value.show = true;
         break;
+    }
+  },
+  async eventChange(arg) {
+    // get new start and end dates
+    if (arg.event.extendedProps.type !== EventTypes.TASK) {
+      error.value.message = "Only tasks can be updated from the calendar view";
+      error.value.show = true;
+      arg.revert();
+    }
+
+    const newStartDate = new Date(arg.event.startStr);
+    const newEndDate = new Date(arg.event.endStr);
+    const task: Task | undefined = tasks.value.find(
+      (task) => task._id === arg.event.id,
+    );
+
+    if (!task) {
+      error.value.message = "Task not found";
+      error.value.show = true;
+      arg.revert();
+      return;
+    }
+
+    if (!task?._id) {
+      error.value.message = "Task ID not found";
+      error.value.show = true;
+      arg.revert();
+      return;
+    }
+
+    if (!task?.status) {
+      error.value.message = "Task status not found";
+      error.value.show = true;
+      arg.revert();
+      return;
+    }
+
+    const newTask = {
+      title: task.title,
+      startDate: newStartDate,
+      endDate: newEndDate,
+      hrsCompleted: task.hrsCompleted,
+      hrsRequired: task.hrsRequired,
+      dependantTasks: task.dependantTasks,
+      progress: task.status,
+      taskId: task._id,
+      activities: task.activities,
+    };
+
+    const result = await TaskService.update(newTask, authStore.authToken);
+
+    if (result.success) {
+      await userStore.getUser();
+      success.value.message = "Task updated successfully";
+      success.value.show = true;
+    } else {
+      error.value.message = result.error ?? "Error updating task";
+      error.value.show = true;
+      arg.revert();
     }
   },
   select: (info) => {
@@ -265,6 +340,18 @@ userStore.$subscribe(updateEvents);
     :module="moduleInfo.module"
     :close="() => (moduleInfo.show = false)"
     editable
+  />
+  <Alert
+    v-model:show="success.show"
+    type="success"
+    :message="success.message"
+    :close="() => (success.show = false)"
+  />
+  <Alert
+    v-model:show="error.show"
+    type="error"
+    :message="error.message"
+    :close="() => (error.show = false)"
   />
 </template>
 

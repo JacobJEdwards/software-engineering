@@ -54,6 +54,7 @@ export type Task = {
   status: TaskStatus;
   hrsCompleted: number;
   hrsRequired: number;
+  dependantTasks: Array<string>;
   activities: Array<string>;
 } & Base;
 
@@ -101,6 +102,7 @@ export type TaskForm = {
   startDate?: Date | string;
   endDate?: Date | string;
   progress: TaskStatus;
+  dependantTasks: Array<string>;
   hrsCompleted: number;
   hrsRequired: number;
 };
