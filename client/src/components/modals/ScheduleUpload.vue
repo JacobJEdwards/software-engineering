@@ -132,7 +132,7 @@ const submitFile = async (isUpdate: boolean = false) => {
     <template #text>
       <p class="text-lg mb-4">Are you sure you want to update your schedule?</p>
       <p class="text-sm text-gray-400">
-        This may overwrite your current schedule
+        This will overwrite any existing schedule data with the same name or ID.
       </p>
     </template>
   </ConfirmModal>
