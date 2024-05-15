@@ -216,6 +216,7 @@ const calendarOptions = ref<CalendarOptions>({
       error.value.message = "Only tasks can be updated from the calendar view";
       error.value.show = true;
       arg.revert();
+      return;
     }
 
     const newStartDate = new Date(arg.event.startStr);
