@@ -27,7 +27,7 @@ export class ImportController {
                 }
                 const token = req.headers.authorization;
                 const decoded = jwt.verify(token, process.env.JWT_SECRET);
-                let response = await ImportService.addFileData(output, decoded.userId);
+                let response = req.query.update ? await ImportService.updateFileData(output, decoded.userId) : await ImportService.addFileData(output, decoded.userId);
                 return res.status(response.code).json({ message: response.message, data: response.data });
             });
 
