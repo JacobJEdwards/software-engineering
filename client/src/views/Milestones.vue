@@ -4,6 +4,7 @@ import { useUserStore } from "../stores";
 import { computed, ref } from "vue";
 import type { Milestone, Task as TaskType } from "../typings/user";
 import AddMilestone from "../components/AddMilestone.vue";
+import MilestoneInfo from "../components/modals/MilestoneInfo.vue";
 
 const userStore = useUserStore();
 
@@ -12,6 +13,9 @@ const hasSemester = computed(() => !!userStore.user?.semester?.length);
 const milestones = ref<Milestone[]>(userStore.milestones);
 const search = ref<string>("");
 const expanded = ref<string[]>([]);
+
+const showMilestoneInfo = ref<boolean>(false);
+const selectedMilestone = ref<Milestone | null>(null);
 
 const upComingMilestones = computed(() =>
   milestones.value
@@ -30,6 +34,11 @@ const headers = [
   { title: "LTS Defined", key: "ltsDefined" },
   { title: "", key: "action", sortable: false },
 ];
+
+const editMilestone = (milestone: Milestone) => {
+  selectedMilestone.value = milestone;
+  showMilestoneInfo.value = !showMilestoneInfo.value;
+};
 
 userStore.$subscribe(() => {
   milestones.value = userStore.milestones;
@@ -89,10 +98,8 @@ userStore.$subscribe(() => {
         <v-card
           title="All milestones"
           prepend-icon="mdi-dots-horizontal"
-          flat
-          color="white"
           rounded="md"
-          border
+          elevation="3"
         >
           <template #text>
             <v-text-field
@@ -127,7 +134,18 @@ userStore.$subscribe(() => {
                 }}</v-icon>
               </template>
               <template #item.action="{ item }">
-                <v-btn color="primary" variant="text"></v-btn>
+                <v-btn
+                  color="primary"
+                  variant="text"
+                  :icon="
+                    showMilestoneInfo && selectedMilestone === item
+                      ? 'mdi-close'
+                      : item.ltsDefined
+                        ? 'mdi-information-outline'
+                        : 'mdi-pencil'
+                  "
+                  @click="editMilestone(item)"
+                ></v-btn>
               </template>
             </v-data-table>
           </v-card-text>
@@ -135,6 +153,13 @@ userStore.$subscribe(() => {
       </v-col>
     </v-row>
   </v-container>
+  <MilestoneInfo
+    v-if="selectedMilestone"
+    :milestone="selectedMilestone"
+    v-model:show="showMilestoneInfo"
+    :editable="!selectedMilestone.ltsDefined"
+    :close="() => (showMilestoneInfo = false)"
+  />
 </template>
 
 <style scoped></style>

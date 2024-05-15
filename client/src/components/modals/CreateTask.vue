@@ -37,6 +37,7 @@ const formData = ref<TaskForm>({
   hrsCompleted: props.hrsCompleted ?? 0,
   hrsRequired: props.hrsRequired ?? 0,
   startDate: props.startDate ?? new Date(Date.now()),
+  dependantTasks: props.dependantTasks ?? [],
   endDate: props.endDate ?? undefined,
 });
 
@@ -51,6 +52,7 @@ watch(
       hrsCompleted: props.hrsCompleted ?? 0,
       hrsRequired: props.hrsRequired ?? 0,
       startDate: props.startDate ?? new Date(Date.now()),
+      dependantTasks: props.dependantTasks ?? [],
       endDate: props.endDate ?? undefined,
     };
   },
@@ -78,6 +80,7 @@ const closeForm = () => {
     startDate: props.startDate ?? undefined,
     endDate: props.endDate ?? undefined,
     progress: props.progress ?? TaskStatuses.STARTED,
+    dependantTasks: props.dependantTasks ?? [],
     hrsCompleted: props.hrsCompleted ?? 0,
     hrsRequired: props.hrsRequired ?? 0,
   };
@@ -103,6 +106,7 @@ const createTask = async () => {
     endDate: formData.value.endDate,
     progress: formData.value.progress,
     hrsCompleted: formData.value.hrsCompleted,
+    dependantTasks: formData.value.dependantTasks,
     hrsRequired: formData.value.hrsRequired,
   };
 

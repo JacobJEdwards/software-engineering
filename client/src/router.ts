@@ -102,7 +102,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("./views/Terms.vue"),
     meta: {
       requiresAuth: false,
-      title: "Terms of Service",
+      title: "Terms & Conditions",
     },
   },
   {
@@ -111,7 +111,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("./views/About.vue"),
     meta: {
       requiresAuth: false,
-      title: "About",
+      title: "About Us",
     },
   },
   {
@@ -120,7 +120,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("./views/Contact.vue"),
     meta: {
       requiresAuth: false,
-      title: "Contact",
+      title: "Contact Us",
     },
   },
   {
