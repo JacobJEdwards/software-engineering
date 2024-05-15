@@ -19,6 +19,7 @@ const show = defineModel("show", {
 
 const confirm = () => {
   emit("confirm");
+  show.value = false;
 };
 
 const cancel = () => {

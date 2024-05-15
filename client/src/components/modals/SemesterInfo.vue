@@ -85,6 +85,14 @@ watch(
               <v-list-item-subtitle>
                 {{ modules.length }}
               </v-list-item-subtitle>
+              <template #append>
+                <router-link
+                  to="/modules"
+                  class="text-blue-500 text-sm hover:text-blue-700 focus:outline-none"
+                >
+                  View All
+                </router-link>
+              </template>
             </v-list-item>
           </v-col>
           <v-divider></v-divider>
@@ -96,6 +104,14 @@ watch(
               <v-list-item-subtitle>
                 {{ milestones.length }}
               </v-list-item-subtitle>
+              <template #append>
+                <router-link
+                  to="/milestones"
+                  class="text-blue-500 text-sm hover:text-blue-700 focus:outline-none"
+                >
+                  View All
+                </router-link>
+              </template>
             </v-list-item>
           </v-col>
           <v-divider></v-divider>

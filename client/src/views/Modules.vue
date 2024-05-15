@@ -3,12 +3,21 @@ import UserLoading from "../components/UserLoading.vue";
 import { useUserStore } from "../stores";
 import { computed, ref } from "vue";
 import type { Module } from "../typings/user";
+import ModuleMilestones from "../components/ModuleMilestones.vue";
+import ModuleInfo from "../components/modals/ModuleInfo.vue";
 
 const userStore = useUserStore();
 
 const modules = ref<Module[]>(userStore.modules);
 const search = ref<string>("");
 const expanded = ref<string[]>([]);
+const showModuleInfo = ref<boolean>(false);
+const selectedModule = ref<Module | null>(null);
+
+const viewModule = (module: Module) => {
+  selectedModule.value = module;
+  showModuleInfo.value = !showModuleInfo.value;
+};
 
 const headers = [
   { title: "Title", key: "moduleName", sortable: false },
@@ -75,7 +84,24 @@ userStore.$subscribe(() => {
                 {{ new Date(item.endDate).toLocaleDateString() }}
               </template>
               <template #item.action="{ item }">
-                <v-btn color="primary" variant="text"></v-btn>
+                <v-btn
+                  color="primary"
+                  variant="text"
+                  :icon="
+                    showModuleInfo && selectedModule === item
+                      ? 'mdi-close'
+                      : 'mdi-information-outline'
+                  "
+                  @click="viewModule(item)"
+                ></v-btn>
+              </template>
+              <template #expanded-row="{ item, columns }">
+                <tr>
+                  <td :colspan="columns.length">
+                    <h3 class="text-lg font-bold my-2">Milestones</h3>
+                    <ModuleMilestones :milestones="item.milestones" />
+                  </td>
+                </tr>
               </template>
             </v-data-table>
           </v-card-text>
@@ -83,6 +109,13 @@ userStore.$subscribe(() => {
       </v-col>
     </v-row>
   </v-container>
+  <ModuleInfo
+    :editable="false"
+    v-if="selectedModule"
+    :module="selectedModule"
+    v-model:show="showModuleInfo"
+    :close="() => (showModuleInfo = false)"
+  />
 </template>
 
 <style scoped></style>
