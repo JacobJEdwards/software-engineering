@@ -144,6 +144,7 @@ class ImportService {
         if (response.code !== 200) {
             return response;
         } else {
+            this.addFileDataUser(file, user);
             await user.save();
             return new Response("Data reimported successfully", 200, {});
         }

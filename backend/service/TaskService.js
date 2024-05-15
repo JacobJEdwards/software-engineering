@@ -5,6 +5,7 @@ import User from "./UserService.js";
 import Module from "./ModuleService.js";
 import Milestone from "./MilestoneService.js";
 import Validator from "../middleware/Validator.js";
+import ActivityService from "./ActivityService.js";
 
 class TaskService {
   static async createTask(
