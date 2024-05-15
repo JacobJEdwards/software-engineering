@@ -27,12 +27,33 @@ export class ImportController {
                 }
                 const token = req.headers.authorization;
                 const decoded = jwt.verify(token, process.env.JWT_SECRET);
-                let response = await ImportService.addFileData(output, decoded.userId);
+                let response = req.query.update ? await ImportService.updateFileData(output, decoded.userId) : await ImportService.addFileData(output, decoded.userId);
                 return res.status(response.code).json({ message: response.message, data: response.data });
             });
 
         } catch (error) {
             return res.status(500).json({ message: error.message });
+        }
+    }
+
+    static async generateCSV(req, res) {
+        try {
+            const body = req.body;
+            const response = await ImportService.generateCSVFromRequest(body);
+            if (response.code !== 200) {
+                return res.status(response.code).json({message: response.message, errors: response.data});
+            }
+
+            const filePath = response.data.filePath;
+            res.download(filePath, 'data.csv', (err) => {
+                if (err) {
+                    return res.status(500).json({message: "Error downloading file"});
+                } else {
+                    fs.unlinkSync(filePath); // Delete the file after download
+                }
+            });
+        } catch (error) {
+            return res.status(500).json({message: error.message});
         }
     }
 

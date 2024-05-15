@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useAuthStore, useUserStore } from "../../stores";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useSuccessErrorMessage } from "../../utils/utils.ts";
 import { useLoading } from "../../utils/utils.ts";
+import type { Semester } from "../../typings/user";
 import Alert from "../utils/Alert.vue";
-import ConfirmModal from "./ConfirmModal.vue";
 
 const { success, error } = useSuccessErrorMessage();
 const { loading } = useLoading();
@@ -21,35 +21,35 @@ const props = defineProps<{
 const authStore = useAuthStore();
 const userStore = useUserStore();
 
-const name = ref<string>("");
-const editPressed = ref<boolean>(false);
+const currentSemester = ref<Semester | null>(userStore.currentSemester);
+const semesters = ref<Semester[]>(userStore.user?.semester ?? []);
+const selectedSemester = ref<string | null>(
+  userStore.currentSemester?._id ?? null,
+);
 
-const closeForm = () => {
-  name.value = "";
-  error.value.message = "";
-  error.value.show = false;
-  success.value.message = "";
-  success.value.show = false;
-  props.close();
+const changeSelectedSemester = () => {
+  const newSemester = semesters.value.find(
+    (s) => s._id === selectedSemester.value,
+  );
+
+  if (newSemester) {
+    currentSemester.value = newSemester;
+  }
 };
 
-const changeName = async () => {
+const changeSemester = () => {
   loading.value = true;
   error.value.message = "";
   error.value.show = false;
   success.value.message = "";
   success.value.show = false;
 
-  const result = {
-    success: false,
-    error: "Error",
-  };
-
-  if (result.success) {
-    success.value.message = "Name changed successfully";
+  if (selectedSemester.value) {
+    userStore.changeSemester(currentSemester.value);
+    success.value.message = "Semester changed successfully";
     success.value.show = true;
   } else {
-    error.value.message = result.error ?? "Error changing name";
+    error.value.message = "Error changing semester";
     error.value.show = true;
   }
 
@@ -71,28 +71,43 @@ const changeName = async () => {
       <v-card-text>
         <v-row>
           <v-col cols="12">
-            <v-text-field
-              v-model="name"
-              label="Name"
+            <div v-if="!currentSemester">
+              <p class="text-lg mb-4">No semesters uploaded!</p>
+              <p class="text-sm text-gray-400">
+                Upload a schedule in the
+                <router-link
+                  to="/profile"
+                  class="text-blue-500 text-sm hover:text-blue-700 focus:outline-none"
+                  >profile page.</router-link
+                >
+              </p>
+            </div>
+            <v-select
+              v-else
+              v-model="selectedSemester"
+              :items="semesters"
+              item-title="semesterName"
+              item-value="_id"
+              label="Semester"
               outlined
-              required
               variant="solo-filled"
-              type="text"
-            ></v-text-field>
+              @update:model-value="changeSelectedSemester"
+              required
+            ></v-select>
           </v-col>
         </v-row>
       </v-card-text>
       <v-card-actions>
-        <v-btn @click="closeForm" color="danger" :loading="loading"
+        <v-btn @click="props.close" color="danger" :loading="loading"
           >Cancel</v-btn
         >
         <v-spacer></v-spacer>
         <v-btn
-          @click="editPressed = true"
+          @click="changeSemester"
           color="success"
           :loading="loading"
-          :disabled="!name"
-          >Change Name</v-btn
+          :disabled="!selectedSemester"
+          >Change Semester</v-btn
         >
       </v-card-actions>
       <Alert
@@ -109,12 +124,6 @@ const changeName = async () => {
       />
     </v-card>
   </v-dialog>
-  <ConfirmModal
-    v-model:show="editPressed"
-    :text="`Are you sure you want to change your name to ${name}?`"
-    @confirm="changeName"
-    @close="editPressed = false"
-  />
 </template>
 
 <style scoped></style>

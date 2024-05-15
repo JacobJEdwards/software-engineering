@@ -9,6 +9,7 @@ class ImportRoutes {
 
     registerRoutes() {
         this.router.post('/upload', upload.single('file'), ImportController.fileUpload);
+        this.router.post('/generate-csv', ImportController.generateCSV);
     }
 }
 

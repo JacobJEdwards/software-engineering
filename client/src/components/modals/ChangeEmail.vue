@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { useAuthStore, useUserStore } from "../../stores";
 import { useSuccessErrorMessage, useLoading } from "../../utils/utils.ts";
 import Alert from "../utils/Alert.vue";
+import ConfirmModal from "./ConfirmModal.vue";
 
 const { success, error } = useSuccessErrorMessage();
 const { loading } = useLoading();
@@ -21,6 +22,17 @@ const userStore = useUserStore();
 
 const email = ref<string>("");
 const emailConfirm = ref<string>("");
+const editPressed = ref<boolean>(false);
+
+const closeForm = () => {
+  email.value = "";
+  emailConfirm.value = "";
+  error.value.message = "";
+  error.value.show = false;
+  success.value.message = "";
+  success.value.show = false;
+  props.close();
+};
 
 const changeEmail = async () => {
   loading.value = true;
@@ -89,12 +101,12 @@ const changeEmail = async () => {
         </v-row>
       </v-card-text>
       <v-card-actions>
-        <v-btn @click="props.close" color="danger" :loading="loading"
+        <v-btn @click="closeForm" color="danger" :loading="loading"
           >Cancel</v-btn
         >
         <v-spacer></v-spacer>
         <v-btn
-          @click="changeEmail"
+          @click="editPressed = true"
           color="success"
           :loading="loading"
           :disabled="!email || !emailConfirm"
@@ -115,6 +127,13 @@ const changeEmail = async () => {
       />
     </v-card>
   </v-dialog>
+  <ConfirmModal
+    v-model:show="editPressed"
+    title="Confirm change"
+    :text="`Are you sure you want to change your email to ${email}?`"
+    @confirm="changeEmail"
+    @cancel="editPressed = false"
+  />
 </template>
 
 <style scoped></style>

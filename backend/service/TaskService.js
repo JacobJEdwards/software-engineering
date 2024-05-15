@@ -14,6 +14,7 @@ class TaskService {
     startDate,
     endDate,
     progress,
+    taskDependancies,
     hrsCompleted,
     hrsRequired,
   ) {
@@ -35,6 +36,7 @@ class TaskService {
     if (tasks === null) {
       return new Response("Milestone does not exist", 404, { milestoneId });
     }
+    taskDependancies = taskDependancies === null ? [] : taskDependancies;
     const newTask = {
       title: title,
       startDate: startDate,
@@ -42,6 +44,7 @@ class TaskService {
       status: progress,
       hrsCompleted: hrsCompleted,
       hrsRequired: hrsRequired,
+      taskDependancies: taskDependancies,
       activities: [],
     };
 
@@ -98,6 +101,7 @@ class TaskService {
     newStartDate,
     newEndDate,
     newStatus,
+    newListOfDependantTasks,
     hrsRequired,
     hrsCompleted,
   ) {
@@ -133,9 +137,9 @@ class TaskService {
     task.startDate = newStartDate ?? task.startDate;
     task.endDate = newEndDate ?? task.endDate;
     task.status = newStatus ?? task.status;
+    tasks.dependantTasks = newListOfDependantTasks ?? tasks.dependantTasks;
     task.hrsRequired = hrsRequired ?? task.hrsRequired;
     task.hrsCompleted = hrsCompleted ?? task.hrsCompleted;
-
     const response = await Validator.validateTaskObject(task);
 
     if (response.code !== 200) {
@@ -184,7 +188,6 @@ class TaskService {
     if (task) {
       return new Response("Task found", 200, task);
     }
-
     return new Response("Task does not exist", 404, { taskId });
   }
 

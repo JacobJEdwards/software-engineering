@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import { MilestoneTypes } from "../typings/user.ts";
+import { MilestoneTypes } from "../../typings/user.ts";
 
 const show = defineModel("show", {
   type: Boolean,

@@ -20,7 +20,7 @@ const show = defineModel("show", {
   default: false,
 });
 
-const semester = userStore.user?.semester[0];
+const semester = userStore.currentSemester;
 
 const props = defineProps<
   {
@@ -159,13 +159,14 @@ const createTask = async () => {
             </v-col>
             <v-col cols="12">
               <v-select
-                v-if="selectedModule"
+                :disabled="!selectedModule"
                 v-model="formData.milestoneId"
                 :items="selectedModuleMilestones ?? []"
                 item-title="milestoneTitle"
                 item-value="_id"
                 label="Milestone"
                 required
+                aria-required="true"
                 variant="solo-filled"
               ></v-select>
             </v-col>

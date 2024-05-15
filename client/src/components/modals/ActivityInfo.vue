@@ -7,6 +7,7 @@ import { ActivitiesService } from "../../services";
 import { useAuthStore, useUserStore } from "../../stores";
 import Alert from "../utils/Alert.vue";
 import NumberInput from "../utils/NumberInput.vue";
+import ConfirmModal from "./ConfirmModal.vue";
 
 const { loading } = useLoading();
 const { success, error } = useSuccessErrorMessage();
@@ -42,6 +43,7 @@ const formData = ref<ActivityForm>({
 });
 
 const edit = ref<boolean>(false);
+const deletePressed = ref<boolean>(false);
 
 const deleteActivity = async () => {
   loading.value = true;
@@ -209,21 +211,21 @@ watch(
           {{ edit ? "Cancel" : "Edit" }}
         </v-btn>
         <v-btn
+          @click="deletePressed = true"
+          color="error"
+          :loading="loading"
+          v-if="props.editable"
+        >
+          Delete
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn
           v-if="edit"
           @click="updateActivity"
           :loading="loading"
           color="success"
         >
           Save
-        </v-btn>
-        <v-spacer></v-spacer>
-        <v-btn
-          @click="deleteActivity"
-          color="error"
-          :loading="loading"
-          v-if="props.editable"
-        >
-          Delete
         </v-btn>
       </v-card-actions>
       <Alert
@@ -240,6 +242,12 @@ watch(
       />
     </v-card>
   </v-dialog>
+  <ConfirmModal
+    v-model:show="deletePressed"
+    text="Are you sure you want to delete this activity?"
+    @confirm="deleteActivity"
+    @cancel="deletePressed = false"
+  />
 </template>
 
 <style scoped></style>

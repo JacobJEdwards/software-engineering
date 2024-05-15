@@ -12,6 +12,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { CalendarOptions, EventInput } from "@fullcalendar/core";
 import { ComputedRef } from "vue";
 import SemesterOverview from "../components/SemesterOverview.vue";
+import Calendar from "../components/Calendar.vue";
 
 const userStore = useUserStore();
 
@@ -119,8 +120,8 @@ userStore.$subscribe(() => {
               <v-divider></v-divider>
               <v-card-text>
                 <SemesterOverview
-                  v-if="userStore.user?.semester?.length"
-                  :selected-semester="userStore.user?.semester[0]"
+                  v-if="userStore.currentSemester"
+                  :selected-semester="userStore.currentSemester"
                 />
                 <div class="p-4" v-else>
                   <p class="text-lg">No semester found!</p>
@@ -139,9 +140,7 @@ userStore.$subscribe(() => {
           <v-col cols="12">
             <v-card title="Calendar" prepend-icon="mdi-calendar">
               <v-divider></v-divider>
-              <v-card-text>
-                <FullCalendar :options="calendarOptions" class="fc" />
-              </v-card-text>
+              <Calendar dueDatesOnly />
             </v-card>
           </v-col>
         </v-row>

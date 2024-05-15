@@ -16,6 +16,13 @@ import { EventInput } from "fullcalendar";
 import CreateTask from "./modals/CreateTask.vue";
 import { Task, Activity, Milestone, Module } from "../typings/user.ts";
 
+const props = defineProps({
+  dueDatesOnly: {
+    type: Boolean,
+    default: false,
+  },
+});
+
 const userStore = useUserStore();
 
 const addTask = ref<boolean>(false);
@@ -66,18 +73,23 @@ const EventTypes = {
 } as const;
 
 const taskEvents: ComputedRef<EventInput[]> = computed(() =>
-  tasks.value.map((task) => ({
-    start: new Date(task.startDate),
-    end: new Date(task.endDate),
-    allDay: true,
-    title: task.title,
-    color: task.status === "Completed" ? "green" : "red",
-    id: task._id,
-    extendedProps: {
-      task: task,
-      type: EventTypes.TASK,
-    },
-  })),
+  tasks.value.map((task) => {
+    const startDate = new Date(task.startDate);
+    const endDate = new Date(task.endDate);
+
+    return {
+      start: props.dueDatesOnly ? endDate : startDate,
+      end: props.dueDatesOnly ? undefined : endDate,
+      allDay: !props.dueDatesOnly,
+      title: task.title,
+      color: task.status === "Completed" ? "green" : "red",
+      id: task._id,
+      extendedProps: {
+        task: task,
+        type: EventTypes.TASK,
+      },
+    };
+  }),
 );
 
 const activityEvents: ComputedRef<EventInput[]> = computed(() =>
@@ -106,9 +118,9 @@ const milestonesEvents: ComputedRef<EventInput[]> = computed(() =>
     const endDate = new Date(milestone.endDate);
 
     return {
-      start: startDate,
-      end: endDate,
-      allDay: true,
+      start: props.dueDatesOnly ? endDate : startDate,
+      end: props.dueDatesOnly ? undefined : endDate,
+      allDay: !props.dueDatesOnly,
       title: milestone.milestoneTitle,
       color: "blue",
       id: milestone._id,
@@ -126,9 +138,9 @@ const moduleEvents: ComputedRef<EventInput[]> = computed(() =>
     const endDate = new Date(module.endDate);
 
     return {
-      start: startDate,
-      end: endDate,
-      allDay: true,
+      start: props.dueDatesOnly ? endDate : startDate,
+      end: props.dueDatesOnly ? undefined : endDate,
+      allDay: !props.dueDatesOnly,
       title: module.moduleName,
       color: "purple",
       id: module._id,
@@ -139,8 +151,6 @@ const moduleEvents: ComputedRef<EventInput[]> = computed(() =>
     };
   }),
 );
-
-console.log(moduleEvents.value);
 
 const events = computed(() => [
   ...taskEvents.value,
@@ -264,6 +274,14 @@ userStore.$subscribe(updateEvents);
 }
 
 .fc-daygrid-event:hover {
+  filter: brightness(90%);
+}
+
+.fc-event {
+  cursor: pointer;
+}
+
+.fc-event:hover {
   filter: brightness(90%);
 }
 </style>

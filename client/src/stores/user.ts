@@ -5,6 +5,7 @@ import type {
   Milestone,
   Activity,
   Module,
+  Semester,
 } from "../typings/user.ts";
 import { useAuthStore } from "./auth.ts";
 import { getUser } from "../services/user.ts";
@@ -13,6 +14,7 @@ import { getActivities } from "../services/activities";
 export type UserState = {
   userId: string | null;
   user: User | null;
+  currentSemester: Semester | null;
   loading: boolean;
   tasks: Task[];
   milestones: Milestone[];
@@ -24,6 +26,7 @@ export const useUserStore = defineStore("user", {
   state: (): UserState => ({
     userId: null,
     user: null,
+    currentSemester: null,
     loading: false,
     tasks: [],
     milestones: [],
@@ -35,6 +38,16 @@ export const useUserStore = defineStore("user", {
     isLoading: (state) => state.loading,
   },
   actions: {
+    changeSemester(semester: Semester | null) {
+      if (!semester) {
+        return;
+      }
+
+      this.currentSemester = semester;
+      this.refreshModules();
+      this.refreshMilestones();
+      this.refreshTasks();
+    },
     async getUser() {
       const authStore = useAuthStore();
 
@@ -58,6 +71,11 @@ export const useUserStore = defineStore("user", {
       }
 
       this.user = result.data;
+      this.userId = result.data._id;
+
+      this.currentSemester = this.user.semester.length
+        ? this.user.semester[0]
+        : null;
 
       await this.loadActivities();
       this.refreshModules();
@@ -78,7 +96,7 @@ export const useUserStore = defineStore("user", {
         return;
       }
 
-      this.modules = this.user.semester.flatMap((s) => s.modules);
+      this.modules = this.currentSemester?.modules ?? [];
     },
     refreshMilestones() {
       if (!this.user) {
