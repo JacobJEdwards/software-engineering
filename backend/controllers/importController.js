@@ -36,5 +36,26 @@ export class ImportController {
         }
     }
 
+    static async generateCSV(req, res) {
+        try {
+            const body = req.body;
+            const response = await ImportService.generateCSVFromRequest(body);
+            if (response.code !== 200) {
+                return res.status(response.code).json({message: response.message, errors: response.data});
+            }
+
+            const filePath = response.data.filePath;
+            res.download(filePath, 'data.csv', (err) => {
+                if (err) {
+                    return res.status(500).json({message: "Error downloading file"});
+                } else {
+                    fs.unlinkSync(filePath); // Delete the file after download
+                }
+            });
+        } catch (error) {
+            return res.status(500).json({message: error.message});
+        }
+    }
+
 }
 export default ImportController

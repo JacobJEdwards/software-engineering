@@ -6,8 +6,46 @@ import Milestone from "../service/MilestoneService.js";
 import User from "./UserService.js";
 import Response from "../utils/Response.js"
 import Validator from "../middleware/Validator.js";
+import { Parser } from 'json2csv';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class ImportService {
+    static async generateCSVFromRequest(body) {
+        try {
+            const fields = [
+                "SemesterName",
+                "SemesterStartDate",
+                "SemesterEndDate",
+                "ModuleName",
+                "ModuleCode",
+                "ModuleStartDate",
+                "ModuleEndDate",
+                "MilestoneTitle",
+                "MilestoneType",
+                "MilestoneStartDate",
+                "MilestoneEndDate"
+            ];
+            const json2csvParser = new Parser({ fields });
+
+            const csv = json2csvParser.parse(body);
+            let response = await Validator.validateFullFile(body);
+            if (response.code !== 200) {
+                return response;
+            }
+
+            const filePath = path.join(__dirname, 'output.csv');
+            fs.writeFileSync(filePath, csv);
+            return new Response("CSV generated successfully", 200, { filePath });
+        } catch (error) {
+            return new Response("Error generating CSV", 500, error.message);
+        }
+    }
+
     static async addFileDataUser(file, user) {
         let errors = {
             Semester: [],
@@ -47,6 +85,8 @@ class ImportService {
         if (response.code !== 200) {
             return response;
         }
+
+        console.log(file);
         let user = await User.getUserInternal(userid);
         let errors = {
             Semester: [],
