@@ -43,12 +43,24 @@ console.log(name);
       message: message.value
      };
 
+    // const submitForm = handleSubmit(() => {
+    //   alert('Form submitted successfully!');
+    //   formData.name = '';
+    //   formData.email = '';
+    //   formData.message = '';
+    // });
     const submitForm = handleSubmit(() => {
-      alert('Form submitted successfully!');
-      formData.name = '';
-      formData.email = '';
-      formData.message = '';
-    });
+  if (!nameError && !emailError && !messageError) {
+    alert('Form submitted successfully!');
+    // Reset form
+    name.value = '';
+    email.value = '';
+    message.value = '';
+  } else {
+    alert(' Error submitting form.');
+  }
+});
+
 
     const teamMembers = [
       { name: 'Jamie Wales', email: 'J.Wales@uea.ac.uk' },
@@ -104,7 +116,7 @@ console.log(name);
   font-size: 20px;
   background-color: #007bff;
   color: white;
-  border: none;
+  border: black;
   border-radius: 5px;
   cursor: pointer;
 }
