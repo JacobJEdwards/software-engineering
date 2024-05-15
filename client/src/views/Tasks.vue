@@ -61,12 +61,11 @@ const showLogActivity = (task: TaskType) => {
 
     <v-row v-else>
       <v-col cols="12" md="6">
-        <v-card
-          title="Upcoming Tasks"
-          prepend-icon="mdi-checkbox-marked-circle-outline"
-          elevation="3"
-          rounded="md"
-        >
+        <v-card elevation="3" rounded="md">
+          <v-card-title class="card-title">
+            <v-icon>mdi-checkbox-marked-circle-outline</v-icon>
+            <span> Upcoming Tasks</span>
+          </v-card-title>
           <v-divider></v-divider>
           <v-card-text>
             <v-list v-if="topTasks.length">
@@ -84,12 +83,11 @@ const showLogActivity = (task: TaskType) => {
       <v-col cols="12" md="6">
         <v-row>
           <v-col cols="12">
-            <v-card
-              title="Add a task"
-              prepend-icon="mdi-clipboard-outline"
-              elevation="3"
-              rounded="md"
-            >
+            <v-card elevation="3" rounded="md">
+              <v-card-title class="card-title">
+                <v-icon>mdi-clipboard-plus-outline</v-icon>
+                <span> Add a task</span>
+              </v-card-title>
               <v-divider></v-divider>
               <v-card-text>
                 <AddTask :enabled="hasSemester" />

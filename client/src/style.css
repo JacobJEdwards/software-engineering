@@ -11,6 +11,11 @@ body,
   height: 100%;
 }
 
+.fc-button {
+    background-color: #15385f !important;
+    color: white !important;
+}
+
 .fc-prev-button,
 .fc-next-button {
     display: flex !important;
@@ -26,6 +31,8 @@ body,
 }
 
 .card-title {
+    /*
     background-color: #15385f;
     color: white;
+     */
 }
