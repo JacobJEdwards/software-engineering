@@ -4,15 +4,15 @@
     <form @submit.prevent="submitForm" class="form">
       <label for="name" class="label">Name:</label><br>
       <input type="text" id="name" v-model="formData.name" class="input"><br>
-      <span class="error">{{ errors.first('name') }}</span><br>
+      <span class="error">{{ nameError }}</span><br>
 
       <label for="email" class="label">Email:</label><br>
       <input type="email" id="email" v-model="formData.email" class="input"><br>
-      <span class="error">{{ errors.first('email') }}</span><br>
+      <span class="error">{{ emailError }}</span><br>
 
       <label for="message" class="label">Message:</label><br>
       <textarea id="message" v-model="formData.message" class="input"></textarea><br><br>
-      <span class="error">{{ errors.first('message') }}</span><br>
+      <span class="error">{{ messageError }}</span><br>
 
       <button type="submit" class="button">Submit</button>
     </form>
@@ -36,16 +36,31 @@ export default defineComponent({
     const { value: name, errorMessage: nameError } = useField('name', yup.string().required('Name is required'));
     const { value: email, errorMessage: emailError } = useField('email', yup.string().email('Invalid email').required('Email is required'));
     const { value: message, errorMessage: messageError } = useField('message', yup.string().required('Message is required'));
+console.log(name);
+    const formData = { 
+      name: name.value,
+      email: email.value,
+      message: message.value
+     };
 
-    const formData = { name, email, message };
-
+    // const submitForm = handleSubmit(() => {
+    //   alert('Form submitted successfully!');
+    //   formData.name = '';
+    //   formData.email = '';
+    //   formData.message = '';
+    // });
     const submitForm = handleSubmit(() => {
-      alert('Form submitted successfully!');
-      // Reset form
-      formData.name = '';
-      formData.email = '';
-      formData.message = '';
-    });
+  if (!nameError && !emailError && !messageError) {
+    alert('Form submitted successfully!');
+    // Reset form
+    name.value = '';
+    email.value = '';
+    message.value = '';
+  } else {
+    alert(' Error submitting form.');
+  }
+});
+
 
     const teamMembers = [
       { name: 'Jamie Wales', email: 'J.Wales@uea.ac.uk' },
@@ -54,6 +69,7 @@ export default defineComponent({
       { name: 'Faizan Khan', email: 'F.Khan@uea.ac.uk' },
       { name: 'Andrew Lord', email: 'A.Lord@uea.ac.uk' }
     ];
+
 
     return {
       submitForm,
@@ -100,7 +116,7 @@ export default defineComponent({
   font-size: 20px;
   background-color: #007bff;
   color: white;
-  border: none;
+  border: black;
   border-radius: 5px;
   cursor: pointer;
 }

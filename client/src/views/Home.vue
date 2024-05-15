@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import UserLoading from "../components/UserLoading.vue";
-import { useUserStore } from "../stores";
+import { useAuthStore, useUserStore } from "../stores";
 import { computed, ref } from "vue";
 import type { Task as TaskType, Activity } from "../typings/user";
 import Task from "../components/Task.vue";
 
-import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -15,6 +14,7 @@ import SemesterOverview from "../components/SemesterOverview.vue";
 import Calendar from "../components/Calendar.vue";
 
 const userStore = useUserStore();
+const authStore = useAuthStore();
 
 const tasks = ref<TaskType[]>(userStore.tasks);
 const activities = ref<Activity[]>(userStore.activities);
@@ -82,12 +82,13 @@ userStore.$subscribe(() => {
 
     <v-row v-else>
       <v-col cols="12" md="6">
-        <v-card
-          title="Upcoming Tasks"
-          prepend-icon="mdi-checkbox-marked-circle-outline"
-        >
+        <v-card rounded="md" elevation="3">
+          <v-card-title class="card-title">
+            <v-icon>mdi-checkbox-marked-circle-outline</v-icon>
+            Upcoming Tasks
+          </v-card-title>
           <v-divider></v-divider>
-          <v-card-text v-if="topTasks.length">
+          <v-card-text v-if="topTasks.length" class="bg-grey">
             <v-list>
               <Task
                 v-for="task in topTasks"
@@ -113,10 +114,11 @@ userStore.$subscribe(() => {
       <v-col cols="12" md="6">
         <v-row>
           <v-col cols="12">
-            <v-card>
-              <v-card-title
-                ><v-icon>mdi-clipboard-outline</v-icon> Current Semester
-              </v-card-title>
+            <v-card rounded="md" elevation="3">
+              <v-card-title class="card-title">
+                <v-icon class="">mdi-clock-time-four-outline</v-icon>
+                Semester Overview</v-card-title
+              >
               <v-divider></v-divider>
               <v-card-text>
                 <SemesterOverview
@@ -138,7 +140,12 @@ userStore.$subscribe(() => {
             </v-card>
           </v-col>
           <v-col cols="12">
-            <v-card title="Calendar" prepend-icon="mdi-calendar">
+            <v-card rounded="md" elevation="3">
+              <v-card-title class="card-title">
+                <v-icon>mdi-calendar</v-icon>
+                Calendar
+              </v-card-title>
+
               <v-divider></v-divider>
               <Calendar dueDatesOnly />
             </v-card>

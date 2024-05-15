@@ -20,6 +20,7 @@ export type UserState = {
   milestones: Milestone[];
   activities: Activity[];
   modules: Module[];
+  allActivities: Activity[];
 };
 
 export const useUserStore = defineStore("user", {
@@ -32,6 +33,7 @@ export const useUserStore = defineStore("user", {
     milestones: [],
     modules: [],
     activities: [],
+    allActivities: [],
   }),
   getters: {
     userInfo: (state) => state.user,
@@ -47,7 +49,9 @@ export const useUserStore = defineStore("user", {
       this.refreshModules();
       this.refreshMilestones();
       this.refreshTasks();
+      this.refreshActivities();
     },
+
     async getUser() {
       const authStore = useAuthStore();
 
@@ -81,6 +85,7 @@ export const useUserStore = defineStore("user", {
       this.refreshModules();
       this.refreshMilestones();
       this.refreshTasks();
+      this.refreshActivities();
 
       this.loading = false;
     },
@@ -105,6 +110,16 @@ export const useUserStore = defineStore("user", {
 
       this.milestones = this.modules.flatMap((m) => m.milestones);
     },
+    refreshActivities() {
+      if (!this.user) {
+        return;
+      }
+
+      this.activities = this.allActivities.filter((activity) =>
+        this.tasks.some((task) => task.activities.includes(activity._id)),
+      );
+    },
+
     async loadActivities() {
       if (!this.user) {
         return;
@@ -129,7 +144,7 @@ export const useUserStore = defineStore("user", {
         this.loading = false;
         return;
       }
-      this.activities = result.data;
+      this.allActivities = result.data;
       this.loading = false;
     },
   },

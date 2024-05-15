@@ -61,6 +61,33 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: "/milestones",
+    name: "milestones",
+    component: () => import("./views/Milestones.vue"),
+    meta: {
+      requiresAuth: true,
+      title: "Milestones",
+    },
+  },
+  {
+    path: "/modules",
+    name: "modules",
+    component: () => import("./views/Modules.vue"),
+    meta: {
+      requiresAuth: true,
+      title: "Modules",
+    },
+  },
+  {
+    path: "/stats",
+    name: "stats",
+    component: () => import("./views/Stats.vue"),
+    meta: {
+      requiresAuth: true,
+      title: "Stats",
+    },
+  },
+  {
     path: "/privacy",
     name: "privacy",
     component: () => import("./views/Privacy.vue"),

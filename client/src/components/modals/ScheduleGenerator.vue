@@ -99,7 +99,7 @@ watch(
     max-height="600px"
     @click:outside="props.close"
   >
-    <v-card>
+    <v-card elevation="3" rounded="md">
       <v-card-title class="d-flex justify-space-between">
         <span class="headline">Schedule Generator</span>
         <v-btn icon="mdi-close" variant="text" @click="props.close"></v-btn>
@@ -202,7 +202,7 @@ watch(
           <v-container v-if="entries.length > 0">
             <v-row>
               <v-col v-for="(entry, index) in entries" :key="index" cols="12">
-                <v-card>
+                <v-card elevation="3" rounded="md">
                   <v-card-actions>
                     <v-btn
                       color="error"

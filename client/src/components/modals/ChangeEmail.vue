@@ -74,7 +74,7 @@ const changeEmail = async () => {
     max-height="600px"
     @click:outside="props.close"
   >
-    <v-card>
+    <v-card elevation="3" rounded="md">
       <v-card-title class="headline">Change Email</v-card-title>
       <v-card-text>
         <v-row>

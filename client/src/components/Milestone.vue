@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <v-card>
+  <v-card elevation="3" rounded="md">
     <v-card-title>
       {{ milestone.milestoneTitle }}
     </v-card-title>

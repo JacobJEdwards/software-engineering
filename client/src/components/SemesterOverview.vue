@@ -9,6 +9,7 @@ import {
 } from "../typings/user";
 import SemesterInfo from "./modals/SemesterInfo.vue";
 import TaskFilter from "./utils/TaskFilter.vue";
+import ModuleItem from "./ModuleItem.vue";
 
 const props = defineProps<{
   selectedSemester: Semester;
@@ -49,10 +50,7 @@ const tasks: ComputedRef<Task[]> = computed(() =>
       <TaskFilter :tasks="tasks" />
     </v-card-text>
   </v-card>
-  <v-card v-else>
-    <v-card-title> No semester selected </v-card-title>
-    <v-card-text></v-card-text>
-  </v-card>
+  <v-card v-else title="No semester selected" flat> </v-card>
   <SemesterInfo
     v-model:show="showDetails"
     :semester="props.selectedSemester"

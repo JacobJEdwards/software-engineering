@@ -22,27 +22,33 @@ const startedTasks: ComputedRef<Task[]> = computed(() =>
 <template>
   <v-row class="d-flex justify-center align-center">
     <v-col cols="12" md="4">
-      <v-card class="mb-4" flat>
-        <v-card-title>
-          {{ completedTasks.length }}
-        </v-card-title>
-        <v-card-text> Completed Tasks </v-card-text>
+      <v-card
+        class="mb-4 text-center"
+        flat
+        text="Started Tasks"
+        :title="startedTasks.length"
+        border
+      >
       </v-card>
     </v-col>
     <v-col cols="12" md="4">
-      <v-card class="mb-4" flat>
-        <v-card-title>
-          {{ inProgressTasks.length }}
-        </v-card-title>
-        <v-card-text> In Progress Tasks </v-card-text>
+      <v-card
+        class="mb-4 text-center"
+        flat
+        :title="inProgressTasks.length"
+        text="In Progress Tasks"
+        border
+      >
       </v-card>
     </v-col>
     <v-col cols="12" md="4">
-      <v-card class="mb-4" flat>
-        <v-card-title>
-          {{ startedTasks.length }}
-        </v-card-title>
-        <v-card-text> Started Tasks </v-card-text>
+      <v-card
+        flat
+        :title="completedTasks.length"
+        text="Completed Tasks"
+        class="mb-4 text-center"
+        border
+      >
       </v-card>
     </v-col>
   </v-row>

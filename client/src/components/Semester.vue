@@ -9,7 +9,7 @@ const showModule = ref<boolean>(false);
 </script>
 
 <template>
-  <v-card class="mb-4" flat>
+  <v-card class="mb-4" flat elevation="3" rounded="md">
     <v-card-title>
       {{ props.semester.semesterName }}
     </v-card-title>

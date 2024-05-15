@@ -10,7 +10,7 @@ defineProps<{
 const show = ref<boolean>(false);
 </script>
 <template>
-  <v-card>
+  <v-card elevation="3" rounded="md">
     <v-card-title>
       <h3>{{ module.moduleName }}</h3>
     </v-card-title>
