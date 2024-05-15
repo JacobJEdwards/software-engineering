@@ -39,7 +39,17 @@ class SemesterService {
         }
     }
 
-    // Similar changes for readSemesterByModule and readSemesterByMilestone...
+    static async updatedSemesterValidated(user, semesterName, semesterStartDate, semesterEndDate) {
+        const semester = user.semester.find(semester => semester.semesterName === semesterName);
+        if (semester) {
+            semester.semesterName = semesterName;
+            semester.startDate = semesterStartDate;
+            semester.endDate = semesterEndDate;
+            return new Response("Semester updated", 200, {});
+        } else {
+            return new Response(`Semester '${semesterName}' does not exist`, 404, {semesterName});
+        }
+    }
 
     static async readSemesterByUserId(userId, semesterName) {
         const user = await UserService.getUserInternal(userId);
@@ -61,9 +71,10 @@ class SemesterService {
     }
 
     static deleteSemester(semesterName, user) {
-        const semesterIndex = user.semester.findIndex(semester => semester.semesterName === semesterName);
-        if (semesterIndex !== -1) {
-            user.semester.splice(semesterIndex, 1);
+        const semesterIndex = user.semester.forEach(semester => {if(semester.semesterName === semesterName) {
+            user.semester.pull(semester);
+        }})
+        if (semesterIndex) {
             return new Response("Semester deleted", 200, {});
         } else {
             return new Response(`Semester '${semesterName}' does not exist`, 404, {semesterName});

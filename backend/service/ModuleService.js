@@ -1,19 +1,11 @@
 import userSchema from "../models/User.js";
-import { model } from "mongoose";
+import {model} from "mongoose";
 import Response from "../utils/Response.js";
 import UserService from "./UserService.js";
 
 class ModuleService {
-    static createModule(
-        semesterName,
-        moduleName,
-        moduleCode,
-        moduleStartDate,
-        moduleEndDate,
-        user) {
-        const semesterExists = user.semester.find(
-            (semesterObject) => semesterObject.semesterName === semesterName,
-        );
+    static createModule(semesterName, moduleName, moduleCode, moduleStartDate, moduleEndDate, user) {
+        const semesterExists = user.semester.find((semesterObject) => semesterObject.semesterName === semesterName,);
         if (semesterExists) {
             const newModule = {
                 moduleName: moduleName,
@@ -88,11 +80,8 @@ class ModuleService {
     };
 
 
-
     static editModuleName(moduleCode, newModuleName, user) {
-        const module = user.modules.find(
-            (module) => module.moduleCode === moduleCode,
-        );
+        const module = user.modules.find((module) => module.moduleCode === moduleCode,);
         if (module) {
             module.moduleName = newModuleName;
             return new Response("Module name updated successfully", 200, {});
@@ -102,9 +91,7 @@ class ModuleService {
     }
 
     static editModuleCode(moduleCode, newModuleCode, user) {
-        const module = user.modules.find(
-            (module) => module.moduleCode === moduleCode,
-        );
+        const module = user.modules.find((module) => module.moduleCode === moduleCode,);
         if (module) {
             module.moduleCode = newModuleCode;
             return new Response("Module code updated successfully", 200, {});
@@ -129,9 +116,7 @@ class ModuleService {
     }
 
     static editModuleStartDate(moduleCode, newStartDate, user) {
-        const module = user.modules.find(
-            (module) => module.moduleCode === moduleCode,
-        );
+        const module = user.modules.find((module) => module.moduleCode === moduleCode,);
         if (module) {
             module.startDate = newStartDate;
             return new Response("Module start date updated successfully", 200, {});
@@ -141,9 +126,7 @@ class ModuleService {
     }
 
     static editModuleEndDate(moduleCode, newEndDate, user) {
-        const module = user.modules.find(
-            (module) => module.moduleCode === moduleCode,
-        );
+        const module = user.modules.find((module) => module.moduleCode === moduleCode,);
         if (module) {
             module.endDate = newEndDate;
             return new Response("Module end date updated successfully", 200, {});
@@ -168,15 +151,20 @@ class ModuleService {
         }
     }
 
-    static deleteModule(moduleCode, user) {
-        const module = user.modules.find(
-            (module) => module.moduleCode === moduleCode,
-        );
-        if (module) {
-            return new Response("Module deleted successfully", 200, {});
-        } else {
-            return new Response("Module does not exist", 404, {});
-        }
+    static deleteModule(moduleCode, semesterName, user) {
+        user.semester
+            .find((semester) => {
+                if (semester.semesterName === semesterName) {
+                    semester.modules.find((module) => {
+                        if (module.moduleCode === moduleCode) {
+                            semester.modules.pull(module);
+                            return new Response("Module delete", 200, {});
+                        }
+                    })
+                }
+            });
+
+        return new Response("Module not found", 404, {});
     }
 
 
@@ -201,7 +189,6 @@ class ModuleService {
 userSchema
     .loadClass(ModuleService);
 
-const
-    Module = model("Module", userSchema);
+const Module = model("Module", userSchema);
 
 export default Module;

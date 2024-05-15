@@ -1,7 +1,7 @@
 import userSchema from "../models/User.js";
 import Response from "../utils/Response.js";
 import User from "../service/UserService.js";
-import { model } from "mongoose";
+import {model} from "mongoose";
 
 class MilestoneService {
     static async createMilestone(userid, moduleCode, milestoneName, milestoneType, milestoneStartDate, milestoneEndDate, ltsDefined) {
@@ -27,7 +27,10 @@ class MilestoneService {
             await user.save();
             return new Response("Milestone created successfully", 200, {});
         } else {
-            return new Response("Milestone could not find milestone", 404, { userid: userid, milestoneName: milestoneName });
+            return new Response("Milestone could not find milestone", 404, {
+                userid: userid,
+                milestoneName: milestoneName
+            });
         }
     }
 
@@ -50,7 +53,11 @@ class MilestoneService {
             });
             return new Response("Milestone successfully created", 200, {});
         } else {
-            return new Response("Cannot find milestone", 400, { userid: user.id, milestoneName: milestoneName, moduleCode: moduleCode });
+            return new Response("Cannot find milestone", 400, {
+                userid: user.id,
+                milestoneName: milestoneName,
+                moduleCode: moduleCode
+            });
         }
     }
 
@@ -73,7 +80,6 @@ class MilestoneService {
     }
 
 
-
     static async readMilestoneByUserId(userId, milestoneId) {
         const user = await User.getUserInternal(userId);
         const milestone = user.module.find(module => module.milestones.find(milestone => milestone.id === milestoneId));
@@ -85,8 +91,15 @@ class MilestoneService {
     }
 
 
-    static updateMilestone(user, milestoneId, newMilestoneName, newStartDate, newEndDate, milestoneType) {
-        const milestone = user.module.find(module => module.milestones.find(milestone => milestone.id === milestoneId));
+    static updateMilestone(user, moduleCode, milestoneName, newMilestoneName, newStartDate, newEndDate, milestoneType) {
+        const mod = user.module.find((module) => {
+            module.name === moduleName
+        });
+
+        let ms = mod.milestones.find((milestone) => {
+            return milestone.milestoneName === milestoneName
+        })
+
         if (milestone && !milestone.ltsDefined) {
             milestone.milestoneName = newMilestoneName == null ? milestone.milestoneName : newMilestoneName
             milestone.milestoneType = milestoneType == null ? milestone.milestoneType : milestoneType
@@ -98,6 +111,39 @@ class MilestoneService {
         }
     }
 
+    // static updateMilestone(user, milestoneId, newMilestoneName, newStartDate, newEndDate, milestoneType) {
+    //     const milestone = user.module.find(module => module.milestones.find(milestone => milestone.id === milestoneId));
+    //     if (milestone && !milestone.ltsDefined) {
+    //         milestone.milestoneName = newMilestoneName == null ? milestone.milestoneName : newMilestoneName
+    //         milestone.milestoneType = milestoneType == null ? milestone.milestoneType : milestoneType
+    //         milestone.startDate = newStartDate == null ? milestone.startDate : newStartDate
+    //         milestone.endDate = newEndDate == null ? milestone.endDate : newEndDate;
+    //         return new Response("Milestone updated successfully", 200, {});
+    //     } else {
+    //         return new Response("Milestone not able to be updated", 400, {});
+    //     }
+    // }
+
+
+    static updateMilestone(user, moduleCode, milestoneName, newMilestoneName, newStartDate, newEndDate, milestoneType) {
+        const mod = user.module.find((module) => {
+            module.name === moduleName
+        });
+
+        let ms = mod.milestones.find((milestone) => {
+            return milestone.milestoneName === milestoneName
+        })
+
+        if (milestone) {
+            milestone.milestoneName = newMilestoneName == null ? milestone.milestoneName : newMilestoneName
+            milestone.milestoneType = milestoneType == null ? milestone.milestoneType : milestoneType
+            milestone.startDate = newStartDate == null ? milestone.startDate : newStartDate
+            milestone.endDate = newEndDate == null ? milestone.endDate : newEndDate;
+            return new Response("Milestone updated successfully", 200, {});
+        } else {
+            return new Response("Milestone not able to be updated", 400, {});
+        }
+    }
 
     static async updateMilestoneByUserId(userId, milestoneId, newMilestoneName, newStartDate, newEndDate, milestoneType) {
         const user = await User.getUserInternal(userId);
@@ -125,7 +171,6 @@ class MilestoneService {
         }
     }
 
-
     static async deleteMilestoneByUserId(userId, milestoneId) {
         const user = await User.getUserInternal(userId);
         const milestone = user.module.find(module => module.milestones.find(milestone => milestone.id === milestoneId));
@@ -136,6 +181,22 @@ class MilestoneService {
         } else {
             return new Response("Milestone not found", 404, {});
         }
+    }
+
+    static deleteMilestoneByUser(user, moduleCode, milestoneTitle) {
+        user.semester.forEach(semester => {
+            semester.modules.find(module => {
+                if (module.moduleCode == moduleCode) {
+                    module.milestones.find(milestone => {
+                        if (milestone.milestoneTitle === milestoneTitle) {
+                            module.milestones.pull(milestone);
+                            return new Response("Milestone deleted successfully", 200, {});
+                        }
+                    })
+                }
+            })
+        });
+        return new Response("Milestone does not exist", 400, {});
     }
 }
 
