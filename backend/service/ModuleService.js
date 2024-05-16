@@ -15,13 +15,13 @@ class ModuleService {
                 startDate: moduleStartDate,
                 endDate: moduleEndDate,
             };
-            let response = await Validator.validateModule(newModule);
+            let response = await Validator.validateModule(moduleName, moduleCode, moduleStartDate, moduleEndDate);
             if (response.code !== 200) {
                 return response
             }
             const moduleExists = user.semester
                 .find((semester) => semester.semesterName === semesterName)
-                .modules.some((module) => module.moduleCode === moduleCode);
+                .modules.find((module) => module.moduleCode === moduleCode);
 
             if (!moduleExists) {
                 user.semester
@@ -31,8 +31,6 @@ class ModuleService {
             } else {
                 return new Response("Module already exists", 404, {});
             }
-        } else {
-            return new Response("Semester Does not Exist", 404, {})
         }
     }
 
