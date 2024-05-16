@@ -95,7 +95,7 @@ class TaskService {
         task.startDate = newStartDate ?? task.startDate;
         task.endDate = newEndDate ?? task.endDate;
         task.status = newStatus ?? task.status;
-        task.dependantTasks = newListOfDependantTasks ?? tasks.dependantTasks;
+        task.dependantTasks = newListOfDependantTasks ?? task.dependantTasks;
         task.hrsRequired = hrsRequired ?? task.hrsRequired;
         task.hrsCompleted = hrsCompleted ?? task.hrsCompleted;
         const response = await Validator.validateTaskObject(task);
