@@ -34,6 +34,7 @@ const createMilestone = async (
     milestoneType: string;
     startDate: Date;
     endDate: Date;
+    moduleId: string;
   },
   token: string,
 ): Promise<Result> => {

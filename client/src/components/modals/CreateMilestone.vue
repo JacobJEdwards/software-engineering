@@ -6,6 +6,7 @@ import {
   Milestone,
   MilestoneTypes,
   MilestoneType,
+  Module,
 } from "../../typings/user.ts";
 import Alert from "../utils/Alert.vue";
 import NumberInput from "../utils/NumberInput.vue";
@@ -13,6 +14,8 @@ import { MilestoneService } from "../../services/milestones.ts";
 
 const authStore = useAuthStore();
 const userStore = useUserStore();
+
+const modules = ref<Module[]>(userStore.modules);
 
 const { loading } = useLoading();
 const { success, error } = useSuccessErrorMessage();
@@ -37,6 +40,7 @@ type FormData = {
   type: string;
   startDate?: Date;
   endDate?: Date;
+  moduleId?: string;
 };
 
 const formData = ref<FormData>({
@@ -44,6 +48,7 @@ const formData = ref<FormData>({
   type: props.milestoneType ?? "",
   startDate: props.startDate ?? undefined,
   endDate: props.endDate ?? undefined,
+  moduleId: props.moduleId ?? undefined,
 });
 
 const createMilestone = async () => {
@@ -57,6 +62,7 @@ const createMilestone = async () => {
       milestoneType: formData.value.type as MilestoneType,
       startDate: formData.value.startDate ?? new Date(),
       endDate: formData.value.endDate ?? new Date(),
+      moduleId: formData.value.moduleId ?? "",
     },
     authStore.authToken,
   );
@@ -79,6 +85,7 @@ const closeForm = () => {
     type: "",
     startDate: undefined,
     endDate: undefined,
+    moduleId: undefined,
   };
   props.close();
 };
@@ -91,6 +98,7 @@ watch(
       type: props.milestoneType ?? "",
       startDate: props.startDate ?? undefined,
       endDate: props.endDate ?? undefined,
+      moduleId: props.moduleId ?? undefined,
     };
   },
   { deep: true },
@@ -124,6 +132,19 @@ watch(
                 v-model="formData.type"
                 :items="milestoneSelectTypes as string[]"
                 label="Type"
+                required
+                variant="solo-filled"
+                outlined
+                aria-required="true"
+              ></v-select>
+            </v-col>
+            <v-col cols="12">
+              <v-select
+                v-model="formData.moduleId"
+                :items="modules"
+                item-title="moduleName"
+                item-value="_id"
+                label="Module"
                 required
                 variant="solo-filled"
                 outlined
