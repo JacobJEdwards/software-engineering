@@ -11,7 +11,7 @@ class UserService {
         const user = new this({email, name, password: hashedPassword, authCode: authCode});
         try {
             await user.save();
-            Mailer.emailUserVerification(user._id, authCode);
+            await Mailer.emailUserVerification(user._id, authCode);
             return new Response("User created successfully", 200, {
                 userId: user._id,
             });
