@@ -9,6 +9,7 @@ import {
 } from "../../typings/user.ts";
 import Alert from "../utils/Alert.vue";
 import NumberInput from "../utils/NumberInput.vue";
+import { MilestoneService } from "../../services/milestones.ts";
 
 const authStore = useAuthStore();
 const userStore = useUserStore();
@@ -34,16 +35,53 @@ const milestoneSelectTypes = Object.values(MilestoneTypes);
 type FormData = {
   title: string;
   type: string;
-  startDate: Date;
-  endDate: Date;
+  startDate?: Date;
+  endDate?: Date;
 };
 
 const formData = ref<FormData>({
   title: props.milestoneTitle ?? "",
   type: props.milestoneType ?? "",
-  startDate: props.startDate ?? new Date(Date.now()),
-  endDate: props.endDate ?? new Date(Date.now()),
+  startDate: props.startDate ?? undefined,
+  endDate: props.endDate ?? undefined,
 });
+
+const createMilestone = async () => {
+  loading.value = true;
+  error.value.show = false;
+  success.value.show = false;
+
+  const result = await MilestoneService.create(
+    {
+      milestoneTitle: formData.value.title,
+      milestoneType: formData.value.type as MilestoneType,
+      startDate: formData.value.startDate ?? new Date(),
+      endDate: formData.value.endDate ?? new Date(),
+    },
+    authStore.authToken,
+  );
+
+  if (result.success) {
+    success.value.message = "Milestone created successfully";
+    success.value.show = true;
+    emit("created");
+    loading.value = false;
+  } else {
+    error.value.message = result.error ?? "An error occurred";
+    error.value.show = true;
+    loading.value = false;
+  }
+};
+
+const closeForm = () => {
+  formData.value = {
+    title: "",
+    type: "",
+    startDate: undefined,
+    endDate: undefined,
+  };
+  props.close();
+};
 
 watch(
   () => props,
@@ -51,8 +89,8 @@ watch(
     formData.value = {
       title: props.milestoneTitle ?? "",
       type: props.milestoneType ?? "",
-      startDate: props.startDate ?? new Date(Date.now()),
-      endDate: props.endDate ?? new Date(Date.now()),
+      startDate: props.startDate ?? undefined,
+      endDate: props.endDate ?? undefined,
     };
   },
   { deep: true },
@@ -92,33 +130,52 @@ watch(
                 aria-required="true"
               ></v-select>
             </v-col>
-            <v-col cols="12">
-              <v-text-field
-                v-model="formData.startDate"
-                label="Start Date"
-                required
-                variant="solo-filled"
-                outlined
-                aria-required="true"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12">
-              <v-text-field
-                v-model="formData.endDate"
-                label="End Date"
-                required
-                variant="solo-filled"
-                outlined
-                aria-required="true"
-              ></v-text-field>
-            </v-col>
+            <v-row class="justify-center items-center">
+              <v-col cols="6" class="">
+                <p class="text-center">Start Date</p>
+                <v-date-picker
+                  v-model="formData.startDate"
+                  title="Start Date"
+                  required
+                  hide-header
+                  aria-required="true"
+                ></v-date-picker>
+              </v-col>
+              <v-col cols="6" class="">
+                <p class="text-center">End Date</p>
+                <v-date-picker
+                  v-model="formData.endDate"
+                  title="End Date"
+                  required
+                  hide-header
+                  aria-required="true"
+                ></v-date-picker>
+              </v-col>
+            </v-row>
           </v-row>
         </v-container>
       </v-card-text>
       <v-card-actions>
+        <v-btn
+          @click="closeForm"
+          rounded="sm"
+          color="primary"
+          text="Cancel"
+        ></v-btn>
         <v-spacer></v-spacer>
-        <v-btn @click="close" color="primary">Close</v-btn>
-        <v-btn @click="close" color="primary">Save</v-btn>
+        <v-btn
+          @click="createMilestone"
+          rounded="sm"
+          color="success"
+          text="Create"
+          :loading="loading"
+          :disabled="
+            !formData.title ||
+            !formData.type ||
+            !formData.startDate ||
+            !formData.endDate
+          "
+        ></v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

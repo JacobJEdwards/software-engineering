@@ -29,7 +29,12 @@ const deleteMilestone = async (
 };
 
 const createMilestone = async (
-  milestone: Milestone,
+  milestone: {
+    milestoneTitle: string;
+    milestoneType: string;
+    startDate: Date;
+    endDate: Date;
+  },
   token: string,
 ): Promise<Result> => {
   try {
