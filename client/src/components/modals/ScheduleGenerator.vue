@@ -11,32 +11,51 @@ const props = defineProps<{
   close: () => void;
 }>();
 
+const semesterFormData = ref<{
+  SemesterName: string;
+  SemesterStartDate?: Date;
+  SemesterEndDate?: Date;
+}>({
+  SemesterName: "",
+});
+
+const moduleFormData = ref<{
+  ModuleCode: string;
+  ModuleName: string;
+  ModuleStartDate?: Date;
+  ModuleEndDate?: Date;
+}>({
+  ModuleCode: "",
+  ModuleName: "",
+});
+
+const milestoneFormData = ref<{
+  MilestoneTitle: string;
+  MilestoneType: string;
+  MilestoneStartDate?: Date;
+  MilestoneEndDate?: Date;
+}>({
+  MilestoneTitle: "",
+  MilestoneType: MilestoneTypes.ASSIGNMENT,
+});
+
 const semesters = ref<
   {
     SemesterName: string;
     SemesterStartDate: Date;
     SemesterEndDate: Date;
-  }[]
->([]);
-
-const modules = ref<
-  {
-    SemesterName: string;
-    ModuleCode: string;
-    ModuleName: string;
-    ModuleStartDate: Date;
-    ModuleEndDate: Date;
-  }[]
->([]);
-
-const milestones = ref<
-  {
-    SemesterName: string;
-    ModuleCode: string;
-    MilestoneTitle: string;
-    MilestoneType: string;
-    MilestoneStartDate: Date;
-    MilestoneEndDate: Date;
+    modules: {
+      ModuleCode: string;
+      ModuleName: string;
+      ModuleStartDate: Date;
+      ModuleEndDate: Date;
+      milestones: {
+        MilestoneTitle: string;
+        MilestoneType: string;
+        MilestoneStartDate: Date;
+        MilestoneEndDate: Date;
+      }[];
+    }[];
   }[]
 >([]);
 
@@ -61,11 +80,43 @@ const saveEntry = () => {};
         <v-container>
           <v-row>
             <v-card flat title="Semesters">
-
+              <v-card-text>
+                <v-row>
+                  <v-item-group>
+                    <v-expansion-panel v-for="semester of semesters">
+                      <v-expansion-panel-title>
+                        {{ semester.SemesterName }}
+                      </v-expansion-panel-title>
+                      <v-expansion-panel-text>
+                        <p class="caption">Modules</p>
+                        <v-expansion-panel v-for="module of semester.modules">
+                          <v-expansion-panel-title>
+                            {{ module.ModuleCode }} - {{ module.ModuleName }}
+                          </v-expansion-panel-title>
+                          <v-expansion-panel-text>
+                            <p class="caption">Milestones</p>
+                            <v-expansion-panel
+                              v-for="milestone of module.milestones"
+                            >
+                              <v-expansion-panel-title>
+                                {{ milestone.MilestoneTitle }}
+                              </v-expansion-panel-title>
+                              <v-expansion-panel-text>
+                                {{ milestone.MilestoneType }}
+                                {{ milestone.MilestoneStartDate }}
+                                {{ milestone.MilestoneEndDate }}
+                              </v-expansion-panel-text>
+                            </v-expansion-panel>
+                          </v-expansion-panel-text>
+                        </v-expansion-panel>
+                      </v-expansion-panel-text>
+                    </v-expansion-panel>
+                  </v-item-group>
+                  <v-expansion-panel> // add semester </v-expansion-panel>
+                </v-row>
+              </v-card-text>
             </v-card>
           </v-row>
-        </v-container>
-
           <v-divider class="my-2"></v-divider>
           <v-btn color="success" @click="" block rounded="md"
             >Export All to CSV</v-btn
