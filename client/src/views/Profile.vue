@@ -8,6 +8,12 @@ import { computed, ref } from "vue";
 import ChangeEmail from "../components/modals/ChangeEmail.vue";
 import ChangeName from "../components/modals/ChangeName.vue";
 
+import { useTheme } from "vuetify";
+//import {ref} from "vue";
+
+
+
+
 const userStore = useUserStore();
 
 const showScheduleGenerator = ref<boolean>(false);
@@ -24,6 +30,7 @@ const milestones = computed(() => modules.value.flatMap((m) => m.milestones));
 const tasks = ref<Task[]>(userStore.tasks);
 const activities = ref<Activity[]>(userStore.activities);
 
+const theme = useTheme();
 const toggleScheduleGenerator = () => {
   showScheduleGenerator.value = !showScheduleGenerator.value;
 };
@@ -31,6 +38,22 @@ const toggleScheduleGenerator = () => {
 const toggleScheduleUpload = () => {
   showScheduleUpload.value = !showScheduleUpload.value;
 };
+
+const toggleDarkmode = () => {
+  theme.global.name.value =
+    theme.global.name.value === "light" ? "dark" : "light";
+};
+ 
+
+const toggleColorBlind = () =>{
+  console.log('ere')
+
+  theme.global.name.value =
+    theme.global.name.value === "colorBlindLightTheme" ? "colorBlindDarkTheme" : "colorBlindLightTheme";
+};
+
+
+
 
 const showChangeEmail = ref<boolean>(false);
 const showChangeName = ref<boolean>(false);
@@ -124,6 +147,38 @@ userStore.$subscribe(() => {
                   :close="toggleScheduleGenerator"
                   :semester-names="semesterNames"
                 />
+              </v-card-text>
+            </v-card>
+          </v-col>
+
+          <v-col cols="12">
+            <v-card title="Toggle Dark Mode" prepend-icon="mdi-calendar">
+              <v-card-text>
+                <v-btn
+                  @click="toggleDarkmode"
+                  color="secondary"
+                  class="my-4"
+                  rounded="md"
+                  block
+                  > Toggle Darkmode</v-btn
+                >
+              
+              </v-card-text>
+            </v-card>
+          </v-col>
+
+          <v-col cols="12">
+            <v-card title="Toggle Color Blind Mode" prepend-icon="mdi-calendar">
+              <v-card-text>
+                <v-btn
+                  @click="toggleColorBlind"
+                  color="secondary"
+                  class="my-4"
+                  rounded="md"
+                  block
+                  > Toggle Color Blind Mode</v-btn
+                >
+              
               </v-card-text>
             </v-card>
           </v-col>
