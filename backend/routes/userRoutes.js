@@ -10,7 +10,6 @@ export class UserRoutes {
     registerRoutes() {
         this.router.get('/home', UserController.getUser);;
         this.router.post('/current-semester', UserController.updateCurrentSemester);
-        this.router.get('/verify', UserController.verify);
     }
 }
 

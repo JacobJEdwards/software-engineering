@@ -5,36 +5,31 @@ import Tasks from '../service/TaskService.js';
 import mongoose from 'mongoose';
 
 class Mailer {
-    static async emailUserVerification(id, token) {
+    static async emailUserVerification(user, token) {
         try {
             await mongoose.connect(process.env.MONGODB_URI);
             let mailgun = new Mailgun(formData);
-            let user = await User.getUserInternal(id);
             let mg = mailgun.client({username: 'api', key: process.env.MAILGUN_API_KEY});
-
             const emailData = {
                 from: "Excited User <mail@wonderfultasks.me>",
                 to: [user.email],
                 subject: "Please verify your account",
-                text: `Dear ${user.name}, please verify your account at the following URL: localhost:3000/verify?userid=${id}&token=${token}`,
-                html: `<p>Dear ${user.name},</p><p>Please verify your account at <a href="http://localhost:3000/verify?userid=${id}&token=${token}">this link</a>.</p>`
+                text: `Dear ${user.name}, please verify your account at the following URL: localhost:3000/api/auth/verify?userId=${user._id}&token=${token}`,
+                html: `<p>Dear ${user.name},</p><p>Please verify your account at <a href="http://localhost:3000/api/auth/verify?userId=${user._id}&token=${token}">this link</a>.</p>`
             };
 
             await mg.messages.create('wonderfultasks.me', emailData)
                 .then(msg => console.log(`Email sent to ${user.email}`))
                 .catch(err => console.log(`Failed to send email to ${user.email}: ${err.message}`));
-
+            return true;
         } catch (error) {
             console.error(`Error: ${error.message}`);
-        } finally {
-            await mongoose.connection.close();
         }
     }
 
     static async upcomingTasks() {
         try {
             await mongoose.connect(process.env.MONGODB_URI);
-
             let mailgun = new Mailgun(formData);
             let mg = mailgun.client({username: 'api', key: process.env.MAILGUN_API_KEY});
             const users = await User.find({}); // Assuming each user should receive a notification
@@ -58,8 +53,6 @@ class Mailer {
             }
         } catch (error) {
             console.error(`Error: ${error.message}`);
-        } finally {
-            await mongoose.connection.close();
         }
     }
 }

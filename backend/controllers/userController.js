@@ -22,19 +22,6 @@ export class UserController {
         }
     }
 
-    static async verify(req, res) {
-        let id = req.query.userId;
-        let verify = req.query.token;
-        let user = await User.getUserInternal(id);
-        if (user) {
-            if (user.authCode === verify) {
-                user.auth = true;
-                await user.save();
-                return res.status(200).json({message: "Validated"});
-            }
-        }
-        return res.status(400).json({message: "invalid credentials"});
-    }
 }
 
 

@@ -10,13 +10,12 @@ class UserService {
         const authCode = await bcrypt.hash(email, 12);
 
         try {
-        const user = new this({email, name, password: hashedPassword, authCode: authCode});
+        const user = await new this({email: email, name: name, password: hashedPassword, auth:false, authCode: authCode});
             try {
-                let mail = await Mailer.emailUserVerification(user._id, authCode);
+                let mail = await Mailer.emailUserVerification(user, authCode);
                 await user.save();
-                return new Response("User created successfully", 200, {
-                    userId: user._id,
-                });
+                return new Response("User created successfully", 200,
+                );
             } catch (e) {
                 return new Response("User Unsuccessful", 400, e)
             }
@@ -27,7 +26,7 @@ class UserService {
 
     static async authenticateUser(email, password) {
         let user = await this.findOne({email});
-        if (user && (await bcrypt.compare(password, user.password))) {
+        if (user && (await bcrypt.compare(password, user.password) && user.auth)) {
             user = user.toObject();
             delete user.password;
             return new Response("User authenticated", 200, user);
