@@ -8,15 +8,20 @@ class UserService {
     static async createUser(email, name, password) {
         const hashedPassword = await bcrypt.hash(password, 12);
         const authCode = await bcrypt.hash(email, 12);
-        const user = new this({email, name, password: hashedPassword, authCode: authCode});
+
         try {
-            await user.save();
-            await Mailer.emailUserVerification(user._id, authCode);
-            return new Response("User created successfully", 200, {
-                userId: user._id,
-            });
+        const user = new this({email, name, password: hashedPassword, authCode: authCode});
+            try {
+                let mail = await Mailer.emailUserVerification(user._id, authCode);
+                await user.save();
+                return new Response("User created successfully", 200, {
+                    userId: user._id,
+                });
+            } catch (e) {
+                return new Response("User Unsuccessful", 400, e)
+            }
         } catch (e) {
-            return new Response("User already exists", 400);
+            return new Response("User already exists", 400, e);
         }
     }
 

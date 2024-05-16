@@ -10,7 +10,7 @@ const userSchema = new Schema({
     password: {type: String, required: true},
     currentSemester: {type: Schema.Types.ObjectId, ref: 'Semester'},
     auth: {type: Boolean, default: false},
-    authcode: {type: String},
+    authCode: {type: String},
     semester: [Semester]
 }, {timestamps: true});
 

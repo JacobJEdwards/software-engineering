@@ -6,7 +6,7 @@ class AuthMiddleware {
         try {
             const token = req.headers.authorization;
             req.userData = jwt.verify(token, process.env.JWT_SECRET);
-            let user = User.getUserInternal(req.userData);
+            let user = User.getUserInternal(req.userData.userId);
             if (!user.auth) return res.status(401).json({message: 'Authentication failed'});
             next();
         } catch (e) {
