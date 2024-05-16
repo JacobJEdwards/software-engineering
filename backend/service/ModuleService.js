@@ -21,7 +21,7 @@ class ModuleService {
             }
             const moduleExists = user.semester
                 .find((semester) => semester.semesterName === semesterName)
-                .modules.some((module) => module.moduleCode === moduleCode);
+                .modules.find((module) => module.moduleCode === moduleCode);
 
             if (!moduleExists) {
                 user.semester
@@ -31,8 +31,6 @@ class ModuleService {
             } else {
                 return new Response("Module already exists", 404, {});
             }
-        } else {
-            return new Response("Semester Does not Exist", 404, {})
         }
     }
 
