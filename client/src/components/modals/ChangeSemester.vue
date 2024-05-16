@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useAuthStore, useUserStore } from "../../stores";
-import { computed, ref } from "vue";
+import { useUserStore } from "../../stores";
+import { ref } from "vue";
 import { useSuccessErrorMessage } from "../../utils/utils.ts";
 import { useLoading } from "../../utils/utils.ts";
 import type { Semester } from "../../typings/user";
@@ -18,7 +18,6 @@ const props = defineProps<{
   close: () => void;
 }>();
 
-const authStore = useAuthStore();
 const userStore = useUserStore();
 
 const currentSemester = ref<Semester | null>(userStore.currentSemester);
@@ -55,6 +54,12 @@ const changeSemester = () => {
 
   loading.value = false;
 };
+
+userStore.$subscribe(() => {
+  currentSemester.value = userStore.currentSemester;
+  semesters.value = userStore.user?.semester ?? [];
+  selectedSemester.value = userStore.currentSemester?._id ?? null;
+});
 </script>
 
 <template>
