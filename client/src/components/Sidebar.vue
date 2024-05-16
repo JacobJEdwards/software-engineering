@@ -6,7 +6,7 @@ const userStore = useUserStore();
 </script>
 
 <template>
-  <v-navigation-drawer app color="secondary">
+  <v-navigation-drawer app color="">
     <template #prepend>
       <v-list-item
         lines="two"

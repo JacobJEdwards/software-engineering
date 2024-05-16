@@ -11,12 +11,25 @@ import ModuleInfo from "./modals/ModuleInfo.vue";
 import MilestoneInfo from "./modals/MilestoneInfo.vue";
 
 import { ref, computed, ComputedRef } from "vue";
-import { useUserStore } from "../stores";
+import { useAuthStore, useUserStore } from "../stores";
 import { EventInput } from "fullcalendar";
 import CreateTask from "./modals/CreateTask.vue";
 import { Task, Activity, Milestone, Module } from "../typings/user.ts";
+import Alert from "./utils/Alert.vue";
+import { useSuccessErrorMessage } from "../utils/utils.ts";
+import { TaskService } from "../services/tasks";
+
+const props = defineProps({
+  dueDatesOnly: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const { success, error } = useSuccessErrorMessage();
 
 const userStore = useUserStore();
+const authStore = useAuthStore();
 
 const addTask = ref<boolean>(false);
 
@@ -58,6 +71,16 @@ const moduleInfo = ref<{
   show: false,
 });
 
+const updateTask = async (task: Task) => {
+  try {
+    success.value.message = "Task updated successfully";
+    success.value.show = true;
+  } catch (e: any) {
+    error.value.message = e?.message ?? "Error updating task";
+    error.value.show = true;
+  }
+};
+
 const EventTypes = {
   ACTIVITY: "ACTIVITY",
   TASK: "TASK",
@@ -66,18 +89,23 @@ const EventTypes = {
 } as const;
 
 const taskEvents: ComputedRef<EventInput[]> = computed(() =>
-  tasks.value.map((task) => ({
-    start: new Date(task.startDate),
-    end: new Date(task.endDate),
-    allDay: true,
-    title: task.title,
-    color: task.status === "Completed" ? "green" : "red",
-    id: task._id,
-    extendedProps: {
-      task: task,
-      type: EventTypes.TASK,
-    },
-  })),
+  tasks.value.map((task) => {
+    const startDate = new Date(task.startDate);
+    const endDate = new Date(task.endDate);
+
+    return {
+      start: props.dueDatesOnly ? endDate : startDate,
+      end: props.dueDatesOnly ? undefined : endDate,
+      allDay: !props.dueDatesOnly,
+      title: task.title,
+      color: task.status === "Completed" ? "green" : "red",
+      id: task._id,
+      extendedProps: {
+        task: task,
+        type: EventTypes.TASK,
+      },
+    };
+  }),
 );
 
 const activityEvents: ComputedRef<EventInput[]> = computed(() =>
@@ -90,7 +118,7 @@ const activityEvents: ComputedRef<EventInput[]> = computed(() =>
       start: startDate,
       end: endDate,
       title: activity.activityTitle,
-      color: "pink",
+      color: "#d32d7d",
       id: activity._id,
       extendedProps: {
         activity: activity,
@@ -106,11 +134,11 @@ const milestonesEvents: ComputedRef<EventInput[]> = computed(() =>
     const endDate = new Date(milestone.endDate);
 
     return {
-      start: startDate,
-      end: endDate,
-      allDay: true,
+      start: props.dueDatesOnly ? endDate : startDate,
+      end: props.dueDatesOnly ? undefined : endDate,
+      allDay: !props.dueDatesOnly,
       title: milestone.milestoneTitle,
-      color: "blue",
+      color: "#49a078",
       id: milestone._id,
       extendedProps: {
         milestone: milestone,
@@ -126,11 +154,11 @@ const moduleEvents: ComputedRef<EventInput[]> = computed(() =>
     const endDate = new Date(module.endDate);
 
     return {
-      start: startDate,
-      end: endDate,
-      allDay: true,
+      start: props.dueDatesOnly ? endDate : startDate,
+      end: props.dueDatesOnly ? undefined : endDate,
+      allDay: !props.dueDatesOnly,
       title: module.moduleName,
-      color: "purple",
+      color: "#41c40f",
       id: module._id,
       extendedProps: {
         module: module,
@@ -139,8 +167,6 @@ const moduleEvents: ComputedRef<EventInput[]> = computed(() =>
     };
   }),
 );
-
-console.log(moduleEvents.value);
 
 const events = computed(() => [
   ...taskEvents.value,
@@ -158,7 +184,7 @@ const calendarOptions = ref<CalendarOptions>({
   },
   initialView: "dayGridMonth",
   events: events.value,
-  editable: false,
+  editable: !props.dueDatesOnly,
   selectable: true,
   selectMirror: true,
   dayMaxEvents: true,
@@ -182,6 +208,66 @@ const calendarOptions = ref<CalendarOptions>({
         moduleInfo.value.module = event.event._def.extendedProps.module;
         moduleInfo.value.show = true;
         break;
+    }
+  },
+  async eventChange(arg) {
+    // get new start and end dates
+    if (arg.event.extendedProps.type !== EventTypes.TASK) {
+      error.value.message = "Only tasks can be updated from the calendar view";
+      error.value.show = true;
+      arg.revert();
+      return;
+    }
+
+    const newStartDate = new Date(arg.event.startStr);
+    const newEndDate = new Date(arg.event.endStr);
+    const task: Task | undefined = tasks.value.find(
+      (task) => task._id === arg.event.id,
+    );
+
+    if (!task) {
+      error.value.message = "Task not found";
+      error.value.show = true;
+      arg.revert();
+      return;
+    }
+
+    if (!task?._id) {
+      error.value.message = "Task ID not found";
+      error.value.show = true;
+      arg.revert();
+      return;
+    }
+
+    if (!task?.status) {
+      error.value.message = "Task status not found";
+      error.value.show = true;
+      arg.revert();
+      return;
+    }
+
+    const newTask = {
+      title: task.title,
+      startDate: newStartDate,
+      endDate: newEndDate,
+      hrsCompleted: task.hrsCompleted,
+      hrsRequired: task.hrsRequired,
+      dependantTasks: task.dependantTasks,
+      progress: task.status,
+      taskId: task._id,
+      activities: task.activities,
+    };
+
+    const result = await TaskService.update(newTask, authStore.authToken);
+
+    if (result.success) {
+      await userStore.getUser();
+      success.value.message = "Task updated successfully";
+      success.value.show = true;
+    } else {
+      error.value.message = result.error ?? "Error updating task";
+      error.value.show = true;
+      arg.revert();
     }
   },
   select: (info) => {
@@ -218,7 +304,7 @@ userStore.$subscribe(updateEvents);
         <FullCalendar :options="calendarOptions" />
       </v-col>
       <v-col cols="3" v-if="showOptions">
-        <v-card> </v-card>
+        <v-card elevation="3" rounded="md"> </v-card>
       </v-col>
     </v-row>
   </v-container>
@@ -256,6 +342,18 @@ userStore.$subscribe(updateEvents);
     :close="() => (moduleInfo.show = false)"
     editable
   />
+  <Alert
+    v-model:show="success.show"
+    type="success"
+    :message="success.message"
+    :close="() => (success.show = false)"
+  />
+  <Alert
+    v-model:show="error.show"
+    type="error"
+    :message="error.message"
+    :close="() => (error.show = false)"
+  />
 </template>
 
 <style>
@@ -264,6 +362,14 @@ userStore.$subscribe(updateEvents);
 }
 
 .fc-daygrid-event:hover {
+  filter: brightness(90%);
+}
+
+.fc-event {
+  cursor: pointer;
+}
+
+.fc-event:hover {
   filter: brightness(90%);
 }
 </style>

@@ -31,7 +31,7 @@ const showModel = () => {
     small
     color="accent"
     dark
-    class="position-fixed bottom-14 right-8"
+    class="position-fixed bottom-6 right-8"
     max-width="10rem"
     @click="showModel"
     rounded="md"

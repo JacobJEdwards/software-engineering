@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { TaskStatuses, Task, TaskStatus } from "../../typings/user.ts";
+import { TaskStatuses, Task } from "../../typings/user.ts";
 import { useLoading, useSuccessErrorMessage } from "../../utils/utils.ts";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { TaskService } from "../../services";
 import { useAuthStore, useUserStore } from "../../stores";
 import Alert from "../utils/Alert.vue";
 import NumberInput from "../utils/NumberInput.vue";
+import ConfirmModal from "./ConfirmModal.vue";
+import type { TaskForm } from "../../typings/user";
 
 const { loading } = useLoading();
 const { success, error } = useSuccessErrorMessage();
@@ -18,15 +20,6 @@ const show = defineModel("show", {
 const authStore = useAuthStore();
 const userStore = useUserStore();
 
-type TaskForm = {
-  title: string;
-  startDate: string | Date;
-  endDate: string | Date;
-  status: TaskStatus;
-  hrsCompleted: number;
-  hrsRequired: number;
-};
-
 const props = defineProps<{
   task: Task;
   editable: boolean;
@@ -37,21 +30,46 @@ const formData = ref<TaskForm>({
   title: props.task.title,
   startDate: new Date(props.task.startDate),
   endDate: new Date(props.task.endDate),
-  status: props.task.status,
+  progress: props.task.status,
   hrsCompleted: props.task.hrsCompleted,
   hrsRequired: props.task.hrsRequired,
+  milestoneId: "",
+  dependantTasks: props.task.dependantTasks,
 });
 
 const edit = ref<boolean>(false);
+const deletePressed = ref<boolean>(false);
+const possibleDependantTasks = computed(() => {
+  return userStore.tasks.filter(
+    (task) =>
+      task._id !== props.task._id &&
+      !task.dependantTasks.includes(props.task._id),
+  );
+});
+
+const currentDependantTasks = computed(() => {
+  return userStore.tasks.filter((task) =>
+    props.task.dependantTasks.includes(task._id),
+  );
+});
+
+const selectedTask = ref<Task | null>(null);
+const showTaskInfo = ref<boolean>(false);
+const closeTaskInfo = () => {
+  selectedTask.value = null;
+  showTaskInfo.value = false;
+};
 
 const closeForm = () => {
   formData.value = {
     title: props.task.title,
     startDate: props.task.startDate,
     endDate: props.task.endDate,
-    status: props.task.status,
+    progress: props.task.status,
     hrsCompleted: props.task.hrsCompleted,
     hrsRequired: props.task.hrsRequired,
+    milestoneId: "",
+    dependantTasks: props.task.dependantTasks,
   };
   error.value.message = "";
   error.value.show = false;
@@ -105,9 +123,10 @@ const updateTask = async () => {
     title: formData.value.title,
     startDate: formData.value.startDate,
     endDate: formData.value.endDate,
-    progress: formData.value.status,
+    progress: formData.value.progress,
     hrsCompleted: formData.value.hrsCompleted,
     hrsRequired: formData.value.hrsRequired,
+    dependantTasks: formData.value.dependantTasks,
   };
 
   const result = await TaskService.update(body, authStore.authToken);
@@ -132,9 +151,11 @@ watch(
       title: props.task.title,
       startDate: new Date(props.task.startDate),
       endDate: new Date(props.task.endDate),
-      status: props.task.status,
+      progress: props.task.status,
       hrsCompleted: props.task.hrsCompleted,
       hrsRequired: props.task.hrsRequired,
+      milestoneId: "",
+      dependantTasks: props.task.dependantTasks,
     };
   },
   { deep: true },
@@ -191,7 +212,7 @@ watch(
           <v-col cols="12">
             <v-select
               :loading="loading"
-              v-model="formData.status"
+              v-model="formData.progress"
               label="Status"
               :items="Object.values(TaskStatuses)"
               aria-required="true"
@@ -215,6 +236,19 @@ watch(
               :min="0"
               required
             />
+          </v-col>
+          <v-col cols="12">
+            <v-select
+              :loading="loading"
+              v-model="formData.dependantTasks"
+              label="Dependant Tasks"
+              multiple
+              :items="possibleDependantTasks"
+              item-title="title"
+              item-value="_id"
+              aria-required="true"
+              variant="solo-filled"
+            ></v-select>
           </v-col>
         </v-row>
       </v-card-text>
@@ -256,6 +290,30 @@ watch(
               :subtitle="`${task.hrsCompleted}/${task.hrsRequired}`"
             ></v-list-item>
           </v-col>
+          <v-col cols="12">
+            <v-list-item
+              title="Dependant Tasks"
+              :key="task._id"
+              :subtitle="task.dependantTasks.length"
+            ></v-list-item>
+            <v-list-item
+              v-for="task in currentDependantTasks"
+              :key="task._id"
+              :subtitle="task.title"
+            >
+              <template #append>
+                <v-btn
+                  icon="mdi-information-outline"
+                  variant="text"
+                  @click="
+                    selectedTask = task;
+                    showTaskInfo = true;
+                  "
+                >
+                </v-btn>
+              </template>
+            </v-list-item>
+          </v-col>
         </v-row>
       </v-card-text>
 
@@ -264,21 +322,21 @@ watch(
           {{ edit ? "Cancel" : "Edit" }}
         </v-btn>
         <v-btn
+          v-if="props.editable"
+          @click="deletePressed = true"
+          color="error"
+          :loading="loading"
+        >
+          Delete
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn
           v-if="edit"
           color="success"
           @click="updateTask"
           :loading="loading"
         >
           Save
-        </v-btn>
-        <v-spacer></v-spacer>
-        <v-btn
-          v-if="props.editable"
-          @click="deleteTask"
-          color="error"
-          :loading="loading"
-        >
-          Delete
         </v-btn>
       </v-card-actions>
       <Alert
@@ -295,6 +353,19 @@ watch(
       />
     </v-card>
   </v-dialog>
+  <ConfirmModal
+    v-model:show="deletePressed"
+    text="Are you sure you want to delete this task?"
+    @confirm="deleteTask"
+    @cancel="deletePressed = false"
+  />
+  <TaskInfo
+    v-if="selectedTask"
+    :task="selectedTask"
+    editable
+    :close="closeTaskInfo"
+    v-model:show="showTaskInfo"
+  />
 </template>
 
 <style scoped></style>

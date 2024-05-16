@@ -13,9 +13,12 @@ const { mdAndDown } = useDisplay();
 
 const links = [
   { display: "Home", to: { name: "home" }, icon: "mdi-home" },
-  { display: "Tasks", to: { name: "tasks" }, icon: "mdi-format-list-checks" },
   { display: "Schedule", to: { name: "schedule" }, icon: "mdi-calendar" },
+  { display: "Tasks", to: { name: "tasks" }, icon: "mdi-format-list-checks" },
+  { display: "Milestones", to: { name: "milestones" }, icon: "mdi-flag" },
+  { display: "Modules", to: { name: "modules" }, icon: "mdi-book" },
   { display: "Profile", to: { name: "profile" }, icon: "mdi-account" },
+  { display: "Stats", to: { name: "stats" }, icon: "mdi-chart-bar" },
 ];
 
 const logout = async () => {
@@ -28,8 +31,9 @@ const logout = async () => {
   <v-navigation-drawer
     expand-on-hover
     rail
-    class="full-height relative bg-grey-darken-4 pt-8"
+    class="full-height relative pt-8"
     v-if="!mdAndDown"
+    color="secondary"
   >
     <v-list>
       <v-list-item
@@ -45,11 +49,14 @@ const logout = async () => {
         v-for="link in links"
         :key="link.display"
         :to="link.to"
-        :title="link.display"
         :prepend-icon="link.icon"
         link
-        class="hover:bg-gray-800 hover:text-white"
-      ></v-list-item>
+        class="font-bold my-4"
+      >
+        <template #title>
+          <span class="font-bold my-4">{{ link.display }}</span>
+        </template>
+      </v-list-item>
     </v-list>
 
     <template #append>

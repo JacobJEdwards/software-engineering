@@ -54,13 +54,13 @@ export type Task = {
   status: TaskStatus;
   hrsCompleted: number;
   hrsRequired: number;
-  activities: Array<Activity>;
+  dependantTasks: Array<string>;
+  activities: Array<string>;
 } & Base;
 
 export type Milestone = {
   milestoneTitle: string;
   milestoneType: string;
-  milestoneProgress: number;
   ltsDefined: boolean;
   tasks: Array<Task>;
   startDate: Date;
@@ -101,13 +101,14 @@ export type TaskForm = {
   startDate?: Date | string;
   endDate?: Date | string;
   progress: TaskStatus;
+  dependantTasks: Array<string>;
   hrsCompleted: number;
   hrsRequired: number;
 };
 
 export type ActivityForm = {
   activityTitle: string;
-  activityType: ActivityType;
+  activityType: string;
   activityDescription: string;
   hrsCompleted: number;
   tasks: string[];

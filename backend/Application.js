@@ -10,6 +10,8 @@ import CronJob from "./utils/CronJobSetup.js";
 import UserRoutes from "./routes/userRoutes.js";
 import TaskRoutes from "./routes/TaskRoutes.js";
 import ActivityRoutes from "./routes/ActivityRoutes.js";
+import Mailer from "./middleware/Mailer.js";
+import MilestoneRoutes from "./routes/MilestoneRoutes.js";
 
 class Application {
   constructor(port, uri) {
@@ -24,37 +26,20 @@ class Application {
     this.userRoutes = new UserRoutes();
     this.taskRoutes = new TaskRoutes();
     this.activityRoutes = new ActivityRoutes();
+    this.milestoneRoutes = new MilestoneRoutes();
     this.PORT = port;
     this.mongoDBUri = uri;
   }
   start() {
     this.cronJob.startAllJobs();
     this.app.use("/api/auth", this.authRoutes.router);
-    this.app.use(
-      "/api/protected",
-      AuthMiddleware.authenticate,
-      this.authRoutes.router,
-    );
-    this.app.use(
-      "/api/protected",
-      AuthMiddleware.authenticate,
-      this.importRoutes.router,
-    );
-    this.app.use(
-      "/api/protected",
-      AuthMiddleware.authenticate,
-      this.userRoutes.router,
-    );
-    this.app.use(
-      "/api/protected",
-      AuthMiddleware.authenticate,
-      this.taskRoutes.router,
-    );
-    this.app.use(
-      "/api/protected",
-      AuthMiddleware.authenticate,
-      this.activityRoutes.router,
-    );
+    this.app.use("/api/protected", AuthMiddleware.authenticate, this.authRoutes.router);
+    this.app.use("/api/protected", AuthMiddleware.authenticate, this.importRoutes.router);
+    this.app.use("/api/protected", AuthMiddleware.authenticate, this.userRoutes.router);
+    this.app.use("/api/protected", AuthMiddleware.authenticate, this.taskRoutes.router);
+    this.app.use("/api/protected", AuthMiddleware.authenticate, this.activityRoutes.router);
+    this.app.use("/api/protected", AuthMiddleware.authenticate, this.milestoneRoutes.router);
+    Mailer.upcomingTasks();
     mongoose
       .connect(this.mongoDBUri)
       .then(() => console.log("MongoDB connected"))

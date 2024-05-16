@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import UserLoading from "../components/UserLoading.vue";
-import { useUserStore } from "../stores";
+import { useAuthStore, useUserStore } from "../stores";
 import { computed, ref } from "vue";
 import type { Task as TaskType, Activity } from "../typings/user";
 import Task from "../components/Task.vue";
 
-import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { CalendarOptions, EventInput } from "@fullcalendar/core";
 import { ComputedRef } from "vue";
 import SemesterOverview from "../components/SemesterOverview.vue";
+import Calendar from "../components/Calendar.vue";
 
 const userStore = useUserStore();
 
@@ -74,19 +74,44 @@ userStore.$subscribe(() => {
   calendarOptions.value.events = events.value;
 });
 </script>
-
 <template>
   <v-container>
     <UserLoading v-if="userStore.loading" />
 
     <v-row v-else>
       <v-col cols="12" md="6">
-        <v-card
-          title="Upcoming Tasks"
-          prepend-icon="mdi-checkbox-marked-circle-outline"
-        >
+        <v-card rounded="md" elevation="3">
+          <v-card-title class="card-title">
+            <v-icon color="semester">mdi-clock-time-four-outline</v-icon>
+            Semester Overview
+          </v-card-title>
           <v-divider></v-divider>
-          <v-card-text v-if="topTasks.length">
+          <v-card-text>
+            <SemesterOverview
+              v-if="userStore.currentSemester"
+              :selected-semester="userStore.currentSemester"
+            />
+            <div class="" v-else>
+              <p class="text-lg">No semester found!</p>
+              <div class="my-4">
+                <v-divider class="my-4"></v-divider>
+              </div>
+              <router-link
+                to="/profile"
+                class="text-blue-500 text-sm hover:text-blue-700 focus:outline-none"
+                >Upload a schedule</router-link
+              >
+            </div>
+          </v-card-text>
+        </v-card>
+
+        <v-card rounded="md" elevation="3" class="mt-4">
+          <v-card-title class="card-title">
+            <v-icon color="task">mdi-checkbox-marked-circle-outline</v-icon>
+            Upcoming Tasks
+          </v-card-title>
+          <v-divider></v-divider>
+          <v-card-text v-if="topTasks.length" class="">
             <v-list>
               <Task
                 v-for="task in topTasks"
@@ -109,45 +134,18 @@ userStore.$subscribe(() => {
           </v-card-text>
         </v-card>
       </v-col>
+
       <v-col cols="12" md="6">
-        <v-row>
-          <v-col cols="12">
-            <v-card>
-              <v-card-title
-                ><v-icon>mdi-clipboard-outline</v-icon> Current Semester
-              </v-card-title>
-              <v-divider></v-divider>
-              <v-card-text>
-                <SemesterOverview
-                  v-if="userStore.user?.semester?.length"
-                  :selected-semester="userStore.user?.semester[0]"
-                />
-                <div class="p-4" v-else>
-                  <p class="text-lg">No semester found!</p>
-                  <div class="my-4">
-                    <v-divider class="my-4"></v-divider>
-                  </div>
-                  <router-link
-                    to="/profile"
-                    class="text-blue-500 text-sm hover:text-blue-700 focus:outline-none"
-                    >Upload a semester</router-link
-                  >
-                </div>
-              </v-card-text>
-            </v-card>
-          </v-col>
-          <v-col cols="12">
-            <v-card title="Calendar" prepend-icon="mdi-calendar">
-              <v-divider></v-divider>
-              <v-card-text>
-                <FullCalendar :options="calendarOptions" class="fc" />
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
+        <v-card rounded="md" elevation="3">
+          <v-card-title class="card-title">
+            <v-icon color="accent">mdi-calendar</v-icon>
+            Calendar
+          </v-card-title>
+          <v-divider></v-divider>
+          <Calendar dueDatesOnly />
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
 </template>
-
 <style scoped></style>

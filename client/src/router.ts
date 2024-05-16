@@ -61,6 +61,33 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: "/milestones",
+    name: "milestones",
+    component: () => import("./views/Milestones.vue"),
+    meta: {
+      requiresAuth: true,
+      title: "Milestones",
+    },
+  },
+  {
+    path: "/modules",
+    name: "modules",
+    component: () => import("./views/Modules.vue"),
+    meta: {
+      requiresAuth: true,
+      title: "Modules",
+    },
+  },
+  {
+    path: "/stats",
+    name: "stats",
+    component: () => import("./views/Stats.vue"),
+    meta: {
+      requiresAuth: true,
+      title: "Stats",
+    },
+  },
+  {
     path: "/privacy",
     name: "privacy",
     component: () => import("./views/Privacy.vue"),
@@ -75,7 +102,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("./views/Terms.vue"),
     meta: {
       requiresAuth: false,
-      title: "Terms of Service",
+      title: "Terms & Conditions",
     },
   },
   {
@@ -84,7 +111,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("./views/About.vue"),
     meta: {
       requiresAuth: false,
-      title: "About",
+      title: "About Us",
     },
   },
   {
@@ -93,7 +120,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("./views/Contact.vue"),
     meta: {
       requiresAuth: false,
-      title: "Contact",
+      title: "Contact Us",
     },
   },
   {

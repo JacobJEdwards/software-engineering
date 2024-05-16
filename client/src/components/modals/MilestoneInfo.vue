@@ -5,6 +5,7 @@ import { Milestone, MilestoneTypes } from "../../typings/user";
 import { useLoading, useSuccessErrorMessage } from "../../utils/utils.ts";
 import Alert from "../utils/Alert.vue";
 import NumberInput from "../utils/NumberInput.vue";
+import ConfirmModal from "./ConfirmModal.vue";
 
 const { loading } = useLoading();
 const { success, error } = useSuccessErrorMessage();
@@ -23,7 +24,6 @@ const props = defineProps<{
 type FormData = {
   milestoneTitle: string;
   milestoneType: string;
-  milestoneProgress: number;
   startDate: Date;
   endDate: Date;
 };
@@ -31,7 +31,6 @@ type FormData = {
 const formData = ref<FormData>({
   milestoneTitle: props.milestone.milestoneTitle,
   milestoneType: props.milestone.milestoneType,
-  milestoneProgress: props.milestone.milestoneProgress,
   startDate: new Date(props.milestone.startDate),
   endDate: new Date(props.milestone.endDate),
 });
@@ -39,6 +38,27 @@ const formData = ref<FormData>({
 const milestoneSelectTypes = Object.values(MilestoneTypes);
 
 const edit = ref<boolean>(false);
+const deletePressed = ref<boolean>(false);
+
+const deleteMilestone = async () => {
+  loading.value = true;
+  error.value.message = "";
+  error.value.show = false;
+  success.value.message = "";
+  success.value.show = false;
+
+  // const result = await MilestonesService.delete(
+  //   authStore.authToken,
+  //   props.milestone._id,
+  // );
+  // if (result.success) {
+  //   success.value.message = "Milestone deleted successfully";
+  //   props.close();
+  // } else {
+  //   error.value.message = result.message;
+  //   error.value.show = true;
+  // }
+};
 
 watch(
   () => props,
@@ -46,7 +66,6 @@ watch(
     formData.value = {
       milestoneTitle: props.milestone.milestoneTitle,
       milestoneType: props.milestone.milestoneType,
-      milestoneProgress: props.milestone.milestoneProgress,
       startDate: new Date(props.milestone.startDate),
       endDate: new Date(props.milestone.endDate),
     };
@@ -111,16 +130,6 @@ watch(
               variant="solo-filled"
             ></v-select>
           </v-col>
-          <v-col cols="12">
-            <NumberInput
-              persistent-hint
-              hint="Please log an activity to update hours."
-              :loading="loading"
-              v-model="formData.milestoneProgress"
-              label="Hours Completed"
-              disabled
-            />
-          </v-col>
         </v-row>
       </v-card-text>
       <v-card-text v-else>
@@ -139,12 +148,6 @@ watch(
           </v-col>
           <v-col cols="12">
             <v-list-item
-              title="Milestone Progress"
-              :subtitle="formData.milestoneProgress"
-            ></v-list-item>
-          </v-col>
-          <v-col cols="12">
-            <v-list-item
               title="Start Date"
               :subtitle="new Date(formData.startDate).toLocaleDateString()"
             ></v-list-item>
@@ -157,17 +160,15 @@ watch(
           </v-col>
         </v-row>
       </v-card-text>
-      <v-card-actions>
-        <v-card-actions v-if="props.editable">
-          <v-btn @click="edit = !edit" color="primary">
-            {{ edit ? "Cancel" : "Edit" }}
-          </v-btn>
-          <v-btn v-if="edit" color="success" :loading="loading"> Save </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn v-if="props.editable" color="error" :loading="loading">
-            Delete
-          </v-btn>
-        </v-card-actions>
+      <v-card-actions v-if="props.editable && !props.milestone.ltsDefined">
+        <v-btn @click="edit = !edit" color="primary">
+          {{ edit ? "Cancel" : "Edit" }}
+        </v-btn>
+        <v-btn v-if="props.editable" color="error" :loading="loading">
+          Delete
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn v-if="edit" color="success" :loading="loading">Save</v-btn>
       </v-card-actions>
     </v-card>
     <Alert
@@ -183,6 +184,12 @@ watch(
       :close="() => (success.show = false)"
     />
   </v-dialog>
+  <ConfirmModal
+    v-model:show="deletePressed"
+    text="Are you sure you want to delete this milestone?"
+    @confirm="deleteMilestone"
+    @cancel="deletePressed = false"
+  />
 </template>
 
 <style scoped></style>

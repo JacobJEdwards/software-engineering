@@ -4,6 +4,7 @@ import { ref } from "vue";
 import { useSuccessErrorMessage } from "../../utils/utils.ts";
 import { useLoading } from "../../utils/utils.ts";
 import Alert from "../utils/Alert.vue";
+import ConfirmModal from "./ConfirmModal.vue";
 
 const { success, error } = useSuccessErrorMessage();
 const { loading } = useLoading();
@@ -21,6 +22,16 @@ const authStore = useAuthStore();
 const userStore = useUserStore();
 
 const name = ref<string>("");
+const editPressed = ref<boolean>(false);
+
+const closeForm = () => {
+  name.value = "";
+  error.value.message = "";
+  error.value.show = false;
+  success.value.message = "";
+  success.value.show = false;
+  props.close();
+};
 
 const changeName = async () => {
   loading.value = true;
@@ -72,12 +83,12 @@ const changeName = async () => {
         </v-row>
       </v-card-text>
       <v-card-actions>
-        <v-btn @click="props.close" color="danger" :loading="loading"
+        <v-btn @click="closeForm" color="danger" :loading="loading"
           >Cancel</v-btn
         >
         <v-spacer></v-spacer>
         <v-btn
-          @click="changeName"
+          @click="editPressed = true"
           color="success"
           :loading="loading"
           :disabled="!name"
@@ -98,6 +109,12 @@ const changeName = async () => {
       />
     </v-card>
   </v-dialog>
+  <ConfirmModal
+    v-model:show="editPressed"
+    :text="`Are you sure you want to change your name to ${name}?`"
+    @confirm="changeName"
+    @close="editPressed = false"
+  />
 </template>
 
 <style scoped></style>

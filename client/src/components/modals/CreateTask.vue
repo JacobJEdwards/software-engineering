@@ -7,6 +7,7 @@ import { useLoading, useSuccessErrorMessage } from "../../utils/utils.ts";
 import { useAuthStore, useUserStore } from "../../stores";
 import Alert from "../utils/Alert.vue";
 import NumberInput from "../utils/NumberInput.vue";
+import type { Task } from "../../typings/user";
 
 const { loading } = useLoading();
 const { error, success } = useSuccessErrorMessage();
@@ -15,12 +16,14 @@ const TaskStatusSelect = Object.values(TaskStatuses);
 const userStore = useUserStore();
 const authStore = useAuthStore();
 
+const allTasks = ref<Task[]>(userStore.tasks ?? []);
+
 const show = defineModel("show", {
   type: Boolean,
   default: false,
 });
 
-const semester = userStore.user?.semester[0];
+const semester = userStore.currentSemester;
 
 const props = defineProps<
   {
@@ -37,6 +40,7 @@ const formData = ref<TaskForm>({
   hrsCompleted: props.hrsCompleted ?? 0,
   hrsRequired: props.hrsRequired ?? 0,
   startDate: props.startDate ?? new Date(Date.now()),
+  dependantTasks: props.dependantTasks ?? [],
   endDate: props.endDate ?? undefined,
 });
 
@@ -51,6 +55,7 @@ watch(
       hrsCompleted: props.hrsCompleted ?? 0,
       hrsRequired: props.hrsRequired ?? 0,
       startDate: props.startDate ?? new Date(Date.now()),
+      dependantTasks: props.dependantTasks ?? [],
       endDate: props.endDate ?? undefined,
     };
   },
@@ -78,6 +83,7 @@ const closeForm = () => {
     startDate: props.startDate ?? undefined,
     endDate: props.endDate ?? undefined,
     progress: props.progress ?? TaskStatuses.STARTED,
+    dependantTasks: props.dependantTasks ?? [],
     hrsCompleted: props.hrsCompleted ?? 0,
     hrsRequired: props.hrsRequired ?? 0,
   };
@@ -103,6 +109,7 @@ const createTask = async () => {
     endDate: formData.value.endDate,
     progress: formData.value.progress,
     hrsCompleted: formData.value.hrsCompleted,
+    dependantTasks: formData.value.dependantTasks,
     hrsRequired: formData.value.hrsRequired,
   };
 
@@ -139,9 +146,9 @@ const createTask = async () => {
               <v-text-field
                 v-model="formData.title"
                 label="Title"
-                outlined
                 required
                 variant="solo-filled"
+                outlined
                 aria-required="true"
               ></v-text-field>
             </v-col>
@@ -159,13 +166,14 @@ const createTask = async () => {
             </v-col>
             <v-col cols="12">
               <v-select
-                v-if="selectedModule"
+                :disabled="!selectedModule"
                 v-model="formData.milestoneId"
                 :items="selectedModuleMilestones ?? []"
                 item-title="milestoneTitle"
                 item-value="_id"
                 label="Milestone"
                 required
+                aria-required="true"
                 variant="solo-filled"
               ></v-select>
             </v-col>
@@ -220,6 +228,19 @@ const createTask = async () => {
                 :min="0"
                 required
               ></NumberInput>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12">
+              <v-select
+                v-model="formData.dependantTasks"
+                :items="allTasks"
+                item-title="title"
+                item-value="_id"
+                label="Dependant Tasks"
+                multiple
+                variant="solo-filled"
+              ></v-select>
             </v-col>
           </v-row>
         </v-container>

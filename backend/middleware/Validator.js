@@ -26,7 +26,6 @@ const fullSchema = Joi.object({
   // Milestone Validation
   MilestoneTitle: Joi.string().min(3).max(50).required(),
   MilestoneType: Joi.string().required(),
-  MilestoneProgress: Joi.number().required(),
   LTSDefined: Joi.boolean().required(),
   MilestoneStartDate: Joi.date().iso().required(),
   MilestoneEndDate: Joi.date().iso().required(),
@@ -48,7 +47,6 @@ const fullSchema = Joi.object({
   ActivityTitle: Joi.string().min(3).max(50).required(),
   ActivityType: Joi.string().min(3).max(50).required(),
   Notes: Joi.string(),
-  hrsCompleted: Joi.number(),
 });
 
 class Validator {
@@ -70,6 +68,16 @@ class Validator {
     // Combine into a new fileSchema
 
     return fileSchema;
+  }
+
+  static async validateFullFile(file) {
+    const fileSchema = Validator.generateFileValidation();
+    try {
+      await fileSchema.validateAsync(file);
+      return new Response("Validated correctly", 200, {});
+    } catch (e) {
+      return new Response(e.message, 400, {});
+    }
   }
 
   static async validateFile(row) {
@@ -223,15 +231,6 @@ class Validator {
     }
   }
 
-  static async validateMilestone(milestoneObject) {
-    const { error } = await fullSchema.validateAsync({ milestoneObject });
-    if (error) {
-      return new Response(error.message, 400, {});
-    } else {
-      return new Response("Milestone object is valid", 200, {});
-    }
-  }
-
   static async validateMilestone(
     milestoneTitle,
     milestoneType,
@@ -282,7 +281,6 @@ class Validator {
     const progress = fullSchema.extract("Progress");
     const hrsCompleted = fullSchema.extract("hrsCompleted");
     const hrsRequired = fullSchema.extract("hrsRequired");
-    const activities = fullSchema.extract("activities");
 
     const task = {
       title: taskObject.title,
@@ -291,7 +289,6 @@ class Validator {
       status: taskObject.status,
       hrsCompleted: taskObject.hrsCompleted,
       hrsRequired: taskObject.hrsRequired,
-      activities: taskObject.activities,
     };
 
     const taskSchema = Joi.object({
@@ -301,7 +298,6 @@ class Validator {
       status: progress,
       hrsCompleted: hrsCompleted,
       hrsRequired: hrsRequired,
-      activities: activities,
     });
 
     const { error } = taskSchema.validate(task);
@@ -320,7 +316,6 @@ class Validator {
     taskProgress,
     hrsCompleted,
     hrsRequired,
-    activities,
   ) {
     let errors = [];
 
@@ -366,14 +361,6 @@ class Validator {
       const { error } = hrs.validate(hrsRequired);
       if (error) {
         errors.push({ hrsrequired: error.message });
-      }
-    }
-
-    if (activities !== null) {
-      const activities = fullSchema.extract("activities");
-      const { error } = activities.validate(activities);
-      if (error) {
-        errors.push({ activites: error.message });
       }
     }
 

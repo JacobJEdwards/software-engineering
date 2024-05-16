@@ -1,0 +1,9 @@
+SemesterName,SemesterStartDate,SemesterEndDate,ModuleCode,ModuleName,ModuleStartDate,ModuleEndDate,MilestoneTitle,MilestoneType,MilestoneStartDate,MilestoneEndDate
+Sem1,3000-01-01,3000-01-01,CMP101,Introduction to Computing,3000-01-01,3000-01-01,Essay Plan Submission,Coursework,3000-01-01,3000-01-01
+Sem2,3000-01-01,3000-01-01,CMP102,Introduction to Computing,3000-01-01,3000-01-01,Essay Final Draft,Coursework,3000-01-01,3000-01-01
+Sem3,3000-01-01,3000-01-01,CMP103,Introduction to Computing,3000-01-01,3000-01-01,Project Prototype Presentation,Coursework,3000-01-01,3000-01-01
+Sem4,3000-01-01,3000-01-01,CMP104,Introduction to Computing,3000-01-01,3000-01-01,Final Exam,Exam,3000-01-01,3000-01-01
+Sem5,3000-01-01,3000-01-01,CMP111,Data Structures,3000-01-01,3000-01-01,Project Proposal,Coursework,3000-01-01,3000-01-01
+Sem6,3000-01-01,3000-01-01,CMP112,Data Structures,3000-01-01,3000-01-01,Project Implementation,Coursework,3000-01-01,3000-01-01
+Sem7,3000-01-01,3000-01-01,CMP113,Data Structures,3000-01-01,3000-01-01,Midterm Exam,Exam,3000-01-01,3000-01-01
+Sem8,3000-01-01,3000-01-01,CMP114,Data Structures,3000-01-01,3000-01-01,Final Exam,Exam,3000-01-01,3000-01-01

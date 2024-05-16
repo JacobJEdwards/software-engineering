@@ -5,6 +5,7 @@ import type {
   Milestone,
   Activity,
   Module,
+  Semester,
 } from "../typings/user.ts";
 import { useAuthStore } from "./auth.ts";
 import { getUser } from "../services/user.ts";
@@ -13,28 +14,44 @@ import { getActivities } from "../services/activities";
 export type UserState = {
   userId: string | null;
   user: User | null;
+  currentSemester: Semester | null;
   loading: boolean;
   tasks: Task[];
   milestones: Milestone[];
   activities: Activity[];
   modules: Module[];
+  allActivities: Activity[];
 };
 
 export const useUserStore = defineStore("user", {
   state: (): UserState => ({
     userId: null,
     user: null,
+    currentSemester: null,
     loading: false,
     tasks: [],
     milestones: [],
     modules: [],
     activities: [],
+    allActivities: [],
   }),
   getters: {
     userInfo: (state) => state.user,
     isLoading: (state) => state.loading,
   },
   actions: {
+    changeSemester(semester: Semester | null) {
+      if (!semester) {
+        return;
+      }
+
+      this.currentSemester = semester;
+      this.refreshModules();
+      this.refreshMilestones();
+      this.refreshTasks();
+      this.refreshActivities();
+    },
+
     async getUser() {
       const authStore = useAuthStore();
 
@@ -58,11 +75,17 @@ export const useUserStore = defineStore("user", {
       }
 
       this.user = result.data;
+      this.userId = result.data._id;
+
+      this.currentSemester = this.user.semester.length
+        ? this.user.semester[0]
+        : null;
 
       await this.loadActivities();
       this.refreshModules();
       this.refreshMilestones();
       this.refreshTasks();
+      this.refreshActivities();
 
       this.loading = false;
     },
@@ -78,7 +101,7 @@ export const useUserStore = defineStore("user", {
         return;
       }
 
-      this.modules = this.user.semester.flatMap((s) => s.modules);
+      this.modules = this.currentSemester?.modules ?? [];
     },
     refreshMilestones() {
       if (!this.user) {
@@ -87,6 +110,16 @@ export const useUserStore = defineStore("user", {
 
       this.milestones = this.modules.flatMap((m) => m.milestones);
     },
+    refreshActivities() {
+      if (!this.user) {
+        return;
+      }
+
+      this.activities = this.allActivities.filter((activity) =>
+        this.tasks.some((task) => task.activities.includes(activity._id)),
+      );
+    },
+
     async loadActivities() {
       if (!this.user) {
         return;
@@ -111,7 +144,7 @@ export const useUserStore = defineStore("user", {
         this.loading = false;
         return;
       }
-      this.activities = result.data;
+      this.allActivities = result.data;
       this.loading = false;
     },
   },

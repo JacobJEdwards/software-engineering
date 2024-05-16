@@ -25,7 +25,7 @@ const modelVisible = ref<boolean>(false);
         variant="tonal"
         pill
       >
-        {{ task.status }}
+        {{ Math.floor((task.hrsCompleted / task.hrsRequired) * 100) }}% complete
       </v-chip>
       <v-btn
         @click="modelVisible = true"

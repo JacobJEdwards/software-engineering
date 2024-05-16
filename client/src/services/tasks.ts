@@ -33,6 +33,7 @@ const createTask = async (task: TaskForm, token: string): Promise<Result> => {
       startDate: task.startDate ?? new Date(),
       endDate: task.endDate ?? new Date(),
       progress: task.progress,
+      dependantTasks: task.dependantTasks,
       hrsCompleted: task.hrsCompleted,
       hrsRequired: task.hrsRequired,
     };
@@ -60,17 +61,17 @@ const createTask = async (task: TaskForm, token: string): Promise<Result> => {
 };
 
 const updateTask = async (
-  task: TaskForm & { taskId: string },
+  task: Omit<TaskForm, "milestoneId"> & { taskId: string },
   token: string,
 ): Promise<Result> => {
   try {
     const body = {
       taskId: task.taskId,
-      milestoneId: task.milestoneId,
       title: task.title,
       startDate: task.startDate,
       endDate: task.endDate,
       progress: task.progress,
+      dependantTasks: task.dependantTasks,
       hrsCompleted: task.hrsCompleted,
       hrsRequired: task.hrsRequired,
     };

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import ScheduleGenerator from "../components/ScheduleGenerator.vue";
-import ScheduleUpload from "../components/ScheduleUpload.vue";
+import ScheduleGenerator from "../components/modals/ScheduleGenerator.vue";
+import ScheduleUpload from "../components/modals/ScheduleUpload.vue";
 import { useUserStore } from "../stores";
 import type { Semester, Task, Activity } from "../typings/user.ts";
+import ChangeSemester from "../components/modals/ChangeSemester.vue";
 
 import { computed, ref } from "vue";
 import ChangeEmail from "../components/modals/ChangeEmail.vue";
@@ -58,6 +59,7 @@ const toggleColorBlind = () =>{
 const showChangeEmail = ref<boolean>(false);
 const showChangeName = ref<boolean>(false);
 const showChangePassword = ref<boolean>(false);
+const showChangeSemester = ref<boolean>(false);
 
 userStore.$subscribe(() => {
   semesters.value = userStore.user?.semester ?? [];
@@ -74,6 +76,8 @@ userStore.$subscribe(() => {
           title="User Data"
           prepend-icon="mdi-account-circle-outline"
           :loading="userStore.loading"
+          elevation="3"
+          rounded="md"
         >
           <v-card-text>
             <v-list>
@@ -97,9 +101,21 @@ userStore.$subscribe(() => {
                   ></v-btn>
                 </template>
               </v-list-item>
-              <v-list-item title="Semesters">{{
-                semesters?.length
-              }}</v-list-item>
+              <v-list-item title="Semesters"
+                >{{ semesters?.length }}
+              </v-list-item>
+              <v-list-item
+                v-if="userStore.currentSemester"
+                title="Current Semester"
+                >{{ userStore.currentSemester.semesterName }}
+                <template #append>
+                  <v-btn
+                    @click="showChangeSemester = true"
+                    :icon="showChangeSemester ? 'mdi-close' : 'mdi-pencil'"
+                    variant="text"
+                  ></v-btn>
+                </template>
+              </v-list-item>
               <v-list-item title="Modules">{{ modules?.length }}</v-list-item>
               <v-list-item title="Milestones">{{
                 milestones?.length
@@ -116,7 +132,12 @@ userStore.$subscribe(() => {
       <v-col cols="6">
         <v-row>
           <v-col cols="12">
-            <v-card title="Schedule Upload" prepend-icon="mdi-upload">
+            <v-card
+              title="Schedule Upload"
+              prepend-icon="mdi-upload"
+              elevation="3"
+              rounded="md"
+            >
               <v-card-text>
                 <v-btn
                   @click="toggleScheduleUpload"
@@ -124,14 +145,19 @@ userStore.$subscribe(() => {
                   class="my-4"
                   rounded="md"
                   block
-                  >{{ showScheduleUpload ? "Hide" : "Show" }} Schedule
-                  Upload</v-btn
+                  :disabled="showScheduleUpload"
+                  >Upload a Schedule</v-btn
                 >
               </v-card-text>
             </v-card>
           </v-col>
           <v-col cols="12">
-            <v-card title="Schedule Generator" prepend-icon="mdi-calendar">
+            <v-card
+              title="Schedule Generator"
+              prepend-icon="mdi-calendar"
+              elevation="3"
+              rounded="md"
+            >
               <v-card-text>
                 <v-btn
                   @click="toggleScheduleGenerator"
@@ -139,13 +165,12 @@ userStore.$subscribe(() => {
                   class="my-4"
                   rounded="md"
                   block
-                  >{{ showScheduleGenerator ? "Hide" : "Show" }} Schedule
-                  Generator</v-btn
+                  :disabled="showScheduleGenerator"
+                  >Generate a Schedule</v-btn
                 >
                 <ScheduleGenerator
                   v-model:show="showScheduleGenerator"
                   :close="toggleScheduleGenerator"
-                  :semester-names="semesterNames"
                 />
               </v-card-text>
             </v-card>
@@ -195,4 +220,8 @@ userStore.$subscribe(() => {
     v-model:show="showChangeName"
   />
   <ScheduleUpload v-model:show="showScheduleUpload" />
+  <ChangeSemester
+    :close="() => (showChangeSemester = false)"
+    v-model:show="showChangeSemester"
+  />
 </template>

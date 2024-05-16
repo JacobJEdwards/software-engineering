@@ -29,7 +29,13 @@ const deleteMilestone = async (
 };
 
 const createMilestone = async (
-  milestone: Milestone,
+  milestone: {
+    milestoneTitle: string;
+    milestoneType: string;
+    startDate: Date;
+    endDate: Date;
+    moduleId: string;
+  },
   token: string,
 ): Promise<Result> => {
   try {
@@ -82,7 +88,7 @@ const updateMilestone = async (
   }
 };
 
-export const TaskService = {
+export const MilestoneService = {
   delete: deleteMilestone,
   create: createMilestone,
   update: updateMilestone,
