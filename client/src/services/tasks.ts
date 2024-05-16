@@ -1,5 +1,5 @@
 import { API_ROUTE } from "../config";
-import type { TaskForm } from "../typings/user.ts";
+import { TaskForm, TaskStatuses } from "../typings/user.ts";
 import type { Result } from "./common.ts";
 
 const deleteTask = async (taskId: string, token: string): Promise<Result> => {
@@ -32,7 +32,8 @@ const createTask = async (task: TaskForm, token: string): Promise<Result> => {
       tasktitle: task.title,
       startDate: task.startDate ?? new Date(),
       endDate: task.endDate ?? new Date(),
-      progress: task.progress,
+      progress:
+        task.progress === TaskStatuses.NOT_STARTED ? "Started" : task.progress,
       dependantTasks: task.dependantTasks,
       hrsCompleted: task.hrsCompleted,
       hrsRequired: task.hrsRequired,
@@ -70,7 +71,8 @@ const updateTask = async (
       title: task.title,
       startDate: task.startDate,
       endDate: task.endDate,
-      progress: task.progress,
+      progress:
+        task.progress === TaskStatuses.NOT_STARTED ? "Started" : task.progress,
       dependantTasks: task.dependantTasks,
       hrsCompleted: task.hrsCompleted,
       hrsRequired: task.hrsRequired,

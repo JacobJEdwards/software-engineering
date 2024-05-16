@@ -16,7 +16,7 @@ const inProgressTasks: ComputedRef<Task[]> = computed(() =>
 );
 
 const startedTasks: ComputedRef<Task[]> = computed(() =>
-  props.tasks.filter((task) => task.status === TaskStatuses.STARTED),
+  props.tasks.filter((task) => task.status === TaskStatuses.NOT_STARTED),
 );
 
 const percentageCompleted = computed(() => {
@@ -55,7 +55,7 @@ const percentageStarted = computed(() => {
             height="10"
             class="mb-4"
           ></v-progress-linear>
-          <span class="text-centre">Started</span>
+          <span class="text-centre">Not Started</span>
         </v-card-text>
       </v-card>
     </v-col>

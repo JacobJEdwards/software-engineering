@@ -21,7 +21,13 @@ const modelVisible = ref<boolean>(false);
     <template #append>
       <v-chip
         class="text-center p-0 mr-3"
-        :color="task.status === 'Completed' ? 'success' : 'error'"
+        :color="
+          task.status === 'Completed'
+            ? 'success'
+            : task.status === 'In Progress'
+              ? 'warning'
+              : 'error'
+        "
         variant="tonal"
         pill
       >

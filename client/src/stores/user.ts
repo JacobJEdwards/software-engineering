@@ -1,11 +1,12 @@
 import { defineStore } from "pinia";
-import type {
+import {
   Task,
   User,
   Milestone,
   Activity,
   Module,
   Semester,
+  TaskStatuses,
 } from "../typings/user.ts";
 import { useAuthStore } from "./auth.ts";
 import { getUser } from "../services/user.ts";
@@ -95,6 +96,14 @@ export const useUserStore = defineStore("user", {
       }
 
       this.tasks = this.milestones.flatMap((m) => m.tasks);
+
+      this.tasks = this.tasks.map((task) => {
+        if (task.status === "Started") {
+          task.status = TaskStatuses.NOT_STARTED;
+        }
+
+        return task;
+      });
     },
     refreshModules() {
       if (!this.user) {

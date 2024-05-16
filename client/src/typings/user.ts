@@ -1,5 +1,6 @@
 export const TaskStatuses = {
-  STARTED: "Started",
+  // STARTED: "Started",
+  NOT_STARTED: "Not Started",
   IN_PROGRESS: "In Progress",
   COMPLETED: "Completed",
 } as const;
