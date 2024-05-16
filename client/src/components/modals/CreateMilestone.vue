@@ -28,7 +28,9 @@ const show = defineModel("show", {
 const props = defineProps<
   {
     close: () => void;
-  } & Partial<Milestone>
+  } & Partial<Milestone> & {
+      moduleCode?: string;
+    }
 >();
 
 const emit = defineEmits(["created"]);
@@ -48,7 +50,7 @@ const formData = ref<FormData>({
   type: props.milestoneType ?? "",
   startDate: props.startDate ?? undefined,
   endDate: props.endDate ?? undefined,
-  moduleId: props.moduleId ?? undefined,
+  moduleId: props.moduleCode ?? undefined,
 });
 
 const createMilestone = async () => {
@@ -72,6 +74,8 @@ const createMilestone = async () => {
     success.value.show = true;
     emit("created");
     loading.value = false;
+    await userStore.getUser();
+    closeForm();
   } else {
     error.value.message = result.error ?? "An error occurred";
     error.value.show = true;
@@ -98,7 +102,7 @@ watch(
       type: props.milestoneType ?? "",
       startDate: props.startDate ?? undefined,
       endDate: props.endDate ?? undefined,
-      moduleId: props.moduleId ?? undefined,
+      moduleId: props.moduleCode ?? undefined,
     };
   },
   { deep: true },
@@ -143,7 +147,7 @@ watch(
                 v-model="formData.moduleId"
                 :items="modules"
                 item-title="moduleName"
-                item-value="_id"
+                item-value="moduleCode"
                 label="Module"
                 required
                 variant="solo-filled"

@@ -31,8 +31,9 @@ const logout = async () => {
   <v-navigation-drawer
     expand-on-hover
     rail
-    class="full-height relative bg-grey-darken-4 pt-8"
+    class="full-height relative pt-8"
     v-if="!mdAndDown"
+    color="secondary"
   >
     <v-list>
       <v-list-item
@@ -48,11 +49,14 @@ const logout = async () => {
         v-for="link in links"
         :key="link.display"
         :to="link.to"
-        :title="link.display"
         :prepend-icon="link.icon"
         link
-        class="hover:bg-gray-800 hover:text-white"
-      ></v-list-item>
+        class="font-bold my-4"
+      >
+        <template #title>
+          <span class="font-bold my-4">{{ link.display }}</span>
+        </template>
+      </v-list-item>
     </v-list>
 
     <template #append>

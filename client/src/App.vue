@@ -48,7 +48,7 @@ router.beforeEach(async () => {
   <v-app>
     <Navbar v-if="isAuth" />
     <Header v-if="!isLoginPage" />
-    <v-main>
+    <v-main class="pb-12">
       <router-view />
       <v-btn
         v-if="!isLoginPage && !isAuth"
@@ -62,7 +62,6 @@ router.beforeEach(async () => {
       />
       <LogActivity v-else-if="isAuth" />
     </v-main>
-    <Footer />
   </v-app>
 </template>
 

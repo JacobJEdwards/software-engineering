@@ -49,13 +49,13 @@ userStore.$subscribe(() => {
       </v-col>
 
       <v-col cols="12">
-        <v-card
-          title="All modules"
-          prepend-icon="mdi-dots-horizontal"
-          flat
-          elevation="3"
-          rounded="md"
-        >
+        <v-card flat elevation="3" rounded="md">
+          <template #title>
+            <v-card-title class="card-title">
+              <v-icon color="modules">mdi-dots-horizontal</v-icon>
+              <span> All modules</span>
+            </v-card-title>
+          </template>
           <template #text>
             <v-text-field
               v-model="search"

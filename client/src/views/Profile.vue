@@ -148,7 +148,6 @@ userStore.$subscribe(() => {
                 <ScheduleGenerator
                   v-model:show="showScheduleGenerator"
                   :close="toggleScheduleGenerator"
-                  :semester-names="semesterNames"
                 />
               </v-card-text>
             </v-card>

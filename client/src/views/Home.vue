@@ -82,7 +82,7 @@ userStore.$subscribe(() => {
       <v-col cols="12" md="6">
         <v-card rounded="md" elevation="3">
           <v-card-title class="card-title">
-            <v-icon class="">mdi-clock-time-four-outline</v-icon>
+            <v-icon color="semester">mdi-clock-time-four-outline</v-icon>
             Semester Overview
           </v-card-title>
           <v-divider></v-divider>
@@ -107,7 +107,7 @@ userStore.$subscribe(() => {
 
         <v-card rounded="md" elevation="3" class="mt-4">
           <v-card-title class="card-title">
-            <v-icon>mdi-checkbox-marked-circle-outline</v-icon>
+            <v-icon color="task">mdi-checkbox-marked-circle-outline</v-icon>
             Upcoming Tasks
           </v-card-title>
           <v-divider></v-divider>
@@ -138,7 +138,7 @@ userStore.$subscribe(() => {
       <v-col cols="12" md="6">
         <v-card rounded="md" elevation="3">
           <v-card-title class="card-title">
-            <v-icon>mdi-calendar</v-icon>
+            <v-icon color="accent">mdi-calendar</v-icon>
             Calendar
           </v-card-title>
           <v-divider></v-divider>

@@ -61,8 +61,8 @@ userStore.$subscribe(() => {
       <v-col cols="12" md="6">
         <v-card elevation="3" rounded="md">
           <v-card-title class="card-title">
-            <v-icon>mdi-calendar</v-icon>
-            <span>Upcoming Milestones</span>
+            <v-icon color="milestones">mdi-calendar</v-icon>
+            <span> Upcoming Milestones</span>
           </v-card-title>
           <v-divider></v-divider>
           <v-card-text>
@@ -90,12 +90,11 @@ userStore.$subscribe(() => {
       <v-col cols="12" md="6">
         <v-row>
           <v-col cols="12">
-            <v-card
-              title="Add a Milestone"
-              prepend-icon="mdi-clipboard-outline"
-              elevation="3"
-              rounded="md"
-            >
+            <v-card elevation="3" rounded="md">
+              <v-card-title class="card-title">
+                <v-icon color="milestones">mdi-clipboard-plus-outline</v-icon>
+                <span> Add a Milestone</span>
+              </v-card-title>
               <v-divider></v-divider>
               <v-card-text>
                 <AddMilestone :enabled="hasSemester" />
@@ -106,12 +105,13 @@ userStore.$subscribe(() => {
       </v-col>
 
       <v-col cols="12">
-        <v-card
-          title="All milestones"
-          prepend-icon="mdi-dots-horizontal"
-          rounded="md"
-          elevation="3"
-        >
+        <v-card rounded="md" elevation="3">
+          <template #title>
+            <v-card-title class="card-title">
+              <v-icon color="milestones">mdi-dots-horizontal</v-icon>
+              <span> All Milestones</span>
+            </v-card-title>
+          </template>
           <template #text>
             <v-text-field
               v-model="search"

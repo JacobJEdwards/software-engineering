@@ -46,7 +46,7 @@ const links = [
 </script>
 
 <template>
-  <v-footer class="bg-grey-darken-4" height="40" app>
+  <v-footer class="" height="40" app color="primary">
     <v-row align="center" class="pl-10" v-if="!mdAndDown">
       <v-col>
         <v-btn

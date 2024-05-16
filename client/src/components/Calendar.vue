@@ -118,7 +118,7 @@ const activityEvents: ComputedRef<EventInput[]> = computed(() =>
       start: startDate,
       end: endDate,
       title: activity.activityTitle,
-      color: "pink",
+      color: "#d32d7d",
       id: activity._id,
       extendedProps: {
         activity: activity,
@@ -138,7 +138,7 @@ const milestonesEvents: ComputedRef<EventInput[]> = computed(() =>
       end: props.dueDatesOnly ? undefined : endDate,
       allDay: !props.dueDatesOnly,
       title: milestone.milestoneTitle,
-      color: "blue",
+      color: "#49a078",
       id: milestone._id,
       extendedProps: {
         milestone: milestone,
@@ -158,7 +158,7 @@ const moduleEvents: ComputedRef<EventInput[]> = computed(() =>
       end: props.dueDatesOnly ? undefined : endDate,
       allDay: !props.dueDatesOnly,
       title: module.moduleName,
-      color: "purple",
+      color: "#41c40f",
       id: module._id,
       extendedProps: {
         module: module,
