@@ -7,6 +7,7 @@ import { useLoading, useSuccessErrorMessage } from "../../utils/utils.ts";
 import { useAuthStore, useUserStore } from "../../stores";
 import Alert from "../utils/Alert.vue";
 import NumberInput from "../utils/NumberInput.vue";
+import type { Task } from "../../typings/user";
 
 const { loading } = useLoading();
 const { error, success } = useSuccessErrorMessage();
@@ -14,6 +15,8 @@ const TaskStatusSelect = Object.values(TaskStatuses);
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
+
+const allTasks = ref<Task[]>(userStore.tasks ?? []);
 
 const show = defineModel("show", {
   type: Boolean,
@@ -143,9 +146,9 @@ const createTask = async () => {
               <v-text-field
                 v-model="formData.title"
                 label="Title"
-                outlined
                 required
                 variant="solo-filled"
+                outlined
                 aria-required="true"
               ></v-text-field>
             </v-col>
@@ -225,6 +228,19 @@ const createTask = async () => {
                 :min="0"
                 required
               ></NumberInput>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12">
+              <v-select
+                v-model="formData.dependantTasks"
+                :items="allTasks"
+                item-title="title"
+                item-value="_id"
+                label="Dependant Tasks"
+                multiple
+                variant="solo-filled"
+              ></v-select>
             </v-col>
           </v-row>
         </v-container>

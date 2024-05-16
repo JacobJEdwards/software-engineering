@@ -5,6 +5,8 @@ import { computed, ref } from "vue";
 import type { Milestone, Task as TaskType } from "../typings/user";
 import AddMilestone from "../components/AddMilestone.vue";
 import MilestoneInfo from "../components/modals/MilestoneInfo.vue";
+import CreateTask from "../components/modals/CreateTask.vue";
+import MilestoneTasks from "../components/MilestoneTasks.vue";
 
 const userStore = useUserStore();
 
@@ -16,6 +18,7 @@ const expanded = ref<string[]>([]);
 
 const showMilestoneInfo = ref<boolean>(false);
 const selectedMilestone = ref<Milestone | null>(null);
+const showCreateTask = ref<boolean>(false);
 
 const upComingMilestones = computed(() =>
   milestones.value
@@ -40,6 +43,11 @@ const editMilestone = (milestone: Milestone) => {
   showMilestoneInfo.value = !showMilestoneInfo.value;
 };
 
+const showAddTask = (milestone: Milestone) => {
+  selectedMilestone.value = milestone;
+  showCreateTask.value = true;
+};
+
 userStore.$subscribe(() => {
   milestones.value = userStore.milestones;
 });
@@ -51,29 +59,32 @@ userStore.$subscribe(() => {
 
     <v-row v-else>
       <v-col cols="12" md="6">
-        <v-card
-          title="Upcoming Milestones"
-          prepend-icon="mdi-calendar"
-          elevation="3"
-          rounded="md"
-        >
-          <v-list>
-            <v-list-item
-              v-for="milestone in upComingMilestones"
-              :key="milestone._id"
-            >
-              <v-list-item-title class="d-flex justify-space-between">
-                <span>{{ milestone.milestoneTitle }}</span>
-                <p class="caption text-sm text-gray-500">
-                  {{ milestone.milestoneType }}
-                </p>
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                Due: {{ new Date(milestone.endDate).toLocaleDateString() }}
-              </v-list-item-subtitle>
-            </v-list-item>
-            <v-divider></v-divider>
-          </v-list>
+        <v-card elevation="3" rounded="md">
+          <v-card-title class="card-title">
+            <v-icon>mdi-calendar</v-icon>
+            <span>Upcoming Milestones</span>
+          </v-card-title>
+          <v-divider></v-divider>
+          <v-card-text>
+            <v-list v-if="upComingMilestones.length > 0">
+              <v-list-item
+                v-for="milestone in upComingMilestones"
+                :key="milestone._id"
+              >
+                <v-list-item-title class="d-flex justify-space-between">
+                  <span>{{ milestone.milestoneTitle }}</span>
+                  <p class="caption text-sm text-gray-500">
+                    {{ milestone.milestoneType }}
+                  </p>
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  <span class="font-bold">Due: </span
+                  >{{ new Date(milestone.endDate).toLocaleDateString() }}
+                </v-list-item-subtitle>
+              </v-list-item>
+            </v-list>
+            <p v-else class="text-lg mb-4">No milestones due soon!</p>
+          </v-card-text>
         </v-card>
       </v-col>
       <v-col cols="12" md="6">
@@ -120,7 +131,6 @@ userStore.$subscribe(() => {
               item-value="_id"
               show-expand
               v-model:expanded="expanded"
-              class="bg-white"
             >
               <template #item.startDate="{ item }">
                 {{ new Date(item.startDate).toLocaleDateString() }}
@@ -146,6 +156,14 @@ userStore.$subscribe(() => {
                   "
                   @click="editMilestone(item)"
                 ></v-btn>
+              </template>
+              <template #expanded-row="{ item, columns }">
+                <tr>
+                  <td :colspan="columns.length">
+                    <h3 class="text-lg font-bold my-2">Tasks</h3>
+                    <MilestoneTasks :milestone="item" />
+                  </td>
+                </tr>
               </template>
             </v-data-table>
           </v-card-text>

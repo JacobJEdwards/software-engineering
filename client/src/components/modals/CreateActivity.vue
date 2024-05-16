@@ -128,7 +128,7 @@ const submitForm = async () => {
             <v-col cols="12" sm="6">
               <v-select
                 v-model="formData.activityType"
-                :items="Object.values(ActivityTypes)"
+                :items="Object.values(ActivityTypes) as string[]"
                 label="Activity Type"
                 required
                 :loading="loading"

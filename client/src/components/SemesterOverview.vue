@@ -47,6 +47,7 @@ const tasks: ComputedRef<Task[]> = computed(() =>
       {{ new Date(props.selectedSemester.endDate).toLocaleDateString() }}
     </v-card-subtitle>
     <v-card-text>
+      <h3 class="font-bold mb-2">Tasks</h3>
       <TaskFilter :tasks="tasks" />
     </v-card-text>
   </v-card>
