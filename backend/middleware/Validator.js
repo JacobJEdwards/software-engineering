@@ -26,7 +26,6 @@ const fullSchema = Joi.object({
     // Milestone Validation
     MilestoneTitle: Joi.string().min(3).max(50).required(),
     MilestoneType: Joi.string().required(),
-    MilestoneProgress: Joi.number().required(),
     LTSDefined: Joi.boolean().required(),
     MilestoneStartDate: Joi.date().iso().required(),
     MilestoneEndDate: Joi.date().iso().required(),
