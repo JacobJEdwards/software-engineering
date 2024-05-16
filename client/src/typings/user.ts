@@ -109,7 +109,7 @@ export type TaskForm = {
 
 export type ActivityForm = {
   activityTitle: string;
-  activityType: ActivityType;
+  activityType: string;
   activityDescription: string;
   hrsCompleted: number;
   tasks: string[];

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { TaskStatuses, Task } from "../../typings/user.ts";
 import { useLoading, useSuccessErrorMessage } from "../../utils/utils.ts";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { TaskService } from "../../services";
 import { useAuthStore, useUserStore } from "../../stores";
 import Alert from "../utils/Alert.vue";
@@ -39,6 +39,26 @@ const formData = ref<TaskForm>({
 
 const edit = ref<boolean>(false);
 const deletePressed = ref<boolean>(false);
+const possibleDependantTasks = computed(() => {
+  return userStore.tasks.filter(
+    (task) =>
+      task._id !== props.task._id &&
+      !task.dependantTasks.includes(props.task._id),
+  );
+});
+
+const currentDependantTasks = computed(() => {
+  return userStore.tasks.filter((task) =>
+    props.task.dependantTasks.includes(task._id),
+  );
+});
+
+const selectedTask = ref<Task | null>(null);
+const showTaskInfo = ref<boolean>(false);
+const closeTaskInfo = () => {
+  selectedTask.value = null;
+  showTaskInfo.value = false;
+};
 
 const closeForm = () => {
   formData.value = {
@@ -217,6 +237,19 @@ watch(
               required
             />
           </v-col>
+          <v-col cols="12">
+            <v-select
+              :loading="loading"
+              v-model="formData.dependantTasks"
+              label="Dependant Tasks"
+              multiple
+              :items="possibleDependantTasks"
+              item-title="title"
+              item-value="_id"
+              aria-required="true"
+              variant="solo-filled"
+            ></v-select>
+          </v-col>
         </v-row>
       </v-card-text>
 
@@ -256,6 +289,30 @@ watch(
               :key="task._id"
               :subtitle="`${task.hrsCompleted}/${task.hrsRequired}`"
             ></v-list-item>
+          </v-col>
+          <v-col cols="12">
+            <v-list-item
+              title="Dependant Tasks"
+              :key="task._id"
+              :subtitle="task.dependantTasks.length"
+            ></v-list-item>
+            <v-list-item
+              v-for="task in currentDependantTasks"
+              :key="task._id"
+              :subtitle="task.title"
+            >
+              <template #append>
+                <v-btn
+                  icon="mdi-information-outline"
+                  variant="text"
+                  @click="
+                    selectedTask = task;
+                    showTaskInfo = true;
+                  "
+                >
+                </v-btn>
+              </template>
+            </v-list-item>
           </v-col>
         </v-row>
       </v-card-text>
@@ -301,6 +358,13 @@ watch(
     text="Are you sure you want to delete this task?"
     @confirm="deleteTask"
     @cancel="deletePressed = false"
+  />
+  <TaskInfo
+    v-if="selectedTask"
+    :task="selectedTask"
+    editable
+    :close="closeTaskInfo"
+    v-model:show="showTaskInfo"
   />
 </template>
 

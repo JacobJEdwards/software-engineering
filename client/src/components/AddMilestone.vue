@@ -11,10 +11,6 @@ const props = defineProps({
 });
 
 const showModel = () => {
-  if (!props.enabled) {
-    return;
-  }
-
   modelVisible.value = true;
 };
 </script>

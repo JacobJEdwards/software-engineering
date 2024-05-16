@@ -62,6 +62,73 @@ watch(
 );
 </script>
 
-<template></template>
+<template>
+  <v-dialog v-model:show="show" max-width="500px">
+    <v-card>
+      <v-card-title>
+        <span class="headline">{{ props.milestoneTitle }}</span>
+      </v-card-title>
+      <v-card-text>
+        <v-container>
+          <v-row>
+            <v-col cols="12">
+              <v-text-field
+                v-model="formData.title"
+                label="Title"
+                required
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-select
+                v-model="formData.type"
+                :items="milestoneSelectTypes as string[]"
+                label="Type"
+                required
+              ></v-select>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                v-model="formData.progress"
+                label="Progress"
+                required
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                v-model="formData.startDate"
+                label="Start Date"
+                required
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                v-model="formData.endDate"
+                label="End Date"
+                required
+              ></v-text-field>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn @click="close" color="primary">Close</v-btn>
+        <v-btn @click="close" color="primary">Save</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+  <Alert
+    type="error"
+    :message="error.message"
+    :close="() => (error.show = false)"
+    v-model:show="error.show"
+  />
+  <Alert
+    type="success"
+    :message="success.message"
+    :close="() => (success.show = false)"
+    v-model:show="success.show"
+  />
+</template>
 
 <style scoped></style>
