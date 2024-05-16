@@ -24,7 +24,6 @@ const props = defineProps<{
 type FormData = {
   milestoneTitle: string;
   milestoneType: string;
-  milestoneProgress: number;
   startDate: Date;
   endDate: Date;
 };
@@ -32,7 +31,6 @@ type FormData = {
 const formData = ref<FormData>({
   milestoneTitle: props.milestone.milestoneTitle,
   milestoneType: props.milestone.milestoneType,
-  milestoneProgress: props.milestone.milestoneProgress,
   startDate: new Date(props.milestone.startDate),
   endDate: new Date(props.milestone.endDate),
 });
@@ -68,7 +66,6 @@ watch(
     formData.value = {
       milestoneTitle: props.milestone.milestoneTitle,
       milestoneType: props.milestone.milestoneType,
-      milestoneProgress: props.milestone.milestoneProgress,
       startDate: new Date(props.milestone.startDate),
       endDate: new Date(props.milestone.endDate),
     };
@@ -133,16 +130,6 @@ watch(
               variant="solo-filled"
             ></v-select>
           </v-col>
-          <v-col cols="12">
-            <NumberInput
-              persistent-hint
-              hint="Please log an activity to update hours."
-              :loading="loading"
-              v-model="formData.milestoneProgress"
-              label="Hours Completed"
-              disabled
-            />
-          </v-col>
         </v-row>
       </v-card-text>
       <v-card-text v-else>
@@ -157,12 +144,6 @@ watch(
             <v-list-item
               title="Milestone Type"
               :subtitle="formData.milestoneType"
-            ></v-list-item>
-          </v-col>
-          <v-col cols="12">
-            <v-list-item
-              title="Milestone Progress"
-              :subtitle="formData.milestoneProgress"
             ></v-list-item>
           </v-col>
           <v-col cols="12">

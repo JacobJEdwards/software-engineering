@@ -61,7 +61,6 @@ export type Task = {
 export type Milestone = {
   milestoneTitle: string;
   milestoneType: string;
-  milestoneProgress: number;
   ltsDefined: boolean;
   tasks: Array<Task>;
   startDate: Date;

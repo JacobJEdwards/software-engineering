@@ -34,7 +34,6 @@ const milestoneSelectTypes = Object.values(MilestoneTypes);
 type FormData = {
   title: string;
   type: string;
-  progress: number;
   startDate: Date;
   endDate: Date;
 };
@@ -42,7 +41,6 @@ type FormData = {
 const formData = ref<FormData>({
   title: props.milestoneTitle ?? "",
   type: props.milestoneType ?? "",
-  progress: props.milestoneProgress ?? 0,
   startDate: props.startDate ?? new Date(Date.now()),
   endDate: props.endDate ?? new Date(Date.now()),
 });
@@ -53,7 +51,6 @@ watch(
     formData.value = {
       title: props.milestoneTitle ?? "",
       type: props.milestoneType ?? "",
-      progress: props.milestoneProgress ?? 0,
       startDate: props.startDate ?? new Date(Date.now()),
       endDate: props.endDate ?? new Date(Date.now()),
     };
@@ -85,13 +82,6 @@ watch(
                 label="Type"
                 required
               ></v-select>
-            </v-col>
-            <v-col cols="12">
-              <v-text-field
-                v-model="formData.progress"
-                label="Progress"
-                required
-              ></v-text-field>
             </v-col>
             <v-col cols="12">
               <v-text-field
