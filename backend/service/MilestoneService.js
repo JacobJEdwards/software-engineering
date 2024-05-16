@@ -17,7 +17,7 @@ class MilestoneService {
                 ltsDefined: ltsDefined
             };
 
-            let response = await Validator.validateMilestone(newMilestone);
+            let response = await Validator.validateMilestone(milestoneName, milestoneType, milestoneStartDate, milestoneEndDate);
             if (response.code !== 200) return response;
 
             user.semester.find(semester => {

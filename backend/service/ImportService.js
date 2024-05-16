@@ -60,6 +60,7 @@ class ImportService {
             }
         }
         for (let element of file) {
+
             let response = Module.createModule(element.SemesterName, element.ModuleName, element.ModuleCode, element.ModuleStartDate, element.ModuleEndDate, user);
             if (response.code !== 200) {
                 errors.Module.push(response);

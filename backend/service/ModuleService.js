@@ -15,7 +15,7 @@ class ModuleService {
                 startDate: moduleStartDate,
                 endDate: moduleEndDate,
             };
-            let response = await Validator.validateModule(newModule);
+            let response = await Validator.validateModule(moduleName, moduleCode, moduleStartDate, moduleEndDate);
             if (response.code !== 200) {
                 return response
             }
