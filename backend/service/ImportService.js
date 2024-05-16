@@ -106,7 +106,7 @@ class ImportService {
             }
         }
         for (let element of file) {
-            let response = Milestone.createMilestone(user, element.ModuleCode, element.MilestoneTitle, element.MilestoneType, element.MilestoneStartDate, element.MilestoneEndDate, true);
+            let response = Milestone.createMilestoneByUser(user, element.ModuleCode, element.MilestoneTitle, element.MilestoneType, element.MilestoneStartDate, element.MilestoneEndDate, true);
             if (response.code !== 200) {
                 errors.Milestone.push(response);
             }

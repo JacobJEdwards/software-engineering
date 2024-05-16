@@ -2,9 +2,10 @@ import userSchema from "../models/User.js";
 import Response from "../utils/Response.js";
 import User from "../service/UserService.js";
 import {model} from "mongoose";
+import Validator from "../middleware/Validator.js";
 
 class MilestoneService {
-    static async createMilestone(userid, moduleCode, milestoneName, milestoneType, milestoneStartDate, milestoneEndDate, ltsDefined) {
+    static async createMilestoneByUserId(userid, moduleCode, milestoneName, milestoneType, milestoneStartDate, milestoneEndDate, ltsDefined) {
         let user = await User.getUserInternal(userid);
         let milestoneExists = user.semester.find(semester => semester.modules.find(module => module.moduleCode === moduleCode));
         if (milestoneExists) {
@@ -15,6 +16,9 @@ class MilestoneService {
                 endDate: milestoneEndDate,
                 ltsDefined: ltsDefined
             };
+
+            let response = await Validator.validateMilestone(newMilestone);
+            if (response.code !== 200) return response;
 
             user.semester.find(semester => {
                 semester.modules.find(module => {
@@ -28,13 +32,12 @@ class MilestoneService {
             return new Response("Milestone created successfully", 200, {});
         } else {
             return new Response("Milestone could not find milestone", 404, {
-                userid: userid,
-                milestoneName: milestoneName
+                userid: userid, milestoneName: milestoneName
             });
         }
     }
 
-    static createMilestone(user, moduleCode, milestoneName, milestoneType, milestoneStartDate, milestoneEndDate, ltsDefined) {
+    static async createMilestoneByUser(user, moduleCode, milestoneName, milestoneType, milestoneStartDate, milestoneEndDate, ltsDefined) {
         let milestoneExists = user.semester.find(semester => semester.modules.find(module => module.moduleCode === moduleCode));
         if (milestoneExists) {
             const newMilestone = {
@@ -44,6 +47,8 @@ class MilestoneService {
                 endDate: milestoneEndDate,
                 ltsDefined: ltsDefined
             };
+            let response = await Validator.validateMilestone(newMilestone);
+            if (response.code !== 200) return response;
             user.semester.find(semester => {
                 semester.modules.find(module => {
                     if (module.moduleCode === moduleCode) {
@@ -54,9 +59,7 @@ class MilestoneService {
             return new Response("Milestone successfully created", 200, {});
         } else {
             return new Response("Cannot find milestone", 400, {
-                userid: user.id,
-                milestoneName: milestoneName,
-                moduleCode: moduleCode
+                userid: user.id, milestoneName: milestoneName, moduleCode: moduleCode
             });
         }
     }
@@ -91,13 +94,16 @@ class MilestoneService {
     }
 
 
-    static updateMilestone(user, moduleCode, milestoneName, newMilestoneName, newStartDate, newEndDate, milestoneType) {
+    static async updateMilestone(user, moduleCode, milestoneName, newMilestoneName, newStartDate, newEndDate, milestoneType) {
         const mod = user.module.find((module) => {
-            module.name === moduleName
+            if (module.name === moduleName) return module;
         });
 
-        let ms = mod.milestones.find((milestone) => {
-            return milestone.milestoneName === milestoneName
+        if (mod === null) return new Response("Module does not exist", 404, {});
+        let milestone = mod.milestones.find((milestone) => {
+            if (milestone.milestoneName === milestoneName) {
+                return milestone;
+            }
         })
 
         if (milestone && !milestone.ltsDefined) {
@@ -105,46 +111,24 @@ class MilestoneService {
             milestone.milestoneType = milestoneType == null ? milestone.milestoneType : milestoneType
             milestone.startDate = newStartDate == null ? milestone.startDate : newStartDate
             milestone.endDate = newEndDate == null ? milestone.endDate : newEndDate;
-            return new Response("Milestone updated successfully", 200, {});
+            return await Validator.validateMilestone(milestone);
         } else {
             return new Response("Milestone not able to be updated", 400, {});
         }
     }
 
-    // static updateMilestone(user, milestoneId, newMilestoneName, newStartDate, newEndDate, milestoneType) {
-    //     const milestone = user.module.find(module => module.milestones.find(milestone => milestone.id === milestoneId));
-    //     if (milestone && !milestone.ltsDefined) {
-    //         milestone.milestoneName = newMilestoneName == null ? milestone.milestoneName : newMilestoneName
-    //         milestone.milestoneType = milestoneType == null ? milestone.milestoneType : milestoneType
-    //         milestone.startDate = newStartDate == null ? milestone.startDate : newStartDate
-    //         milestone.endDate = newEndDate == null ? milestone.endDate : newEndDate;
-    //         return new Response("Milestone updated successfully", 200, {});
-    //     } else {
-    //         return new Response("Milestone not able to be updated", 400, {});
-    //     }
-    // }
 
-
-    static updateMilestone(user, moduleCode, milestoneName, newMilestoneName, newStartDate, newEndDate, milestoneType) {
-        const mod = user.module.find((module) => {
-            module.name === moduleName
-        });
-
-        let ms = mod.milestones.find((milestone) => {
-            return milestone.milestoneName === milestoneName
-        })
-
-        if (milestone) {
-            milestone.milestoneName = newMilestoneName == null ? milestone.milestoneName : newMilestoneName
-            milestone.milestoneType = milestoneType == null ? milestone.milestoneType : milestoneType
-            milestone.startDate = newStartDate == null ? milestone.startDate : newStartDate
-            milestone.endDate = newEndDate == null ? milestone.endDate : newEndDate;
-            return new Response("Milestone updated successfully", 200, {});
-        } else {
-            return new Response("Milestone not able to be updated", 400, {});
+    static async readMilestoneByModuleId(userId, moduleId) {
+        const user = await User.getUserInternal(userId);
+        if (!user) {
+            return new Response("User does not exist", 404, {userId});
         }
+        const response = await Module.readModuleByUser(user, moduleId);
+        if (response.status !== 200) {
+            return response;
+        }
+        return new Response("Tasks found", 200, response.message.milestones);
     }
-
     static async updateMilestoneByUserId(userId, milestoneId, newMilestoneName, newStartDate, newEndDate, milestoneType) {
         const user = await User.getUserInternal(userId);
         const milestone = user.module.find(module => module.milestones.find(milestone => milestone.id === milestoneId));
@@ -153,6 +137,8 @@ class MilestoneService {
             milestone.milestoneType = milestoneType == null ? milestone.milestoneType : milestoneType
             milestone.startDate = newStartDate == null ? milestone.startDate : newStartDate
             milestone.endDate = newEndDate == null ? milestone.endDate : newEndDate;
+            let response = await Validator.validateMilestone(milestone);
+            if (response.code !== 200) return response;
             await user.save();
             return new Response("Milestone updated successfully", 200, {});
         } else {
@@ -198,6 +184,35 @@ class MilestoneService {
         });
         return new Response("Milestone does not exist", 400, {});
     }
+
+
+    static async milestoneFromToDate(userId, fromDate, toDate) {
+        let user = await User.getUserInternal(userId);
+        if (!user) {
+            return new Response("User does not exist", 404, {userId});
+        } else if (fromDate > toDate) {
+            return new Response("Invalid date range", 400, {fromDate, toDate});
+        }
+        let milestones = user.semester.flatMap((sem) => sem.modules.flatMap((mod) => mod.milestones.filter((mil) => mil.endDate >= fromDate && mil.endDate <= toDate)));
+        return new Response("Tasks found", 200, milestones);
+    }
+
+
+    static async milestoneFromDate(userId, date) {
+        const response = await Validator.validateUser(userId, null, null, null, null);
+        if (response.code !== 200) {
+            return response;
+        }
+        let user = await User.getUserInternal(userId);
+        if (!user) {
+            return new Response("User does not exist", 404, {userId});
+        } else if (date < new Date()) {
+            return new Response("Invalid date", 400, {date});
+        }
+        let milestones = user.semester.flatMap((sem) => sem.modules.flatMap((mod) => mod.milestones.filter((mil) => mil.startDate >= date)));
+        return new Response("Tasks found", 200, milestones);
+    }
+
 }
 
 

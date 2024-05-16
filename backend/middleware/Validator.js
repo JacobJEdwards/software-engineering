@@ -48,7 +48,6 @@ const fullSchema = Joi.object({
     ActivityTitle: Joi.string().min(3).max(50).required(),
     ActivityType: Joi.string().min(3).max(50).required(),
     Notes: Joi.string(),
-    hrsCompleted: Joi.number(),
 });
 
 class Validator {
