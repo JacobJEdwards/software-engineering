@@ -39,6 +39,7 @@ class Application {
     this.app.use("/api/protected", AuthMiddleware.authenticate, this.taskRoutes.router);
     this.app.use("/api/protected", AuthMiddleware.authenticate, this.activityRoutes.router);
     this.app.use("/api/protected", AuthMiddleware.authenticate, this.milestoneRoutes.router);
+    Mailer.upcomingTasks();
     mongoose
       .connect(this.mongoDBUri)
       .then(() => console.log("MongoDB connected"))
