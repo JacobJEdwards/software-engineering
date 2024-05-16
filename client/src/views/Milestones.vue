@@ -59,30 +59,32 @@ userStore.$subscribe(() => {
 
     <v-row v-else>
       <v-col cols="12" md="6">
-        <v-card
-          title="Upcoming Milestones"
-          prepend-icon="mdi-calendar"
-          elevation="3"
-          rounded="md"
-        >
-          <v-list>
-            <v-list-item
-              v-for="milestone in upComingMilestones"
-              :key="milestone._id"
-            >
-              <v-list-item-title class="d-flex justify-space-between">
-                <span>{{ milestone.milestoneTitle }}</span>
-                <p class="caption text-sm text-gray-500">
-                  {{ milestone.milestoneType }}
-                </p>
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                <span class="font-bold">Due: </span
-                >{{ new Date(milestone.endDate).toLocaleDateString() }}
-              </v-list-item-subtitle>
-            </v-list-item>
-            <v-divider></v-divider>
-          </v-list>
+        <v-card elevation="3" rounded="md">
+          <v-card-title class="card-title">
+            <v-icon>mdi-calendar</v-icon>
+            <span>Upcoming Milestones</span>
+          </v-card-title>
+          <v-divider></v-divider>
+          <v-card-text>
+            <v-list v-if="upComingMilestones.length > 0">
+              <v-list-item
+                v-for="milestone in upComingMilestones"
+                :key="milestone._id"
+              >
+                <v-list-item-title class="d-flex justify-space-between">
+                  <span>{{ milestone.milestoneTitle }}</span>
+                  <p class="caption text-sm text-gray-500">
+                    {{ milestone.milestoneType }}
+                  </p>
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  <span class="font-bold">Due: </span
+                  >{{ new Date(milestone.endDate).toLocaleDateString() }}
+                </v-list-item-subtitle>
+              </v-list-item>
+            </v-list>
+            <p v-else class="text-lg mb-4">No milestones due soon!</p>
+          </v-card-text>
         </v-card>
       </v-col>
       <v-col cols="12" md="6">

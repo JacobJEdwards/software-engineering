@@ -60,11 +60,14 @@ watch(
 </script>
 
 <template>
-  <v-dialog v-model:show="show" max-width="500px">
+  <v-dialog
+    v-model="show"
+    max-width="800"
+    scrollable
+    @click:outside="props.close"
+  >
     <v-card>
-      <v-card-title>
-        <span class="headline">{{ props.milestoneTitle }}</span>
-      </v-card-title>
+      <v-card-title class="headline"> Create Milestone </v-card-title>
       <v-card-text>
         <v-container>
           <v-row>
@@ -73,6 +76,9 @@ watch(
                 v-model="formData.title"
                 label="Title"
                 required
+                variant="solo-filled"
+                outlined
+                aria-required="true"
               ></v-text-field>
             </v-col>
             <v-col cols="12">
@@ -81,6 +87,9 @@ watch(
                 :items="milestoneSelectTypes as string[]"
                 label="Type"
                 required
+                variant="solo-filled"
+                outlined
+                aria-required="true"
               ></v-select>
             </v-col>
             <v-col cols="12">
@@ -88,6 +97,9 @@ watch(
                 v-model="formData.startDate"
                 label="Start Date"
                 required
+                variant="solo-filled"
+                outlined
+                aria-required="true"
               ></v-text-field>
             </v-col>
             <v-col cols="12">
@@ -95,6 +107,9 @@ watch(
                 v-model="formData.endDate"
                 label="End Date"
                 required
+                variant="solo-filled"
+                outlined
+                aria-required="true"
               ></v-text-field>
             </v-col>
           </v-row>

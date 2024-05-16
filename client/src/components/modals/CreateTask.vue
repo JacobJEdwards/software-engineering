@@ -146,9 +146,9 @@ const createTask = async () => {
               <v-text-field
                 v-model="formData.title"
                 label="Title"
-                outlined
                 required
                 variant="solo-filled"
+                outlined
                 aria-required="true"
               ></v-text-field>
             </v-col>
