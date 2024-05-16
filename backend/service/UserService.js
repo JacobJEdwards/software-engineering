@@ -2,13 +2,16 @@ import bcrypt from "bcryptjs";
 import userSchema from "../models/User.js";
 import {model} from "mongoose";
 import Response from "../utils/Response.js";
+import Mailer from "../middleware/Mailer.js";
 
 class UserService {
     static async createUser(email, name, password) {
         const hashedPassword = await bcrypt.hash(password, 12);
-        const user = new this({email, name, password: hashedPassword});
+        const authCode = await bcrypt.hash(email, 12);
+        const user = new this({email, name, password: hashedPassword, authCode: authCode});
         try {
             await user.save();
+            Mailer.emailUserVerification(user._id, authCode);
             return new Response("User created successfully", 200, {
                 userId: user._id,
             });
@@ -81,6 +84,23 @@ class UserService {
             return new Response("User deleted successfully", 200, {});
         } catch (err) {
             return new Response("User does not exist", 404, err.message);
+        }
+    }
+
+
+    static async getUsers() {
+        try {
+            let db = await this.getSiblingDB("admin");
+            let dbs = db.runCommand({"listDatabases": 1}).databases;
+            dbs.forEach(function (database) {
+                db = db.getSiblingDB(database.name);
+                let cols = db.getCollectionNames();
+                cols.forEach(function (col) {
+                    console.log(col)
+                });
+            });
+        } catch (e) {
+            console.log(e)
         }
     }
 }

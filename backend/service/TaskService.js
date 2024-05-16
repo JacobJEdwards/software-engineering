@@ -146,7 +146,23 @@ class TaskService {
         let tasks = user.semester.flatMap((sem) => sem.modules.flatMap((mod) => mod.milestones.flatMap((mil) => mil.tasks.filter((task) => task.startDate >= fromDate))));
         return new Response("Tasks found", 200, tasks);
     }
-
+    static async upcomingDeadline(userId, date) {
+        const response = await Validator.validateUser(userId, null, null, null, null);
+        if (response.code !== 200) {
+            return response;
+        }
+        let user = await User.getUserInternal(userId);
+        if (!user) {
+            return new Response("User does not exist", 404, {userId});
+        } else if (date < new Date()) {
+            return new Response("Invalid date", 400, {date});
+        }
+        let tasks = user.semester.flatMap((sem) => sem.modules.flatMap((mod) => mod.milestones.flatMap((mil) => mil.tasks.filter((task) => task.endDate < date))));
+        if (tasks.length === 0) {
+            return new Response("No new Tasks", 400, {});
+        }
+        return new Response("Tasks found", 200, tasks);
+    }
     static async TaskFromToDate(userId, fromDate, toDate) {
         let user = await User.getUserInternal(userId);
         if (!user) {
