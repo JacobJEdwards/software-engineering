@@ -38,12 +38,19 @@ const totalMilestones = computed(() => milestones.value.length);
 const totalActivities = computed(() => activities.value.length);
 
 const mostHoursSpent = computed(() => {
-  const activity = activities.value.reduce(
-    (a, b) => (a.hrsCompleted > b.hrsCompleted ? a : b),
-    null,
-  );
+  let bestActivity = activities.value.length > 0 ? activities.value[0] : null;
 
-  return activity;
+  if (!bestActivity) {
+    return null;
+  }
+
+  activities.value.forEach((activity) => {
+    if (activity.hrsCompleted > bestActivity.hrsCompleted) {
+      bestActivity = activity;
+    }
+  });
+
+  return bestActivity?.hrsCompleted;
 });
 
 const mostTasksCompletedMilestone = computed(() => {
@@ -77,10 +84,10 @@ const mostTasksCompletedMilestone = computed(() => {
         <v-card rounded="md" elevation="3">
           <v-card-title class="card-title">
             <v-icon color="primary">mdi-clock-time-four-outline</v-icon>
-            Total Hours
+            Total Hours Logged
           </v-card-title>
           <v-divider></v-divider>
-          <v-card-text>
+          <v-card-text class="text-center d-flex align-center justify-center">
             <p class="text-lg">{{ totalHours }}</p>
           </v-card-text>
         </v-card>
@@ -91,7 +98,7 @@ const mostTasksCompletedMilestone = computed(() => {
             Total Tasks
           </v-card-title>
           <v-divider></v-divider>
-          <v-card-text>
+          <v-card-text class="text-center d-flex align-center justify-center">
             <p class="text-lg">{{ totalTasks }}</p>
           </v-card-text>
         </v-card>
@@ -102,7 +109,7 @@ const mostTasksCompletedMilestone = computed(() => {
             Total Completed Tasks
           </v-card-title>
           <v-divider></v-divider>
-          <v-card-text>
+          <v-card-text class="text-center d-flex align-center justify-center">
             <p class="text-lg">{{ totalCompletedTasks }}</p>
           </v-card-text>
         </v-card>
@@ -115,7 +122,7 @@ const mostTasksCompletedMilestone = computed(() => {
             Total Modules
           </v-card-title>
           <v-divider></v-divider>
-          <v-card-text>
+          <v-card-text class="text-center d-flex align-center justify-center">
             <p class="text-lg">{{ totalModules }}</p>
           </v-card-text>
         </v-card>
@@ -126,7 +133,7 @@ const mostTasksCompletedMilestone = computed(() => {
             Total Milestones
           </v-card-title>
           <v-divider></v-divider>
-          <v-card-text>
+          <v-card-text class="text-center d-flex align-center justify-center">
             <p class="text-lg">{{ totalMilestones }}</p>
           </v-card-text>
         </v-card>
@@ -137,21 +144,21 @@ const mostTasksCompletedMilestone = computed(() => {
             Total Activities
           </v-card-title>
           <v-divider></v-divider>
-          <v-card-text>
-            <p class="text-lg">{{ totalActivities }}</p>
+          <v-card-text class="text-center d-flex align-center justify-center">
+            <p class="text-lg text-center">{{ totalActivities }}</p>
           </v-card-text>
         </v-card>
       </v-col>
 
       <v-col cols="12">
-        <v-card rounded="md" elevation="3" class="mt-4">
+        <v-card rounded="md" elevation="3" class="mt-4" v-if="mostHoursSpent">
           <v-card-title class="card-title">
             <v-icon color="primary">mdi-timer-sand</v-icon>
             Most Hours Spent on an Activity
           </v-card-title>
           <v-divider></v-divider>
-          <v-card-text>
-            <p class="text-lg">{{ mostHoursSpent }}</p>
+          <v-card-text class="text-center d-flex align-center justify-center">
+            <p class="text-lg text-center">{{ mostHoursSpent }}</p>
           </v-card-text>
         </v-card>
 
@@ -162,7 +169,12 @@ const mostTasksCompletedMilestone = computed(() => {
           </v-card-title>
           <v-divider></v-divider>
           <v-card-text>
-            <p class="text-lg">{{ mostTasksCompletedMilestone }}</p>
+            <p class="text-lg">
+              {{ mostTasksCompletedMilestone?.milestoneTitle }}
+            </p>
+            <p class="text-sm">
+              {{ mostTasksCompletedMilestone?.tasks.length }} tasks!
+            </p>
           </v-card-text>
         </v-card>
       </v-col>

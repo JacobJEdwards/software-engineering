@@ -72,7 +72,7 @@ const logout = async () => {
     </template>
   </v-navigation-drawer>
 
-  <v-app-bar app v-if="mdAndDown" dark class="bg-grey-darken-4">
+  <v-app-bar app v-if="mdAndDown" dark color="secondary">
     <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
     <v-toolbar-title>Wonderful Tasks</v-toolbar-title>
     <v-spacer></v-spacer>
@@ -80,7 +80,7 @@ const logout = async () => {
   <v-navigation-drawer
     v-model="drawer"
     app
-    class="bg-grey-darken-4"
+    color="secondary"
     dark
     v-if="mdAndDown"
   >

@@ -45,14 +45,7 @@ const submitForm = async () => {
   authStore.email = email.value;
   isSuccessful.value = true;
 
-  await redirectToLogin();
-
   loading.value = false;
-};
-
-const redirectToLogin = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-  await router.push("/login");
 };
 </script>
 
@@ -142,13 +135,7 @@ const redirectToLogin = async () => {
         >
           <template #text>
             <p class="text-sm text-gray-400">
-              You will be redirected to the
-              <router-link
-                to="/login"
-                class="text-blue-500 text-sm hover:text-blue-700 focus:outline-none"
-                >login page</router-link
-              >
-              in a few seconds.
+              Please check your email to verify your account
             </p>
           </template>
         </v-empty-state>

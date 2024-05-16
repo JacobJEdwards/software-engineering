@@ -73,15 +73,6 @@ export const signup = async (
       };
     }
 
-    const userId = data.data?.userId;
-
-    if (!userId) {
-      return {
-        success: false,
-        error: data.message,
-      };
-    }
-
     return {
       success: true,
       data: data.data,
@@ -94,7 +85,34 @@ export const signup = async (
   }
 };
 
+const verifyEmail = async (token: string, id: string): Promise<Result> => {
+  try {
+    const response = await fetch(
+      `${API_ROUTE}/auth/verify?userId=${id}&token=${token}`,
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: data.message,
+      };
+    }
+
+    return {
+      success: true,
+    };
+  } catch (e: unknown) {
+    console.error(e);
+    return {
+      success: false,
+    };
+  }
+};
+
 export const AuthService = {
   login,
   signup,
+  verifyEmail,
 };
