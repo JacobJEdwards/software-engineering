@@ -2,10 +2,11 @@ import userSchema from "../models/User.js";
 import {model} from "mongoose";
 import Response from "../utils/Response.js";
 import UserService from "./UserService.js";
+import Validator from "../middleware/Validator.js";
 
 class ModuleService {
-    static createModule(semesterName, moduleName, moduleCode, moduleStartDate, moduleEndDate, user) {
-        const semesterExists = user.semester.find((semesterObject) => semesterObject.semesterName === semesterName,);
+    static async createModule(semesterName, moduleName, moduleCode, moduleStartDate, moduleEndDate, user) {
+        const semesterExists = user.semester.find((semesterObject) => semesterObject.semesterName === semesterName);
         if (semesterExists) {
             const newModule = {
                 moduleName: moduleName,
@@ -14,6 +15,10 @@ class ModuleService {
                 startDate: moduleStartDate,
                 endDate: moduleEndDate,
             };
+            let response = await Validator.validateModule(newModule);
+            if (response.code !== 200) {
+                return response
+            }
             const moduleExists = user.semester
                 .find((semester) => semester.semesterName === semesterName)
                 .modules.some((module) => module.moduleCode === moduleCode);
@@ -31,10 +36,11 @@ class ModuleService {
         }
     }
 
-    static createModuleByUserId(userId, semesterName, moduleName, moduleCode, moduleStartDate, moduleEndDate) {
+
+    static async createModuleByUserId(userId, semesterName, moduleName, moduleCode, moduleStartDate, moduleEndDate) {
         const user = UserService.getUserInternal(userId);
         if (user) {
-            let response = this.createModule(semesterName, moduleName, moduleCode, moduleStartDate, moduleEndDate, user);
+            let response = await this.createModule(semesterName, moduleName, moduleCode, moduleStartDate, moduleEndDate, user);
             if (response.code === 200) {
                 user.save();
                 return response;
@@ -46,7 +52,9 @@ class ModuleService {
         }
     }
 
-    static readModule(user, moduleCode) {
+    static async readModule(user, moduleCode) {
+        let response = await Validator.validateModule(null, moduleCode, null, null);
+        if (response.code !== 200) return response;
         const module = user.semester.find(semester => semester.modules.find(module => module.moduleCode === moduleCode));
         if (module) {
             return new Response("Module found", 200, module);
@@ -56,6 +64,11 @@ class ModuleService {
     }
 
     static async readModuleByUserId(userId, moduleCode) {
+        let response = await Validator.validateModule(null, moduleCode, null, null);
+        if (response.code !== 200) return response;
+        response = await Validator.validateUser(userId, null, null, null);
+        if (response.code !== 200) return response;
+
         const user = await UserService.getUserInteral(userId);
         if (user) {
             let response = this.readModule(moduleCode, user);
@@ -73,28 +86,28 @@ class ModuleService {
             module.moduleCode = newModuleCode == null ? module.moduleCode : newModuleCode;
             module.startDate = newStartDate == null ? module.startDate : newStartDate;
             module.endDate = newEndDate == null ? module.endDate : newEndDate;
-            return new Response("Module updated successfully", 200, {});
+            return await Validator.validateModule(module);
         } else {
             return new Response("Module does not exist", 404, {});
         }
     };
 
 
-    static editModuleName(moduleCode, newModuleName, user) {
+    static async editModuleName(moduleCode, newModuleName, user) {
         const module = user.modules.find((module) => module.moduleCode === moduleCode,);
         if (module) {
             module.moduleName = newModuleName;
-            return new Response("Module name updated successfully", 200, {});
+            return await Validator.validateModule(module);
         } else {
             return new Response("Module does not exist", 404, {});
         }
     }
 
-    static editModuleCode(moduleCode, newModuleCode, user) {
+    static async editModuleCode(moduleCode, newModuleCode, user) {
         const module = user.modules.find((module) => module.moduleCode === moduleCode,);
         if (module) {
             module.moduleCode = newModuleCode;
-            return new Response("Module code updated successfully", 200, {});
+            return await Validator.validateModule(module);
         } else {
             return new Response("Module does not exist", 404, {});
         }
@@ -115,23 +128,22 @@ class ModuleService {
         }
     }
 
-    static editModuleStartDate(moduleCode, newStartDate, user) {
+    static async editModuleStartDate(moduleCode, newStartDate, user) {
         const module = user.modules.find((module) => module.moduleCode === moduleCode,);
         if (module) {
             module.startDate = newStartDate;
-            return new Response("Module start date updated successfully", 200, {});
+            return await Validator.validateModule(module);
         } else {
             return new Response("Module does not exist", 404, {});
         }
     }
 
-    static editModuleEndDate(moduleCode, newEndDate, user) {
+    static async editModuleEndDate(moduleCode, newEndDate, user) {
         const module = user.modules.find((module) => module.moduleCode === moduleCode,);
         if (module) {
             module.endDate = newEndDate;
-            return new Response("Module end date updated successfully", 200, {});
+            return await Validator.validateModule(module);
         } else {
-            resposneHandler.addError("Module does not exist", 404);
             return new Response("Module does not exist", 404, {});
         }
     }
@@ -182,6 +194,7 @@ class ModuleService {
             return new Response("User does not exist", 404, {});
         }
     }
+
 
 }
 

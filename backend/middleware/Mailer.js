@@ -11,7 +11,7 @@ export class Mailer {
             from: "Wonderful Tasks <mail@wondefultasks.me>",
             to: ["jjwales38@gmail.com"],
             subject: "Hello",
-            text: "<Jamie is cooler than you>",
+            text: "Jamie is cooler than you",
             html: "<h1> honestly though </h1>"
         }).then(msg => console.log(msg)).catch(err => console.error(err));
     }
