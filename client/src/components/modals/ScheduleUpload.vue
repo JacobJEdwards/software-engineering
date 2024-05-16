@@ -104,7 +104,7 @@ const submitFile = async (isUpdate: boolean = false) => {
           color="success"
           @click="() => submitFile(false)"
           :loading="loading"
-          :disabled="!file"
+          :disabled="!file || userStore.user?.semester?.length"
           text="Upload"
         >
         </v-btn>
