@@ -14,6 +14,10 @@ const show = defineModel("show", {
   default: false,
 });
 
+const addSemesterOpen = ref([]);
+const addModuleOpen = ref([]);
+const addMilestoneOpen = ref([]);
+
 const props = defineProps<{
   close: () => void;
 }>();
@@ -78,6 +82,8 @@ const saveSemester = () => {
     SemesterEndDate: undefined,
     SemesterStartDate: undefined,
   };
+
+  addSemesterOpen.value = [];
 };
 
 const saveModule = (semester: any) => {
@@ -102,6 +108,8 @@ const saveModule = (semester: any) => {
     ModuleStartDate: undefined,
     ModuleEndDate: undefined,
   };
+
+  addModuleOpen.value = [];
 };
 
 const saveMilestone = (semester: any, module: any) => {
@@ -133,6 +141,8 @@ const saveMilestone = (semester: any, module: any) => {
     MilestoneStartDate: undefined,
     MilestoneEndDate: undefined,
   };
+
+  addMilestoneOpen.value = [];
 };
 
 const saveData = async () => {
@@ -226,11 +236,11 @@ const saveData = async () => {
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
                   <p class="caption">Modules</p>
-                  <v-expansion-panels>
-                    <v-expansion-panel v-for="module of semester.modules">
-                      <v-expansion-panel-title>
-                        {{ module.ModuleCode }} - {{ module.ModuleName }}
-                      </v-expansion-panel-title>
+                  <v-expansion-panels v-model="addModuleOpen">
+                    <v-expansion-panel
+                      v-for="module of semester.modules"
+                      :title="module.ModuleCode + ' - ' + module.ModuleName"
+                    >
                       <v-expansion-panel-text>
                         <p class="caption">Milestones</p>
                         <v-expansion-panels>
@@ -247,7 +257,7 @@ const saveData = async () => {
                             </v-expansion-panel-text>
                           </v-expansion-panel>
                         </v-expansion-panels>
-                        <v-expansion-panels>
+                        <v-expansion-panels v-model="addMilestoneOpen" flat>
                           <v-expansion-panel title="Add Milestone">
                             <v-expansion-panel-text>
                               <v-text-field
@@ -292,7 +302,7 @@ const saveData = async () => {
                       </v-expansion-panel-text>
                     </v-expansion-panel>
                   </v-expansion-panels>
-                  <v-expansion-panels>
+                  <v-expansion-panels v-model="addModuleOpen" flat>
                     <v-expansion-panel title="Add Module">
                       <v-expansion-panel-text>
                         <v-text-field
@@ -335,7 +345,7 @@ const saveData = async () => {
               </v-expansion-panel>
             </v-expansion-panels>
             <v-expansion-panels class="my-6" flat>
-              <v-expansion-panel>
+              <v-expansion-panel v-model="addSemesterOpen">
                 <template #title> Add Semester </template>
 
                 <template #text>
