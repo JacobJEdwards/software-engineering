@@ -38,6 +38,7 @@ class MilestoneController {
   static async createMilestone(req, res) {
     const milestone = await Milestones.createMilestoneByUserId(
       req.userData.userId,
+      req.body.moduleId,
       req.body.milestoneTitle,
       req.body.milestoneType,
       req.body.startDate,
@@ -53,6 +54,7 @@ class MilestoneController {
   static async updateMilestone(req, res) {
     const milestone = await Milestones.updateMilestoneByUserId(
       req.userData.userId,
+      req.userData.moduleId,
       req.body.milestoneTitle,
       req.body.milestoneType,
       req.body.startDate,
