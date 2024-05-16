@@ -91,15 +91,9 @@ class ImportService {
         errors.Milestone.push(response);
       }
 
-      for (const e of errors.Module) {
-        console.log(e);
-        console.log("here");
-      }
-
       const hasErrors = Object.values(errors).some(
         (category) => category.length > 0,
       );
-      console.log(hasErrors);
       if (hasErrors) {
         return new Response("Error encountered", 400, errors);
       } else {
