@@ -50,7 +50,10 @@ class Mailer {
         );
         if (tasks.code === 200) {
           const taskList = tasks.data
-            .map((task) => `<li>${task.name} - Due: ${task.deadline}</li>`)
+            .map(
+              (task) =>
+                `<li>${task.title} - Due: ${new Date(task.endDate).toLocaleDateString()}</li>`,
+            )
             .join("");
           const emailData = {
             from: "Excited User <mail@wonderfultasks.me>",

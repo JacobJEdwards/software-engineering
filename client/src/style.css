@@ -12,14 +12,14 @@ body,
 }
 
 .fc-button {
-    background-color: #15385f !important;
-    color: white !important;
+    background-color: #15385f;
+    color: white;
 }
 
 .fc-prev-button,
 .fc-next-button {
-    display: flex !important;
-    justify-content: center !important;
+    display: flex;
+    justify-content: center;
     align-items: center !important;
 }
 

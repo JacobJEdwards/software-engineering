@@ -138,7 +138,7 @@ const milestonesEvents: ComputedRef<EventInput[]> = computed(() =>
       end: props.dueDatesOnly ? undefined : endDate,
       allDay: !props.dueDatesOnly,
       title: milestone.milestoneTitle,
-      color: "#49a078",
+      color: "#15385f",
       id: milestone._id,
       extendedProps: {
         milestone: milestone,

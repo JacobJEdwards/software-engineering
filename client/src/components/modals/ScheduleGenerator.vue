@@ -257,7 +257,11 @@ const saveData = async () => {
                             </v-expansion-panel-text>
                           </v-expansion-panel>
                         </v-expansion-panels>
-                        <v-expansion-panels v-model="addMilestoneOpen" flat>
+                        <v-expansion-panels
+                          v-model="addMilestoneOpen"
+                          flat
+                          class="mt-4"
+                        >
                           <v-expansion-panel title="Add Milestone">
                             <v-expansion-panel-text>
                               <v-text-field
@@ -277,18 +281,26 @@ const saveData = async () => {
                                   Object.values(MilestoneTypes) as string[]
                                 "
                               ></v-select>
-                              <v-date-picker
-                                v-model="milestoneFormData.MilestoneStartDate"
-                                label="Start Date"
-                                outlined
-                                dense
-                              ></v-date-picker>
-                              <v-date-picker
-                                v-model="milestoneFormData.MilestoneEndDate"
-                                label="End Date"
-                                outlined
-                                dense
-                              ></v-date-picker>
+                              <v-row class="d-flex justify-center align-center">
+                                <v-col cols="6">
+                                  <v-date-picker
+                                    v-model="
+                                      milestoneFormData.MilestoneStartDate
+                                    "
+                                    label="Start Date"
+                                    outlined
+                                    dense
+                                  ></v-date-picker>
+                                </v-col>
+                                <v-col cols="6">
+                                  <v-date-picker
+                                    v-model="milestoneFormData.MilestoneEndDate"
+                                    label="End Date"
+                                    outlined
+                                    dense
+                                  ></v-date-picker>
+                                </v-col>
+                              </v-row>
                               <v-btn
                                 color="success"
                                 @click="() => saveMilestone(semester, module)"
@@ -319,18 +331,24 @@ const saveData = async () => {
                           variant="solo-filled"
                           dense
                         ></v-text-field>
-                        <v-date-picker
-                          v-model="moduleFormData.ModuleStartDate"
-                          label="Start Date"
-                          outlined
-                          dense
-                        ></v-date-picker>
-                        <v-date-picker
-                          v-model="moduleFormData.ModuleEndDate"
-                          label="End Date"
-                          outlined
-                          dense
-                        ></v-date-picker>
+                        <v-row class="d-flex justify-center align-center">
+                          <v-col cols="6">
+                            <v-date-picker
+                              v-model="moduleFormData.ModuleStartDate"
+                              label="Start Date"
+                              outlined
+                              dense
+                            ></v-date-picker>
+                          </v-col>
+                          <v-col cols="6">
+                            <v-date-picker
+                              v-model="moduleFormData.ModuleEndDate"
+                              label="End Date"
+                              outlined
+                              dense
+                            ></v-date-picker>
+                          </v-col>
+                        </v-row>
                         <v-btn
                           color="success"
                           @click="() => saveModule(semester)"
@@ -356,18 +374,24 @@ const saveData = async () => {
                     variant="solo-filled"
                     dense
                   ></v-text-field>
-                  <v-date-picker
-                    v-model="semesterFormData.SemesterStartDate"
-                    label="Start Date"
-                    outlined
-                    dense
-                  ></v-date-picker>
-                  <v-date-picker
-                    v-model="semesterFormData.SemesterEndDate"
-                    label="End Date"
-                    outlined
-                    dense
-                  ></v-date-picker>
+                  <v-row class="d-flex justify-center align-center">
+                    <v-col cols="6">
+                      <v-date-picker
+                        v-model="semesterFormData.SemesterStartDate"
+                        label="Start Date"
+                        outlined
+                        dense
+                      ></v-date-picker>
+                    </v-col>
+                    <v-col cols="6">
+                      <v-date-picker
+                        v-model="semesterFormData.SemesterEndDate"
+                        label="End Date"
+                        outlined
+                        dense
+                      ></v-date-picker>
+                    </v-col>
+                  </v-row>
                   <v-btn
                     color="success"
                     @click="saveSemester"
